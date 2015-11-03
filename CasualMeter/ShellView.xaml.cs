@@ -13,8 +13,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using CasualMeter.Conductors;
-using CasualMeter.Helpers;
+using CasualMeter.Common.Conductors;
+using CasualMeter.Common.Helpers;
 using Lunyx.Common;
 
 namespace CasualMeter

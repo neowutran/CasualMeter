@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CasualMeter.Common</RootNamespace>
     <AssemblyName>CasualMeter.Common</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,34 +46,73 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.2.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Conductors\CasualMessenger.cs" />
     <Compile Include="Conductors\WindowVisibilityMessage.cs" />
+    <Compile Include="Converters\PlayerClassToImageConverter.cs" />
     <Compile Include="Helpers\HotkeyHelper.cs" />
     <Compile Include="Helpers\ProcessHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\CasualMeterWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Lunyx\Lunyx.Common.UI.Wpf\Lunyx.Common.UI.Wpf.csproj">
+      <Project>{75b43592-1666-4d78-9d7e-1240b8e3122c}</Project>
+      <Name>Lunyx.Common.UI.Wpf</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Lunyx\Lunyx.Common\Lunyx.Common.csproj">
       <Project>{97509135-3f03-468a-b5b0-fcd65e6d1600}</Project>
       <Name>Lunyx.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Tera.Core\Tera.Core.csproj">
+      <Project>{ee476c7c-2942-4ba4-ab47-7adbe65635fd}</Project>
+      <Name>Tera.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tera.DamageMeter.Core\Tera.DamageMeter.Core.csproj">
+      <Project>{d1ed4752-f2fc-44c3-97b2-580bc79f4af1}</Project>
+      <Name>Tera.DamageMeter.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tera.Data\Tera.Data.csproj">
+      <Project>{4b6aa9bd-cec2-4aa6-b35a-1acb2fa7767b}</Project>
+      <Name>Tera.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tera.Sniffing\Tera.Sniffing.csproj">
+      <Project>{66bb1685-8ff5-4431-b77f-7f80c92a5da4}</Project>
+      <Name>Tera.Sniffing</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Arrow.cur" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

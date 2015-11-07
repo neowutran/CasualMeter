@@ -48,7 +48,7 @@ namespace Tera.Data
             var directory = Path.GetDirectoryName(typeof (BasicTeraData).Assembly.Location);
             while (directory != null)
             {
-                var resourceDirectory = Path.Combine(directory, @"resources\");
+                var resourceDirectory = Path.Combine(directory, @"res\");
                 if (Directory.Exists(resourceDirectory))
                     return resourceDirectory;
                 directory = Path.GetDirectoryName(directory);

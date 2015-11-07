@@ -63,19 +63,19 @@ namespace Tera.Sniffing
         protected virtual void OnNewConnection(Server server)
         {
             var handler = NewConnection;
-            if (handler != null) handler(server);
+            handler?.Invoke(server);
         }
 
         protected virtual void OnMessageReceived(Message message)
         {
             var handler = MessageReceived;
-            if (handler != null) handler(message);
+            handler?.Invoke(message);
         }
 
         protected virtual void OnWarning(string obj)
         {
             Action<string> handler = Warning;
-            if (handler != null) handler(obj);
+            handler?.Invoke(obj);
         }
 
 
@@ -124,6 +124,7 @@ namespace Tera.Sniffing
                         _clientToServer = connection;
                     }
                 }
+
 
                 if (!(connection == _clientToServer || connection == _serverToClient))
                     return;

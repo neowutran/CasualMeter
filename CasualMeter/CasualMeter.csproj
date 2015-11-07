@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CasualMeter</RootNamespace>
     <AssemblyName>CasualMeter</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -86,6 +87,7 @@
     <Compile Include="ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ShellViewModel.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -147,72 +149,90 @@
     <Resource Include="Resources\CasualMeter.ico" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Arrow.cur" />
+    <Content Include="..\Tera.Data\res\hotkeys.xml">
+      <Link>res\hotkeys.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Tera.Data\res\opcodes-3308.txt">
+      <Link>res\opcodes-3308.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Tera.Data\res\opcodes-3308b.txt">
+      <Link>res\opcodes-3308b.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Tera.Data\res\opcodes-3407.txt">
+      <Link>res\opcodes-3407.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Tera.Data\res\opcodes-3603.txt">
+      <Link>res\opcodes-3603.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Tera.Data\res\opcodes-3603b.txt">
+      <Link>res\opcodes-3603b.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Tera.Data\res\regions.txt">
+      <Link>res\regions.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Tera.Data\res\servers.txt">
+      <Link>res\servers.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Tera.Data\res\user_skills.txt">
+      <Link>res\user_skills.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Tera.Data\res\window.xml">
+      <Link>res\window.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="res\hotkeys.xml">
+    <Content Include="..\Tera.Data\res\class-icons\archer.png">
+      <Link>res\class-icons\archer.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\opcodes-3308.txt">
+    <Content Include="..\Tera.Data\res\class-icons\berserker.png">
+      <Link>res\class-icons\berserker.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\opcodes-3308b.txt">
+    <Content Include="..\Tera.Data\res\class-icons\common.png">
+      <Link>res\class-icons\common.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\opcodes-3407.txt">
+    <Content Include="..\Tera.Data\res\class-icons\gunner.png">
+      <Link>res\class-icons\gunner.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\opcodes-3603.txt">
+    <Content Include="..\Tera.Data\res\class-icons\lancer.png">
+      <Link>res\class-icons\lancer.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\opcodes-3603b.txt">
+    <Content Include="..\Tera.Data\res\class-icons\mystic.png">
+      <Link>res\class-icons\mystic.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\regions.txt">
+    <Content Include="..\Tera.Data\res\class-icons\priest.png">
+      <Link>res\class-icons\priest.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\servers.txt">
+    <Content Include="..\Tera.Data\res\class-icons\reaper.png">
+      <Link>res\class-icons\reaper.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\user_skills.txt">
+    <Content Include="..\Tera.Data\res\class-icons\slayer.png">
+      <Link>res\class-icons\slayer.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\window.xml">
+    <Content Include="..\Tera.Data\res\class-icons\sorcerer.png">
+      <Link>res\class-icons\sorcerer.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="res\class-icons\archer.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\class-icons\berserker.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\class-icons\common.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\class-icons\gunner.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\class-icons\lancer.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\class-icons\mystic.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\class-icons\priest.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\class-icons\reaper.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\class-icons\slayer.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\class-icons\sorcerer.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\class-icons\warrior.png">
+    <Content Include="..\Tera.Data\res\class-icons\warrior.png">
+      <Link>res\class-icons\warrior.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

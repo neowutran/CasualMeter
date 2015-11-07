@@ -26,14 +26,12 @@ namespace CasualMeter.Common.Helpers
 
         private void HookManagerOnKeyDown(object sender, KeyEventArgs e)
         {
-            if (SettingsHelper.Instance.IsTabVisibilityEnabled && ProcessHelper.Instance.IsTeraActive && e.KeyValue == 9)//check if tab is pressed
-                CasualMessenger.Instance.SendWindowVisibilityMessage(true);
+            
         }
 
         private void HookManagerOnKeyUp(object sender, KeyEventArgs e)
         {
-            if (SettingsHelper.Instance.IsTabVisibilityEnabled && e.KeyValue == 9)
-                CasualMessenger.Instance.SendWindowVisibilityMessage(false);
+            
         }
     }
 }

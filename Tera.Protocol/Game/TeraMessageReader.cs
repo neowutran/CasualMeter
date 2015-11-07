@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Text;
 
-namespace Tera.Protocol.Game.Parsing
+namespace Tera.Protocol.Game
 {
     class TeraMessageReader : BinaryReader
     {

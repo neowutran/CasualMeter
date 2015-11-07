@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Gothos
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -7,21 +10,6 @@ namespace Tera.Game
     public class PlayerTracker : IEnumerable<Player>
     {
         private readonly Dictionary<uint, Player> _playerById = new Dictionary<uint, Player>();
-
-        public PlayerTracker(EntityTracker entityTracker)
-        {
-            entityTracker.EntityUpdated += Update;
-        }
-
-        public IEnumerator<Player> GetEnumerator()
-        {
-            return _playerById.Values.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
 
         private void Update(Entity entity)
         {
@@ -50,6 +38,21 @@ namespace Tera.Game
         public Player Get(uint playerId)
         {
             return _playerById[playerId];
+        }
+
+        public IEnumerator<Player> GetEnumerator()
+        {
+            return _playerById.Values.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public PlayerTracker(EntityTracker entityTracker)
+        {
+            entityTracker.EntityUpdated += Update;
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Gothos
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using System.IO;
 using System.Linq;
 using Tera.PacketLog;
@@ -11,7 +14,7 @@ namespace Tera.Sniffing
         private MemoryStream _client = new MemoryStream();
         private MemoryStream _server = new MemoryStream();
         private Session _session;
-        private bool Initialized => _session != null;
+        private bool Initialized { get { return _session != null; } }
 
         public event Action<byte[]> ClientToServerDecrypted;
         public event Action<byte[]> ServerToClientDecrypted;
@@ -19,26 +22,25 @@ namespace Tera.Sniffing
         protected void OnClientToServerDecrypted(byte[] data)
         {
             var action = ClientToServerDecrypted;
-            action?.Invoke(data);
+            if (action != null)
+                action(data);
         }
 
         protected void OnServerToClientDecrypted(byte[] data)
         {
             var action = ServerToClientDecrypted;
-            action?.Invoke(data);
+            if (action != null)
+                action(data);
         }
 
         private static Session CreateSession(byte[] clientKey1, byte[] clientKey2, byte[] serverKey1, byte[] serverKey2)
         {
-            var session = new Session
-            {
-                ClientKey1 = clientKey1,
-                ClientKey2 = clientKey2,
-                ServerKey1 = serverKey1,
-                ServerKey2 = serverKey2
-            };
+            var session = new Session();
+            session.ClientKey1 = clientKey1;
+            session.ClientKey2 = clientKey2;
+            session.ServerKey1 = serverKey1;
+            session.ServerKey2 = serverKey2;
             session.Init();
-            Console.WriteLine("Success");
             return session;
         }
 
@@ -53,7 +55,7 @@ namespace Tera.Sniffing
             _client.Position = 0;
 
             var magicBytes = _server.ReadBytes(4);
-            if (!magicBytes.SequenceEqual(new byte[] {1, 0, 0, 0}))
+            if (!magicBytes.SequenceEqual(new byte[] { 1, 0, 0, 0 }))
                 throw new FormatException("Not a Tera connection");
 
             var clientKey1 = _client.ReadBytes(128);
@@ -62,8 +64,8 @@ namespace Tera.Sniffing
             var serverKey2 = _server.ReadBytes(128);
             _session = CreateSession(clientKey1, clientKey2, serverKey1, serverKey2);
 
-            ClientToServer(_client.ReadBytes((int) (_client.Length - _client.Position)));
-            ServerToClient(_server.ReadBytes((int) (_server.Length - _server.Position)));
+            ClientToServer(_client.ReadBytes((int)(_client.Length - _client.Position)));
+            ServerToClient(_server.ReadBytes((int)(_server.Length - _server.Position)));
             _client = null;
             _server = null;
         }

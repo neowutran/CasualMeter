@@ -44,7 +44,6 @@
   <ItemGroup>
     <Compile Include="DamageTracker.cs" />
     <Compile Include="FormatHelpers.cs" />
-    <Compile Include="PlayerData.cs" />
     <Compile Include="PlayerInfo.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

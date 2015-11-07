@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NetworkSniffer;
-using PacketDotNet.Utils;
 using Tera.Game;
 
 namespace Tera.Sniffing
@@ -22,7 +21,7 @@ namespace Tera.Sniffing
         private TcpConnection _serverToClient;
         private ConnectionDecrypter _decrypter;
         private MessageSplitter _messageSplitter;
-        private readonly IpSniffer _ipSniffer;
+        private readonly IpSnifferWinPcap _ipSniffer;
 
         public TeraSniffer(IEnumerable<Server> servers)
         {
@@ -32,7 +31,7 @@ namespace Tera.Sniffing
             string filter = string.Join(" or ", netmasks.Select(x => string.Format("(net {0})", x)));
             filter = "tcp and (" + filter + ")";
 
-            _ipSniffer = new IpSniffer(filter);
+            _ipSniffer = new IpSnifferWinPcap(filter);
             _ipSniffer.Warning += OnWarning;
             var tcpSniffer = new TcpSniffer(_ipSniffer);
             tcpSniffer.NewConnection += HandleNewConnection;
@@ -51,6 +50,18 @@ namespace Tera.Sniffing
             }
         }
 
+        public int? BufferSize
+        {
+            get
+            {
+                return _ipSniffer.BufferSize;
+            }
+            set
+            {
+                _ipSniffer.BufferSize = value;
+            }
+        }
+
         public IEnumerable<string> SnifferStatus()
         {
             return _ipSniffer.Status();
@@ -63,19 +74,19 @@ namespace Tera.Sniffing
         protected virtual void OnNewConnection(Server server)
         {
             var handler = NewConnection;
-            handler?.Invoke(server);
+            if (handler != null) handler(server);
         }
 
         protected virtual void OnMessageReceived(Message message)
         {
             var handler = MessageReceived;
-            handler?.Invoke(message);
+            if (handler != null) handler(message);
         }
 
         protected virtual void OnWarning(string obj)
         {
             Action<string> handler = Warning;
-            handler?.Invoke(obj);
+            if (handler != null) handler(obj);
         }
 
 
@@ -93,17 +104,17 @@ namespace Tera.Sniffing
         }
 
         // called from the tcp sniffer, so it needs to lock
-        private void HandleTcpDataReceived(TcpConnection connection, ByteArraySegment data)
+        void HandleTcpDataReceived(TcpConnection connection, ArraySegment<byte> data)
         {
             lock (_eventLock)
             {
-                if (data.Length == 0)
+                if (data.Count == 0)
                     return;
                 if (_isNew.Contains(connection))
                 {
                     _isNew.Remove(connection);
                     if (_serversByIp.ContainsKey(connection.Source.Address.ToString()) &&
-                        data.Bytes.Skip(data.Offset).Take(4).SequenceEqual(new byte[] { 1, 0, 0, 0 }))
+                        data.Array.Skip(data.Offset).Take(4).SequenceEqual(new byte[] { 1, 0, 0, 0 }))
                     {
                         var server = _serversByIp[connection.Source.Address.ToString()];
                         _serverToClient = connection;
@@ -125,12 +136,11 @@ namespace Tera.Sniffing
                     }
                 }
 
-
                 if (!(connection == _clientToServer || connection == _serverToClient))
                     return;
                 if (_decrypter == null)
                     return;
-                var dataArray = data.Bytes.Skip(data.Offset).Take(data.Length).ToArray();
+                var dataArray = data.Array.Skip(data.Offset).Take(data.Count).ToArray();
                 if (connection == _clientToServer)
                     _decrypter.ClientToServer(dataArray);
                 else

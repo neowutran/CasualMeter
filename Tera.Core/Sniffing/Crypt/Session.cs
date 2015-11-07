@@ -6,13 +6,14 @@ namespace Tera.Sniffing.Crypt
 {
     internal class Session
     {
-        public byte[] ClientKey1 = new byte[128];
-        public byte[] ClientKey2 = new byte[128];
-        public byte[] DecryptKey = new byte[128];
+        protected Cryptor Encryptor;
         protected Cryptor Decryptor;
 
         public byte[] EncryptKey = new byte[128];
-        protected Cryptor Encryptor;
+        public byte[] DecryptKey = new byte[128];
+
+        public byte[] ClientKey1 = new byte[128];
+        public byte[] ClientKey2 = new byte[128];
         public byte[] ServerKey1 = new byte[128];
         public byte[] ServerKey2 = new byte[128];
 

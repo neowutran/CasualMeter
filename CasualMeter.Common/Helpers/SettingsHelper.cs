@@ -17,15 +17,17 @@ namespace CasualMeter.Common.Helpers
         private static readonly Lazy<SettingsHelper> Lazy = new Lazy<SettingsHelper>(() => new SettingsHelper());
         
         public readonly BasicTeraData BasicTeraData;
-        public TeraData TeraData;
 
-        private readonly Dictionary<PlayerClass, Image> _images;
-        private DamageTracker _damageTracker;
-        private EntityTracker _entityRegistry;
-        private MessageFactory _messageFactory;
-        private PlayerTracker _playerTracker;
-        private Server _server;
+        private readonly Dictionary<PlayerClass, Image> _classIcons;
+
         private TeraSniffer _teraSniffer;
+        private static readonly BasicTeraData _basicTeraData;
+        private static TeraData _teraData;
+        private MessageFactory _messageFactory;
+        private EntityTracker _entityTracker;
+        private DamageTracker _damageTracker;
+        private Server _server;
+        private PlayerTracker _playerTracker;
 
         //todo: keyboard hook
 
@@ -35,7 +37,7 @@ namespace CasualMeter.Common.Helpers
 
         private SettingsHelper()
         {
-            _images = new Dictionary<PlayerClass, Image>();
+            _classIcons = new Dictionary<PlayerClass, Image>();
             BasicTeraData = new BasicTeraData();
             LoadClassIcons();
 
@@ -52,7 +54,7 @@ namespace CasualMeter.Common.Helpers
                 var filename = Path.Combine(directory, playerClass.ToString().ToLowerInvariant() + ".png");
                 using (var image = Image.FromFile(filename))
                 {
-                    _images.Add(playerClass, image);
+                    _classIcons.Add(playerClass, image);
                 }
             }
         }
@@ -66,29 +68,30 @@ namespace CasualMeter.Common.Helpers
 
         public Image GetImage(PlayerClass @class)
         {
-            return _images[@class];
+            return _classIcons[@class];
         }
 
         private void HandleNewConnection(Server server)
         {
             ServerName = $"{server.Name}";
             _server = server;
-            TeraData = BasicTeraData.DataForRegion(server.Region);
-            _entityRegistry = new EntityTracker();
-            _playerTracker = new PlayerTracker(_entityRegistry);
-            _damageTracker = new DamageTracker(_entityRegistry, _playerTracker, TeraData.SkillDatabase);
-            _messageFactory = new MessageFactory(TeraData.OpCodeNamer);
+            _teraData = BasicTeraData.DataForRegion(server.Region);
+            _entityTracker = new EntityTracker();
+            _playerTracker = new PlayerTracker(_entityTracker);
+            _damageTracker = new DamageTracker();
+            _messageFactory = new MessageFactory(_teraData.OpCodeNamer);
         }
 
         private void HandleMessageReceived(Message obj)
         {
             var message = _messageFactory.Create(obj);
-            _entityRegistry.Update(message);
+            _entityTracker.Update(message);
 
             var skillResultMessage = message as EachSkillResultServerMessage;
             if (skillResultMessage != null)
             {
-                _damageTracker.Update(skillResultMessage);
+                var skillResult = new SkillResult(skillResultMessage, _entityTracker, _playerTracker, _teraData.SkillDatabase);
+                _damageTracker.Update(skillResult);
             }
         }
 

@@ -1,4 +1,6 @@
-using System;
+// Copyright (c) Gothos
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System.ComponentModel;
 using Tera.DamageMeter.Annotations;
 
@@ -6,32 +8,10 @@ namespace Tera.DamageMeter
 {
     public class SkillStats : INotifyPropertyChanged
     {
-        private readonly PlayerInfo _playerInfo;
-        private int _crits;
         private long _damage;
         private long _heal;
         private int _hits;
-
-        public SkillStats()
-        {
-        }
-
-        public SkillStats(PlayerInfo playerInfo)
-        {
-            _playerInfo = playerInfo;
-        }
-
-        public double CritRate
-        {
-            get
-            {
-                if (Hits == 0)
-                {
-                    return 0;
-                }
-                return Math.Round((double)Crits*100/Hits, 1);
-            }
-        } 
+        private int _crits;
 
         public long Damage
         {
@@ -39,17 +19,6 @@ namespace Tera.DamageMeter
             set
             {
                 if (value == _damage) return;
-                if (_playerInfo != null)
-                {
-                    if (value != 0)
-                    {
-                        if (_playerInfo.FirstHit == 0)
-                        {
-                            _playerInfo.FirstHit = DateTime.UtcNow.Ticks/10000000;
-                        }
-                        _playerInfo.LastHit = DateTime.UtcNow.Ticks/10000000;
-                    }
-                }
                 _damage = value;
                 OnPropertyChanged("Damage");
             }
@@ -93,8 +62,16 @@ namespace Tera.DamageMeter
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            var handler = PropertyChanged;
+            PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void Add(SkillStats other)
+        {
+            Damage += other.Damage;
+            Heal += other.Heal;
+            Hits += other.Hits;
+            Crits += other.Crits;
         }
     }
 }

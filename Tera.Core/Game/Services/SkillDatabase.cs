@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Gothos
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,17 +12,15 @@ namespace Tera.Game
     // Currently this is limited to the name of the skill
     public class SkillDatabase
     {
-        private readonly Dictionary<RaceGenderClass, List<UserSkill>> _userSkilldata =
-            new Dictionary<RaceGenderClass, List<UserSkill>>();
+        private readonly Dictionary<RaceGenderClass, List<UserSkill>> _userSkilldata = new Dictionary<RaceGenderClass, List<UserSkill>>();
 
         public SkillDatabase(string filename)
         {
             var lines = File.ReadLines(filename);
-            var listOfParts = lines.Select(s => s.Split(new[] {' '}, 5));
+            var listOfParts = lines.Select(s => s.Split(new[] { ' ' }, 5));
             foreach (var parts in listOfParts)
             {
-                var skill = new UserSkill(int.Parse(parts[0]), new RaceGenderClass(parts[1], parts[2], parts[3]),
-                    parts[4]);
+                var skill = new UserSkill(int.Parse(parts[0]), new RaceGenderClass(parts[1], parts[2], parts[3]), parts[4]);
                 if (!_userSkilldata.ContainsKey(skill.RaceGenderClass))
                     _userSkilldata[skill.RaceGenderClass] = new List<UserSkill>();
                 _userSkilldata[skill.RaceGenderClass].Add(skill);

@@ -1,24 +1,25 @@
-﻿namespace Tera.Sniffing.Crypt
+﻿// Unknown Author and License
+
+namespace Tera.Sniffing.Crypt
 {
     internal class Sha
     {
-        protected int Computed;
-        protected int Corrupted;
-        protected ulong LengthHigh;
+        protected uint[] MessageDigest = {
+                                             0x67452301,
+                                             0xEFCDAB89,
+                                             0x98BADCFE,
+                                             0x10325476,
+                                             0xC3D2E1F0,
+                                         };
 
         protected ulong LengthLow;
+        protected ulong LengthHigh;
 
         protected byte[] MessageBlock = new byte[64];
         protected int MessageBlockIndex;
 
-        protected uint[] MessageDigest =
-        {
-            0x67452301,
-            0xEFCDAB89,
-            0x98BADCFE,
-            0x10325476,
-            0xC3D2E1F0
-        };
+        protected int Computed;
+        protected int Corrupted;
 
         protected ulong CircularShift(int bits, ulong word)
         {
@@ -50,7 +51,7 @@
                 return;
             }
 
-            var counter = 0;
+            int counter = 0;
             while (counter < messageArray.Length && Corrupted == 0)
             {
                 MessageBlock[MessageBlockIndex++] = messageArray[counter];
@@ -77,16 +78,16 @@
         protected void ProcessMessageBlock()
         {
             ulong[] k = // Constants defined in SHA
-            {
-                0x5A827999,
-                0x6ED9EBA1,
-                0x8F1BBCDC,
-                0xCA62C1D6
-            };
+                {
+                    0x5A827999,
+                    0x6ED9EBA1,
+                    0x8F1BBCDC,
+                    0xCA62C1D6
+                };
 
             int t; // Loop counter
             ulong temp; // Temporary word value
-            var w = new ulong[80]; // Word sequence
+            ulong[] w = new ulong[80]; // Word sequence
             // ReSharper disable JoinDeclarationAndInitializer
             ulong a, b, c, d, e; // Word buffers
             // ReSharper restore JoinDeclarationAndInitializer
@@ -209,7 +210,7 @@
 
         public static uint[] Digest(byte[] src)
         {
-            var sha = new Sha();
+            Sha sha = new Sha();
             sha.Input(src);
             sha.Result();
 

@@ -1,4 +1,7 @@
-﻿namespace Tera.Game
+﻿// Copyright (c) Gothos
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+namespace Tera.Game
 {
     public enum PlayerClass
     {
@@ -13,6 +16,6 @@
         Reaper = 9,
         Gunner = 10,
 
-        Common = 255
+        Common = 255,
     }
 }

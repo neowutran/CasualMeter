@@ -1,12 +1,15 @@
-﻿using System;
+﻿// Copyright (c) Gothos
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using System.IO;
 
 namespace Tera.PacketLog
 {
     internal class BlockSplitter
     {
-        private readonly MemoryStream buffer = new MemoryStream();
         public event Action<byte[]> BlockFinished;
+        MemoryStream buffer = new MemoryStream();
 
         protected virtual void OnBlockFinished(byte[] block)
         {
@@ -36,7 +39,7 @@ namespace Tera.PacketLog
 
         public byte[] PopBlock()
         {
-            var block = PopBlock(buffer);
+            byte[] block = PopBlock(buffer);
             if (block != null)
             {
                 OnBlockFinished(block);

@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿// Copyright (c) Gothos
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System.IO;
 using System.Text;
 
 namespace Tera.Game
@@ -6,19 +9,19 @@ namespace Tera.Game
     // Used by `ParsedMessage`s to parse themselves
     internal class TeraMessageReader : BinaryReader
     {
-        public TeraMessageReader(Message message, OpCodeNamer opCodeNamer)
-            : base(GetStream(message), Encoding.Unicode)
-        {
-            Message = message;
-            OpCodeName = opCodeNamer.GetName(message.OpCode);
-        }
-
         public Message Message { get; private set; }
         public string OpCodeName { get; private set; }
 
         private static MemoryStream GetStream(Message message)
         {
             return new MemoryStream(message.Payload.Array, message.Payload.Offset, message.Payload.Count, false, true);
+        }
+
+        public TeraMessageReader(Message message, OpCodeNamer opCodeNamer)
+            : base(GetStream(message), Encoding.Unicode)
+        {
+            Message = message;
+            OpCodeName = opCodeNamer.GetName(message.OpCode);
         }
 
         public EntityId ReadEntityId()
@@ -43,6 +46,20 @@ namespace Tera.Game
                     return builder.ToString();
                 builder.Append(c);
             }
+        }
+
+        public Vector3f ReadVector3f()
+        {
+            Vector3f result;
+            result.X = ReadSingle();
+            result.Y = ReadSingle();
+            result.Z = ReadSingle();
+            return result;
+        }
+
+        public Angle ReadAngle()
+        {
+            return new Angle(ReadUInt16());
         }
     }
 }

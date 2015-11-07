@@ -6,17 +6,14 @@ namespace Tera.Sniffing.Crypt
 {
     internal class Cryptor
     {
-        //No fucking idea where that come from, will search later
-        //TODO
-        private readonly CryptorKey[] _key =
-        {
-            new CryptorKey(55, 31),
-            new CryptorKey(57, 50),
-            new CryptorKey(58, 39)
-        };
+        private int ChangeData;
+        private int ChangeLen;
 
-        private int _changeData;
-        private int _changeLen;
+        private CryptorKey[] Key = {
+                                         new CryptorKey(55, 31),
+                                         new CryptorKey(57, 50),
+                                         new CryptorKey(58, 39)
+                                     };
 
         public Cryptor(byte[] key)
         {
@@ -25,10 +22,10 @@ namespace Tera.Sniffing.Crypt
 
         private byte[] FillKey(byte[] src)
         {
-            var result = new byte[680];
+            byte[] result = new byte[680];
 
-            for (var i = 0; i < 680; i++)
-                result[i] = src[i%128];
+            for (int i = 0; i < 680; i++)
+                result[i] = src[i % 128];
 
             result[0] = 128;
 
@@ -37,85 +34,85 @@ namespace Tera.Sniffing.Crypt
 
         private void GenerateKey(byte[] src)
         {
-            var buf = FillKey(src);
-            for (var i = 0; i < 680; i += 20)
+            byte[] buf = FillKey(src);
+            for (int i = 0; i < 680; i += 20)
             {
-                var sha = Sha.Digest(buf);
-                for (var j = 0; j < 5; j++)
-                    Buffer.BlockCopy(BitConverter.GetBytes(sha[j]), 0, buf, i + j*4, 4);
+                uint[] sha = Sha.Digest(buf);
+                for (int j = 0; j < 5; j++)
+                    Buffer.BlockCopy(BitConverter.GetBytes(sha[j]), 0, buf, i + j * 4, 4);
             }
 
-            for (var i = 0; i < 220; i += 4)
-                _key[0].Buffer[i/4] = BitConverter.ToUInt32(buf, i);
+            for (int i = 0; i < 220; i += 4)
+                Key[0].Buffer[i / 4] = BitConverter.ToUInt32(buf, i);
 
-            for (var i = 0; i < 228; i += 4)
-                _key[1].Buffer[i/4] = BitConverter.ToUInt32(buf, 220 + i);
+            for (int i = 0; i < 228; i += 4)
+                Key[1].Buffer[i / 4] = BitConverter.ToUInt32(buf, 220 + i);
 
-            for (var i = 0; i < 232; i += 4)
-                _key[2].Buffer[i/4] = BitConverter.ToUInt32(buf, 448 + i);
+            for (int i = 0; i < 232; i += 4)
+                Key[2].Buffer[i / 4] = BitConverter.ToUInt32(buf, 448 + i);
         }
 
         public void ApplyCryptor(byte[] buf, int size)
         {
-            var pre = (size < _changeLen) ? size : _changeLen;
+            int pre = (size < ChangeLen) ? size : ChangeLen;
             if (pre != 0)
             {
-                for (var j = 0; j < pre; j++)
-                    buf[j] ^= (byte) (_changeData >> (8*(4 - _changeLen + j)));
+                for (int j = 0; j < pre; j++)
+                    buf[j] ^= (byte)(ChangeData >> (8 * (4 - ChangeLen + j)));
 
-                _changeLen -= pre;
+                ChangeLen -= pre;
                 size -= pre;
             }
 
-            for (var i = pre; i < buf.Length - 3; i += 4)
+            for (int i = pre; i < buf.Length - 3; i += 4)
             {
-                var result = _key[0].Key & _key[1].Key | _key[2].Key & (_key[0].Key | _key[1].Key);
+                int result = Key[0].Key & Key[1].Key | Key[2].Key & (Key[0].Key | Key[1].Key);
 
-                for (var j = 0; j < 3; j++)
+                for (int j = 0; j < 3; j++)
                 {
-                    var k = _key[j];
+                    CryptorKey k = Key[j];
                     if (result == k.Key)
                     {
-                        var t1 = k.Buffer[k.Pos1];
-                        var t2 = k.Buffer[k.Pos2];
-                        var t3 = (t1 <= t2) ? t1 : t2;
+                        uint t1 = k.Buffer[k.Pos1];
+                        uint t2 = k.Buffer[k.Pos2];
+                        uint t3 = (t1 <= t2) ? t1 : t2;
                         k.Sum = t1 + t2;
                         k.Key = (t3 > k.Sum) ? 1 : 0;
-                        k.Pos1 = (k.Pos1 + 1)%k.Size;
-                        k.Pos2 = (k.Pos2 + 1)%k.Size;
+                        k.Pos1 = (k.Pos1 + 1) % k.Size;
+                        k.Pos2 = (k.Pos2 + 1) % k.Size;
                     }
-                    buf[i] ^= (byte) k.Sum;
-                    buf[i + 1] ^= (byte) (k.Sum >> 8);
-                    buf[i + 2] ^= (byte) (k.Sum >> 16);
-                    buf[i + 3] ^= (byte) (k.Sum >> 24);
+                    buf[i] ^= (byte)k.Sum;
+                    buf[i + 1] ^= (byte)(k.Sum >> 8);
+                    buf[i + 2] ^= (byte)(k.Sum >> 16);
+                    buf[i + 3] ^= (byte)(k.Sum >> 24);
                 }
             }
 
-            var remain = size & 3;
+            int remain = size & 3;
             if (remain != 0)
             {
-                var result = _key[0].Key & _key[1].Key | _key[2].Key & (_key[0].Key | _key[1].Key);
-                _changeData = 0;
-                for (var j = 0; j < 3; j++)
+                int result = Key[0].Key & Key[1].Key | Key[2].Key & (Key[0].Key | Key[1].Key);
+                ChangeData = 0;
+                for (int j = 0; j < 3; j++)
                 {
-                    var k = _key[j];
+                    CryptorKey k = Key[j];
                     if (result == k.Key)
                     {
-                        var t1 = k.Buffer[k.Pos1];
-                        var t2 = k.Buffer[k.Pos2];
-                        var t3 = (t1 <= t2) ? t1 : t2;
+                        uint t1 = k.Buffer[k.Pos1];
+                        uint t2 = k.Buffer[k.Pos2];
+                        uint t3 = (t1 <= t2) ? t1 : t2;
                         k.Sum = t1 + t2;
                         k.Key = (t3 > k.Sum) ? 1 : 0;
-                        k.Pos1 = (k.Pos1 + 1)%k.Size;
-                        k.Pos2 = (k.Pos2 + 1)%k.Size;
+                        k.Pos1 = (k.Pos1 + 1) % k.Size;
+                        k.Pos2 = (k.Pos2 + 1) % k.Size;
                     }
-                    _changeData ^= (int) k.Sum;
+                    ChangeData ^= (int)k.Sum;
                 }
 
-                for (var j = 0; j < remain; j++)
-                    buf[size + pre - remain + j] ^= (byte) (_changeData >> (j*8));
+                for (int j = 0; j < remain; j++)
+                    buf[size + pre - remain + j] ^= (byte)(ChangeData >> (j * 8));
 
-                _changeLen = 4 - remain;
+                ChangeLen = 4 - remain;
             }
         }
     }

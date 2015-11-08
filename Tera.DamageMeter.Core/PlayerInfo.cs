@@ -18,6 +18,8 @@ namespace Tera.DamageMeter
 
         public ThreadSafeObservableCollection<SkillResult> SkillLog { get; private set; }
 
+        public DateTime EncounterStartTime => _tracker.FirstAttack ?? DateTime.Now;
+
         public SkillStats Received { get; private set; }
         public SkillStats Dealt { get; private set; }
 

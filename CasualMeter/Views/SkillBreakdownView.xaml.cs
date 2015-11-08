@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using CasualMeter.Common.Conductors;
 using CasualMeter.Common.Conductors.Messages;
+using CasualMeter.Common.Converters;
 using CasualMeter.ViewModels;
 using Tera.DamageMeter;
 
@@ -26,6 +27,9 @@ namespace CasualMeter.Views
     public partial class SkillBreakdownView
     {
         public SkillBreakdownViewModel SkillBreakdownViewModel => ViewModel as SkillBreakdownViewModel;
+        private readonly LongToStringConverter _longToStringConverter = new LongToStringConverter();
+        private readonly DoubleToPercentStringConverter _doubleToPercentStringConverter = new DoubleToPercentStringConverter();
+        private readonly DateTimeToTimeSpanStringConverter _dateTimeToTimeSpanStringConverter = new DateTimeToTimeSpanStringConverter();
 
         public SkillBreakdownView(SkillBreakdownViewModel viewModel)
         {
@@ -80,8 +84,11 @@ namespace CasualMeter.Views
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
                         Header = "Time",
-                        Binding = new Binding(nameof(SkillResult.Time)),
-                        SortDirection = ListSortDirection.Ascending
+                        Binding = new Binding(nameof(SkillResult.Time))
+                        {
+                            Converter = _dateTimeToTimeSpanStringConverter,
+                            ConverterParameter = SkillBreakdownViewModel.PlayerInfo.EncounterStartTime
+                        }
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
@@ -97,6 +104,9 @@ namespace CasualMeter.Views
                     {
                         Header = "Amount",
                         Binding = new Binding(nameof(SkillResult.Amount))
+                        {
+                            Converter = _longToStringConverter
+                        }
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
@@ -119,38 +129,58 @@ namespace CasualMeter.Views
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
                         Header = "Amount",
-                        Binding = new Binding(nameof(AggregatedSkillResult.Amount)),
-                        SortDirection = ListSortDirection.Descending
+                        Binding = new Binding(nameof(AggregatedSkillResult.Amount))
+                        {
+                            Converter = _longToStringConverter
+                        }
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
                         Header = "Crit Rate",
                         Binding = new Binding(nameof(AggregatedSkillResult.CritRate))
+                        {
+                            Converter = _doubleToPercentStringConverter
+                        }
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
                         Header = "Highest Crit",
                         Binding = new Binding(nameof(AggregatedSkillResult.HighestCrit))
+                        {
+                            Converter = _longToStringConverter
+                        }
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
                         Header = "Lowest Crit",
                         Binding = new Binding(nameof(AggregatedSkillResult.LowestCrit))
+                        {
+                            Converter = _longToStringConverter
+                        }
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
                         Header = "Average Crit",
                         Binding = new Binding(nameof(AggregatedSkillResult.AverageCrit))
+                        {
+                            Converter = _longToStringConverter
+                        }
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
                         Header = "Average White",
                         Binding = new Binding(nameof(AggregatedSkillResult.AverageWhite))
+                        {
+                            Converter = _longToStringConverter
+                        }
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
                         Header = "Damage Percent",
                         Binding = new Binding(nameof(AggregatedSkillResult.DamagePercent))
+                        {
+                            Converter = _doubleToPercentStringConverter
+                        }
                     });
                     break;
             }
@@ -160,6 +190,11 @@ namespace CasualMeter.Views
         {
             ViewModel = null;
             Close();
+        }
+
+        private void SkillResultsGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {   //prevent selection
+            SkillResultsGrid.UnselectAllCells();
         }
     }
 }

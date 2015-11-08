@@ -13,6 +13,8 @@ namespace CasualMeter.Common.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value is int) value = (long)(int)value;
+
             if (value != null && !(value is long))
                 throw new ArgumentException($"Invalid arguments passed to {nameof(LongToStringConverter)}.");
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,15 +22,31 @@ namespace CasualMeter.ViewModels
             set { SetProperty(value); }
         }
 
+        public Dictionary<SkillViewType, IList<SortDescription>> SortDescriptionMappings
+        {
+            get { return GetProperty<Dictionary<SkillViewType, IList<SortDescription>>>(); }
+            set { SetProperty(value); }
+        }
+
         public ComboBoxEntity SelectedCollectionView
         {
             get { return GetProperty<ComboBoxEntity>(); }
             set { SetProperty(value, onChanged: OnSelectedViewChanged); }
         }
 
+        public IEnumerable<SortDescription> SortDescriptionSource
+        {
+            get { return GetProperty<IEnumerable<SortDescription>>(); }
+            set { SetProperty(value); }
+        }
+
         private void OnSelectedViewChanged(IPropertyValueChangedEventArgs<ComboBoxEntity> e)
         {
             if (e?.NewValue?.Key == null) return;
+
+            //update the sortdescriptions for this view
+            SortDescriptionSource = SortDescriptionMappings[e.NewValue.Key];
+
             CasualMessenger.Instance.UpdateSkillBreakdownView(this, e.NewValue.Key.ToString());
         }
         
@@ -66,7 +83,37 @@ namespace CasualMeter.ViewModels
                 new ComboBoxEntity(SkillViewType.AggregatedSkillNameView, "Aggregate by Name")
             };
 
-            SelectedCollectionView = ComboBoxEntities.First(cbe => cbe.Key == SkillViewType.FlatView);
+            //NOTE: These are duplicated in the xaml because of a wpf bug
+            SortDescriptionMappings = new Dictionary<SkillViewType, IList<SortDescription>>
+            {
+                {
+                    SkillViewType.FlatView,
+                    new List<SortDescription>
+                    {
+                        new SortDescription(nameof(SkillResult.Time), ListSortDirection.Ascending)
+                    }
+
+                },
+                {
+                    SkillViewType.AggregatedSkillIdView,
+                    new List<SortDescription>
+                    {
+                        new SortDescription(nameof(AggregatedSkillResult.Amount), ListSortDirection.Descending)
+                    }
+                },
+                {
+                    SkillViewType.AggregatedSkillNameView,
+                    new List<SortDescription>
+                    {
+                        new SortDescription(nameof(AggregatedSkillResult.Amount), ListSortDirection.Descending)
+                    }
+                }
+            };
+
+            //set the intial view
+            var initialView = SkillViewType.AggregatedSkillIdView;
+            SortDescriptionSource = SortDescriptionMappings[initialView];
+            SelectedCollectionView = ComboBoxEntities.First(cbe => cbe.Key == initialView);
 
             PlayerInfo = playerInfo;
             SkillLog = PlayerInfo.SkillLog;
@@ -98,7 +145,7 @@ namespace CasualMeter.ViewModels
                                      LowestCrit = grps.Any(g => g.IsCritical) ? grps.Where(g => g.IsCritical).Min(g => g.Amount) : 0,
                                      AverageCrit = grps.Any(g => g.IsCritical) ? Convert.ToInt64(grps.Where(g => g.IsCritical).Average(g => g.Amount)) : 0,
                                      AverageWhite = grps.Any(g => !g.IsCritical) ? Convert.ToInt64(grps.Where(g => !g.IsCritical).Average(g => g.Amount)) : 0,
-                                     DamagePercent = (long)grps.Sum(g => g.Amount) / SkillLog.Sum(s => s.Amount)
+                                     DamagePercent = (double)grps.Sum(g => g.Amount) / SkillLog.Sum(s => s.Amount)
                                  }).ToList();
 
             var aggregatedByName =  (from s in SkillLog
@@ -113,7 +160,7 @@ namespace CasualMeter.ViewModels
                                          LowestCrit = grps.Any(g => g.IsCritical) ? grps.Where(g => g.IsCritical).Min(g => g.Amount) : 0,
                                          AverageCrit = grps.Any(g => g.IsCritical) ? Convert.ToInt64(grps.Where(g => g.IsCritical).Average(g => g.Amount)) : 0,
                                          AverageWhite = grps.Any(g => !g.IsCritical) ? Convert.ToInt64(grps.Where(g => !g.IsCritical).Average(g => g.Amount)) : 0,
-                                         DamagePercent = (long)grps.Sum(g => g.Amount) / SkillLog.Sum(s => s.Amount)
+                                         DamagePercent = (double)grps.Sum(g => g.Amount) / SkillLog.Sum(s => s.Amount)
                                      }).ToList();
 
             FillSkillLog(AggregatedSkillLogById, aggregatedById);

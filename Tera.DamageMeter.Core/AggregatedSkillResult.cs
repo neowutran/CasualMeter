@@ -16,6 +16,6 @@ namespace Tera.DamageMeter
         public long LowestCrit { get; set; }
         public long AverageCrit { get; set; }
         public long AverageWhite { get; set; }
-        public long DamagePercent { get; set; }
+        public double DamagePercent { get; set; }
     }
 }

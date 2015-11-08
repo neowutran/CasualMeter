@@ -82,6 +82,7 @@
     <Compile Include="Conductors\Messages\UpdateSkillBreakdownViewMessage.cs" />
     <Compile Include="Converters\ApplicationTitleConverter.cs" />
     <Compile Include="Converters\ContributionToWidthConverter.cs" />
+    <Compile Include="Converters\DateTimeToTimeSpanStringConverter.cs" />
     <Compile Include="Converters\DpsToStringConverter.cs" />
     <Compile Include="Converters\LongToStringConverter.cs" />
     <Compile Include="Converters\DoubleToPercentStringConverter.cs" />

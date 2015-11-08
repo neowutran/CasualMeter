@@ -23,6 +23,7 @@ namespace Tera.DamageMeter
 
         public int SkillId { get; private set; }
         public Skill Skill { get; private set; }
+        public string SkillName => Skill?.Name ?? SkillId.ToString();
         public int Damage { get { return IsHeal ? 0 : Amount; } }
         public int Heal { get { return IsHeal ? Amount : 0; } }
 

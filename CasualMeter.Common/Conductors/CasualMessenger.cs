@@ -11,10 +11,7 @@ namespace CasualMeter.Common.Conductors
     {
         private static readonly Lazy<CasualMessenger> Lazy = new Lazy<CasualMessenger>(() => new CasualMessenger());
 
-        public static CasualMessenger Instance
-        {
-            get { return Lazy.Value; }
-        }
+        public static CasualMessenger Instance => Lazy.Value;
 
         public IMessenger Messenger { get { return GalaSoft.MvvmLight.Messaging.Messenger.Default; } }
 
@@ -34,5 +31,22 @@ namespace CasualMeter.Common.Conductors
         {
             Messenger.Send(new PastePlayerStatsMessage());
         }
+
+        public void RefreshVisibility(bool isVisible)
+        {
+            Messenger.Send(new RefreshVisibilityMessage
+            {
+                IsVisible = isVisible
+            });
+        }
+
+        public void UpdateSkillBreakdownView(object sender, string viewKey)
+        {
+            Messenger.Send(new UpdateSkillBreakdownViewMessage
+            {
+                ViewKey = viewKey
+            }, sender);
+        }
+
     }
 }

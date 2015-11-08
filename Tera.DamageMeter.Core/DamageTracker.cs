@@ -51,6 +51,7 @@ namespace Tera.DamageMeter
                 var playerStats = GetOrCreate(skillResult.SourcePlayer);
                 var statsChange = StatsChange(skillResult);
                 playerStats.Dealt.Add(statsChange);
+                playerStats.LogSkillUsage(skillResult);
                 TotalDealt.Add(statsChange);
             }
 

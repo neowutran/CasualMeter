@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Windows.Media;
+using CasualMeter.Common.Conductors;
 using Lunyx.Common;
 
 namespace CasualMeter.Common.Helpers
@@ -9,8 +11,28 @@ namespace CasualMeter.Common.Helpers
 
         public static ProcessHelper Instance => Lazy.Value;
 
+        private ProcessInfo.WinEventDelegate dele;//leave this here to prevent garbage collection
+
         private ProcessHelper() 
         {
+            //listen to window focus changed event
+            dele = (OnFocusedWindowChanged);
+            ProcessInfo.RegisterWindowFocusEvent(dele);
+        }
+
+        public void Initialize()
+        {
+            //empty method to ensure initialization
+        }
+
+        public void ForceVisibilityRefresh()
+        {
+            CasualMessenger.Instance.RefreshVisibility(IsTeraActive);
+        }
+
+        private void OnFocusedWindowChanged(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+        {
+            ForceVisibilityRefresh();
         }
 
         public bool SendString(string s)

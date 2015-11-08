@@ -3,6 +3,7 @@
 
 using System;
 using System.ComponentModel;
+using Lunyx.Common.UI.Wpf;
 using Tera.Game;
 
 namespace Tera.DamageMeter
@@ -14,6 +15,8 @@ namespace Tera.DamageMeter
 
         public string Name { get { return Player.Name; } }
         public PlayerClass Class { get { return Player.Class; } }
+
+        public ThreadSafeObservableCollection<SkillResult> SkillLog { get; private set; }
 
         public SkillStats Received { get; private set; }
         public SkillStats Dealt { get; private set; }
@@ -33,8 +36,14 @@ namespace Tera.DamageMeter
             Player = user;
             Received = new SkillStats();
             Dealt = new SkillStats();
+            SkillLog = new ThreadSafeObservableCollection<SkillResult>();
 
             Dealt.PropertyChanged += DealtOnPropertyChanged;
+        }
+
+        public void LogSkillUsage(SkillResult result)
+        {
+            SkillLog.Add(result);
         }
 
         public void UpdateStats()

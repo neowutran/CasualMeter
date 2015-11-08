@@ -5,14 +5,18 @@
              StartupUri="ShellView.xaml">
     <Application.Resources>
         <sys:Double x:Key="Width">300</sys:Double>
+        <ImageSource x:Key="CloseButtonImage">pack://application:,,,/Resources/close-inverted.png</ImageSource>
         <SolidColorBrush x:Key="BrushBlack" Color="#1E1E1E"/>
         <SolidColorBrush x:Key="BrushContribution" Color="#12676c"/>
         <SolidColorBrush x:Key="BrushHeal" Color="LimeGreen"/>
         <SolidColorBrush x:Key="BrushDamage" Color="Red"/>
-        <SolidColorBrush x:Key="BrushWhite" Color="GhostWhite"></SolidColorBrush>
-        
+        <SolidColorBrush x:Key="BrushWhite" Color="GhostWhite"/>
         <Style TargetType="{x:Type Grid}" x:Key="GridStyle">
             <Setter Property="Background" Value="{StaticResource BrushBlack}"/>
+        </Style>
+        <Style TargetType="{x:Type Image}" x:Key="CloseButtonStyle">
+            <Setter Property="Height" Value="10"/>
+            
         </Style>
         <Style TargetType="{x:Type Panel}" x:Key="PanelStyle">
             <Setter Property="Background" Value="{StaticResource BrushBlack}"/>
@@ -20,7 +24,7 @@
         <Style TargetType="Label">
             <Setter Property="Foreground" Value="{StaticResource BrushWhite}"/>
         </Style>
-        <Style TargetType="Border">
+        <Style TargetType="Border" x:Key="BorderStyle">
             <Setter Property="BorderBrush" Value="{StaticResource BrushWhite}"/>
             <Setter Property="BorderThickness" Value="1"/>
         </Style>

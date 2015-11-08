@@ -76,7 +76,10 @@
     <Compile Include="Conductors\Messages\ExitMessage.cs" />
     <Compile Include="Conductors\Messages\PastePlayerStatsMessage.cs" />
     <Compile Include="Conductors\Messages\PrepareExitMessage.cs" />
+    <Compile Include="Conductors\Messages\RefreshVisibilityMessage.cs" />
     <Compile Include="Conductors\Messages\ResetPlayerStatsMessage.cs" />
+    <Compile Include="Conductors\Messages\ScrollPlayerStatsMessage.cs" />
+    <Compile Include="Conductors\Messages\UpdateSkillBreakdownViewMessage.cs" />
     <Compile Include="Converters\ApplicationTitleConverter.cs" />
     <Compile Include="Converters\ContributionToWidthConverter.cs" />
     <Compile Include="Converters\DpsToStringConverter.cs" />
@@ -139,7 +142,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Arrow.cur" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Page Include="UI\Controls\PlayerInfoControl.xaml">
       <SubType>Designer</SubType>

@@ -84,10 +84,17 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CloseButton.xaml.cs">
+      <DependentUpon>CloseButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ShellViewModel.cs" />
+    <Compile Include="ViewModels\SkillBreakdownViewModel.cs" />
+    <Compile Include="Views\SkillBreakdownView.xaml.cs">
+      <DependentUpon>SkillBreakdownView.xaml</DependentUpon>
+    </Compile>
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -96,7 +103,15 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="CloseButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ShellView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SkillBreakdownView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -165,6 +180,7 @@
     <Resource Include="Resources\CasualMeter.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\close-inverted.png" />
     <Content Include="res\opcodes-3308.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

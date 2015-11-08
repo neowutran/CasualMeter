@@ -5,16 +5,16 @@
                             xmlns:controls="clr-namespace:CasualMeter.Common.UI.Controls;assembly=CasualMeter.Common"
                             xmlns:converters="clr-namespace:CasualMeter.Common.Converters;assembly=CasualMeter.Common"
                             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
-                            Title="ShellView" 
-                            Width="{StaticResource Width}"
-                            Topmost="True"
-                            ShowInTaskbar="False"
-                            ResizeMode="NoResize"
-                            WindowStyle="None"
-                            AllowsTransparency="True"
-                            Background="{x:Null}">
+                            xmlns:casualMeter="clr-namespace:CasualMeter"
+                            xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                            Title="ShellView"
+                            Width = "{StaticResource Width}">
     <Grid>
         <Grid.Resources>
+            <Style TargetType="Border">
+                <Setter Property="BorderBrush" Value="{StaticResource BrushWhite}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+            </Style>
             <Style TargetType="TextBlock">
                 <Setter Property="Foreground" Value="White"/>
                 <Setter Property="Padding" Value="5"/>
@@ -43,24 +43,32 @@
         <StackPanel>
             <Border>
                 <Grid Width="{StaticResource Width}" Height="25" 
-                            MouseDown="MoveControl" 
-                            VerticalAlignment="Center"
-                            Style="{StaticResource PanelStyle}"
-                            ContextMenu="{StaticResource MainMenu}">
+                      MouseDown="MoveControl" 
+                      VerticalAlignment="Center"
+                      Style="{StaticResource PanelStyle}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0"
                                Text="{Binding Server, Converter={StaticResource ApplicationTitleConverter}}"/>
+                    <casualMeter:CloseButton Grid.Column="1">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding ExitCommand}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </casualMeter:CloseButton>
                 </Grid>
             </Border>
             <ItemsControl Background="Transparent"
                           ItemsSource="{Binding Source={StaticResource PlayerStatsView}}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border>
+                        <Border Style="{StaticResource BorderStyle}">
                             <controls:PlayerInfoControl PlayerInfo="{Binding}"
-                                                        Style="{StaticResource PanelStyle}"/>
+                                                        Style="{StaticResource PanelStyle}"
+                                                        MouseDown="SkillInfo_OnMouseDown"/>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using CasualMeter.Common.Conductors;
+using CasualMeter.Common.Conductors.Messages;
 using CasualMeter.Common.Helpers;
 using Lunyx.Common;
 using Lunyx.Common.UI.Wpf;
@@ -16,20 +17,25 @@ namespace CasualMeter.Common.UI.Controls
 {
     public class CasualMeterWindow : ClickThroughWindow
     {
-        private ProcessInfo.WinEventDelegate dele;//leave this here to prevent garbage collection
-
-        protected ViewModelBase ViewModel { get; set; }
+        public ViewModelBase ViewModel { get; set; }
 
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
 
+            //register visibility messages and set initial visiblity
+            CasualMessenger.Instance.Messenger.Register<RefreshVisibilityMessage>(this, SetVisibility);
+            ProcessHelper.Instance.ForceVisibilityRefresh();
+
+            Topmost = true;
+            ShowInTaskbar = false;
+            ResizeMode = ResizeMode.NoResize;
+            WindowStyle= WindowStyle.None;
+            AllowsTransparency = true;
+            Background = null;
+                            
             //set cursor
             Cursor = new Cursor(new MemoryStream(Properties.Resources.Arrow));
-
-            //listen to window focus changed event
-            dele = (OnFocusedWindowChanged);
-            ProcessInfo.RegisterWindowFocusEvent(dele);   
         }
 
         /// <summary>
@@ -43,14 +49,9 @@ namespace CasualMeter.Common.UI.Controls
                 DragMove();
         }
 
-        private void SetVisibility(bool isVisible)
+        private void SetVisibility(RefreshVisibilityMessage message)
         {
-            Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        private void OnFocusedWindowChanged(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
-        {
-            SetVisibility(ProcessHelper.Instance.IsTeraActive);
+            Visibility = message.IsVisible ? Visibility.Visible : Visibility.Collapsed;
         }
 
         protected override void OnClosed(EventArgs e)

@@ -17,6 +17,9 @@ using System.Windows.Shapes;
 using CasualMeter.Common.Conductors;
 using CasualMeter.Common.Conductors.Messages;
 using CasualMeter.Common.Helpers;
+using CasualMeter.Common.UI.Controls;
+using CasualMeter.ViewModels;
+using CasualMeter.Views;
 using Lunyx.Common;
 using Tera.DamageMeter;
 
@@ -66,6 +69,21 @@ namespace CasualMeter
             PrepareClose(null);
 
             base.OnClosing(e);
+        }
+
+        private void SkillInfo_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left && e.ClickCount == 2)
+            {
+                var control = sender as PlayerInfoControl;
+                var playerInfo = control?.PlayerInfo;
+                if (playerInfo != null)
+                {
+                    var vm = new SkillBreakdownViewModel(playerInfo);
+                    var v = new SkillBreakdownView(vm);
+                    v.Show();
+                }
+            }
         }
     }
 }

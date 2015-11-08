@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AggregatedSkillResult.cs" />
     <Compile Include="DamageTracker.cs" />
     <Compile Include="FormatHelpers.cs" />
     <Compile Include="PlayerInfo.cs" />

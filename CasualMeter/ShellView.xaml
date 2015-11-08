@@ -3,6 +3,7 @@
                             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                             xmlns:tb="http://www.hardcodet.net/taskbar"
                             xmlns:controls="clr-namespace:CasualMeter.Common.UI.Controls;assembly=CasualMeter.Common"
+                            xmlns:converters="clr-namespace:CasualMeter.Common.Converters;assembly=CasualMeter.Common"
                             Title="ShellView" 
                             Height="300" 
                             Width="300"
@@ -13,18 +14,41 @@
                             AllowsTransparency="True"
                             Background="{x:Null}">
     <Grid>
+        <Grid.Resources>
+            <ContextMenu x:Key="MainMenu">
+                <MenuItem Header="Exit" Command="{Binding ExitCommand}"></MenuItem>
+            </ContextMenu>
+            <converters:ApplicationTitleConverter x:Key="ApplicationTitleConverter"/>
+            <converters:TimeSpanToTotalTimeConverter x:Key="TimeSpanToTotalTimeConverter"/>
+            <converters:LongToTotalDamageConverter x:Key="LongToToTotalDamageConverter"/>
+        </Grid.Resources>
         <tb:TaskbarIcon IconSource="Resources/CasualMeter.ico"
-                        ToolTipText="Casual Meter">
-            <tb:TaskbarIcon.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Exit"></MenuItem>
-                </ContextMenu>
-            </tb:TaskbarIcon.ContextMenu>
+                        ToolTipText="Casual Meter"
+                        ContextMenu="{StaticResource MainMenu}">
         </tb:TaskbarIcon>
         <StackPanel>
-            <Rectangle Fill="Aqua" Width="50" Height="50" MouseDown="MoveControl"></Rectangle>
-            <TextBox Width="30"></TextBox>
-            <Button Width="40" Height="50"></Button>
+            <Border>
+                <StackPanel Width="300" Height="25" 
+                            MouseDown="MoveControl" 
+                            Orientation="Horizontal" 
+                            Style="{StaticResource PanelStyle}"
+                            ContextMenu="{StaticResource MainMenu}">
+                    <Label Content="{Binding Server, Converter={StaticResource ApplicationTitleConverter}}"/>
+                </StackPanel>
+            </Border>
+            
+            <Border>
+                <StackPanel Style="{StaticResource PanelStyle}"
+                            Orientation="Horizontal">
+                    <StackPanel Width="150" Height="25"
+                                Orientation="Horizontal">
+                        <Label Content="{Binding Duration, Converter={StaticResource TimeSpanToTotalTimeConverter}}"/>
+                    </StackPanel>
+                    <StackPanel Width="150" Height="25">
+                        <Label Content="{Binding TotalDealt, Converter={StaticResource LongToToTotalDamageConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
         </StackPanel>
     </Grid>
 </controls:CasualMeterWindow>

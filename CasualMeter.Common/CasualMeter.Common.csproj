@@ -46,6 +46,10 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="Nicenis, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Nicenis\Nicenis.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -65,8 +69,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Conductors\CasualMessenger.cs" />
-    <Compile Include="Conductors\WindowVisibilityMessage.cs" />
+    <Compile Include="Converters\ApplicationTitleConverter.cs" />
     <Compile Include="Converters\PlayerClassToImageConverter.cs" />
+    <Compile Include="Converters\LongToTotalDamageConverter.cs" />
+    <Compile Include="Converters\TimeSpanToTotalTimeConverter.cs" />
     <Compile Include="Helpers\HotkeyHelper.cs" />
     <Compile Include="Helpers\ProcessHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
@@ -113,6 +119,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Arrow.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Conductors\Messages\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

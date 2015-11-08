@@ -24,7 +24,7 @@ namespace CasualMeter
     /// </summary>
     public partial class ShellView
     {
-        public ShellViewModel ViewModel { get; set; }//temp
+        public ShellViewModel ShellViewModel => ViewModel as ShellViewModel;
 
         public ShellView()
         {
@@ -40,7 +40,7 @@ namespace CasualMeter
 
             //initialize viewmodel
             DataContext = ViewModel = new ShellViewModel();//temp
-            ViewModel.Initialize();
+            ShellViewModel.Initialize();
         }
     }
 }

@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using CasualMeter.Common.Helpers;
-using Tera.Game;
+using Tera.DamageMeter;
 
 namespace CasualMeter.Common.Converters
 {
-    public class PlayerClassToImageConverter : IValueConverter
+    public class LongToTotalDamageConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is PlayerClass))
-                throw new ArgumentException($"Invalid arguments passed to {nameof(PlayerClassToImageConverter)}.");
+            if (value != null && !(value is long))
+                throw new ArgumentException($"Invalid arguments passed to {nameof(LongToTotalDamageConverter)}.");
 
-            return SettingsHelper.Instance.GetImage((PlayerClass) value);
+            var helper = new FormatHelpers();
+            return $"Total damage: {helper.FormatValue((long?)value ?? 0)}";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

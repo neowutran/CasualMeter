@@ -9,6 +9,7 @@ using System.Windows.Input;
 using CasualMeter.Common.Conductors;
 using CasualMeter.Common.Helpers;
 using Lunyx.Common;
+using Lunyx.Common.UI.Wpf;
 using Lunyx.Common.UI.Wpf.Controls;
 
 namespace CasualMeter.Common.UI.Controls
@@ -16,6 +17,8 @@ namespace CasualMeter.Common.UI.Controls
     public class CasualMeterWindow : ClickThroughWindow
     {
         private ProcessInfo.WinEventDelegate dele;//leave this here to prevent garbage collection
+
+        protected ViewModelBase ViewModel { get; set; }
 
         protected override void OnInitialized(EventArgs e)
         {
@@ -26,10 +29,7 @@ namespace CasualMeter.Common.UI.Controls
 
             //listen to window focus changed event
             dele = (OnFocusedWindowChanged);
-            ProcessInfo.RegisterWindowFocusEvent(dele);
-
-            //subscribe to messages
-            CasualMessenger.Instance.Messenger.Register<WindowVisibilityMessage>(this, m => SetVisibility(m.IsVisible));
+            ProcessInfo.RegisterWindowFocusEvent(dele);   
         }
 
         /// <summary>
@@ -58,7 +58,10 @@ namespace CasualMeter.Common.UI.Controls
             base.OnClosed(e);
 
             //unregister messages
+            CasualMessenger.Instance.Messenger.Unregister(ViewModel);
             CasualMessenger.Instance.Messenger.Unregister(this);
+
+            ViewModel = null;
         }
     }
 }

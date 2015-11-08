@@ -144,6 +144,22 @@
       <Project>{1f43f250-51f4-4ddf-b0db-17dcaf175cdc}</Project>
       <Name>CasualMeter.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Tera.Core\Tera.Core.csproj">
+      <Project>{ee476c7c-2942-4ba4-ab47-7adbe65635fd}</Project>
+      <Name>Tera.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tera.DamageMeter.Core\Tera.DamageMeter.Core.csproj">
+      <Project>{d1ed4752-f2fc-44c3-97b2-580bc79f4af1}</Project>
+      <Name>Tera.DamageMeter.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tera.Data\Tera.Data.csproj">
+      <Project>{4B6AA9BD-CEC2-4AA6-B35A-1ACB2FA7767B}</Project>
+      <Name>Tera.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tera.Sniffing\Tera.Sniffing.csproj">
+      <Project>{66BB1685-8FF5-4431-B77F-7F80C92A5DA4}</Project>
+      <Name>Tera.Sniffing</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\CasualMeter.ico" />

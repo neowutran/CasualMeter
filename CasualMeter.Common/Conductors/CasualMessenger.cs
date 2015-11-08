@@ -1,5 +1,6 @@
 ﻿using System;
 using GalaSoft.MvvmLight.Messaging;
+using Tera.Game;
 
 namespace CasualMeter.Common.Conductors
 {
@@ -16,11 +17,6 @@ namespace CasualMeter.Common.Conductors
 
         private CasualMessenger()
         {
-        }
-
-        public void SendWindowVisibilityMessage(bool isVisible)
-        {
-            Messenger.Send(new WindowVisibilityMessage{ IsVisible = isVisible });
         }
     }
 }

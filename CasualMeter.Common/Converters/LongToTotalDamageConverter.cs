@@ -16,7 +16,7 @@ namespace CasualMeter.Common.Converters
             if (value != null && !(value is long))
                 throw new ArgumentException($"Invalid arguments passed to {nameof(LongToTotalDamageConverter)}.");
 
-            var helper = new FormatHelpers();
+            var helper = FormatHelpers.Pretty;
             return $"Total damage: {helper.FormatValue((long?)value ?? 0)}";
         }
 

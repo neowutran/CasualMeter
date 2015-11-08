@@ -83,6 +83,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="UI\Controls\CasualMeterWindow.cs" />
+    <Compile Include="UI\Controls\PlayerInfoControl.xaml.cs">
+      <DependentUpon>PlayerInfoControl.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -122,6 +125,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Conductors\Messages\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="UI\Controls\PlayerInfoControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

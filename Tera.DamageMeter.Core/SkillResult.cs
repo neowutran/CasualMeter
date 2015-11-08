@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Tera.Game;
@@ -36,6 +37,8 @@ namespace Tera.DamageMeter
             IsCritical = message.IsCritical;
             IsHeal = message.IsHeal;
             SkillId = message.SkillId;
+
+            Debug.Assert(!message.IsUseless);
 
             Source = entityRegistry.GetOrPlaceholder(message.Source);
             Target = entityRegistry.GetOrPlaceholder(message.Target);

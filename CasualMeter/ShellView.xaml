@@ -36,7 +36,11 @@
                     <Label Content="{Binding Server, Converter={StaticResource ApplicationTitleConverter}}"/>
                 </StackPanel>
             </Border>
-            
+            <ListView ItemsSource="{Binding PlayerInfoCollection}">
+                <DataTemplate>
+                    <controls:PlayerInfoControl PlayerInfo="{Binding}"/>
+                </DataTemplate>
+            </ListView>
             <Border>
                 <StackPanel Style="{StaticResource PanelStyle}"
                             Orientation="Horizontal">

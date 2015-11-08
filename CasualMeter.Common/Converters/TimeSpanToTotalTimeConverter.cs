@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using Tera.DamageMeter;
 
 namespace CasualMeter.Common.Converters
 {
@@ -14,8 +15,9 @@ namespace CasualMeter.Common.Converters
         {
             if (!(value is TimeSpan))
                 throw new ArgumentException($"Invalid arguments passed to {nameof(TimeSpanToTotalTimeConverter)}.");
-
-            return $"Total time: {((TimeSpan) value).ToString(@"mm\:ss")}";
+            
+            var helper = FormatHelpers.Pretty;
+            return $"Total time: {helper.FormatTimeSpan((TimeSpan)value)}";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

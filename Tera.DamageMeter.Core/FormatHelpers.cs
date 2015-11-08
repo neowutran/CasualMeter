@@ -8,10 +8,12 @@ namespace Tera.DamageMeter
 {
     public class FormatHelpers
     {
-        public CultureInfo CultureInfo { get; set; }
-        public string UnitSeparator { get; set; }
+        private CultureInfo CultureInfo { get; set; }
+        private string UnitSeparator { get; set; }
 
-        public const string Thinspace = "\u2009";
+        private const string Thinspace = "\u2009";
+
+        private FormatHelpers() {}//prevent instantiation outside of this class
 
         public static readonly FormatHelpers Pretty = new FormatHelpers { UnitSeparator = Thinspace };
         public static readonly FormatHelpers Invariant = new FormatHelpers { UnitSeparator = "", CultureInfo = CultureInfo.InvariantCulture };

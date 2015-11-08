@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using CasualMeter.Common.Conductors;
 using CasualMeter.Common.Helpers;
 using GalaSoft.MvvmLight.CommandWpf;
@@ -39,6 +40,12 @@ namespace CasualMeter
         public Server Server
         {
             get { return GetProperty<Server>(); }
+            set { SetProperty(value); }
+        }
+
+        public IEnumerable<PlayerInfo> PlayerInfoCollection
+        {
+            get { return GetProperty<IEnumerable<PlayerInfo>>(); }
             set { SetProperty(value); }
         }
 
@@ -86,6 +93,9 @@ namespace CasualMeter
 
         private void HandleNewConnection(Server server)
         {
+            if (_damageTracker != null)
+                _damageTracker.OnPlayerInfoEnumerableChanged -= UpdateProperties;
+
             Server = server;
             _teraData = BasicTeraData.DataForRegion(server.Region);
             _entityTracker = new EntityTracker();
@@ -93,7 +103,9 @@ namespace CasualMeter
             _damageTracker = new DamageTracker();
             _messageFactory = new MessageFactory(_teraData.OpCodeNamer);
 
-            UpdateProperties();
+            //manually trigger initial update and subscribe to future changes
+            UpdateProperties(null, null);
+            _damageTracker.OnPlayerInfoEnumerableChanged += UpdateProperties;
         }
 
         private void HandleMessageReceived(Message obj)
@@ -102,21 +114,20 @@ namespace CasualMeter
             _entityTracker.Update(message);
 
             var skillResultMessage = message as EachSkillResultServerMessage;
-            if (skillResultMessage != null)
+            if (skillResultMessage != null && !skillResultMessage.IsUseless)
             {
                 var skillResult = new SkillResult(skillResultMessage, _entityTracker, _playerTracker, _teraData.SkillDatabase);
                 _damageTracker.Update(skillResult);
-
-                //update properties on UI with damage tracker updated values
-                UpdateProperties();
             }
         }
 
-        private void UpdateProperties()
+        private void UpdateProperties(object source, EventArgs e)
         {
             FirstAttack = _damageTracker.FirstAttack;
             LastAttack = _damageTracker.LastAttack;
             TotalDealt = _damageTracker.TotalDealt.Damage;
+
+            PlayerInfoCollection = _damageTracker;
         }
 
         private void Exit()

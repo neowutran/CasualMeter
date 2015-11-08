@@ -12,6 +12,9 @@ namespace Tera.DamageMeter
 {
     public class DamageTracker : IEnumerable<PlayerInfo>
     {
+        public delegate void PlayerInfoEnumerableChanged(object source, EventArgs e);
+        public event PlayerInfoEnumerableChanged OnPlayerInfoEnumerableChanged;
+
         readonly Dictionary<Player, PlayerInfo> _statsByUser = new Dictionary<Player, PlayerInfo>();
         public DateTime? FirstAttack { get; private set; }
         public DateTime? LastAttack { get; private set; }
@@ -19,11 +22,6 @@ namespace Tera.DamageMeter
 
         public SkillStats TotalDealt { get; private set; }
         public SkillStats TotalReceived { get; private set; }
-
-        public void UpdateTotal()
-        {
-
-        }
 
         public DamageTracker()
         {
@@ -68,6 +66,8 @@ namespace Tera.DamageMeter
                 if (FirstAttack == null)
                     FirstAttack = skillResult.Time;
             }
+
+            OnPlayerInfoEnumerableChanged?.Invoke(this, new EventArgs());
         }
 
         private SkillStats StatsChange(SkillResult message)

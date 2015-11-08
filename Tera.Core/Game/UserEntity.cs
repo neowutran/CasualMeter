@@ -11,7 +11,7 @@ namespace Tera.Game
         public string Name { get; set; }
         public string GuildName { get; set; }
         public RaceGenderClass RaceGenderClass { get; set; }
-        public uint PlayerId { get; set; }
+        public uint PlayerId { get; }
 
         public UserEntity(EntityId id)
             : base(id)
@@ -50,6 +50,17 @@ namespace Tera.Game
                 ownedEntity = entity as IHasOwner;
             }
             return entity as UserEntity;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as UserEntity;
+            return PlayerId.Equals(other?.PlayerId);
+        }
+
+        public override int GetHashCode()
+        {
+            return PlayerId.GetHashCode();
         }
     }
 }

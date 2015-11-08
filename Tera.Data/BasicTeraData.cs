@@ -54,7 +54,7 @@ namespace Tera.Data
             }
             throw new InvalidOperationException("Could not find the resource directory");
         }
-
+        
         private static IEnumerable<Region> GetRegions(string filename)
         {
             return File.ReadAllLines(filename)

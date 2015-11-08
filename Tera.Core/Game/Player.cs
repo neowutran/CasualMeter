@@ -34,5 +34,16 @@ namespace Tera.Game
         {
             return string.Format("{0} {1} [{2}]", Class, Name, GuildName);
         }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as Player;
+            return PlayerId.Equals(other?.PlayerId);
+        }
+
+        public override int GetHashCode()
+        {
+            return PlayerId.GetHashCode();
+        }
     }
 }

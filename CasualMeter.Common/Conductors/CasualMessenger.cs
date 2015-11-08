@@ -1,5 +1,8 @@
 ﻿using System;
+using CasualMeter.Common.Conductors.Messages;
 using GalaSoft.MvvmLight.Messaging;
+using Lunyx.Common.UI.Wpf;
+using Tera.DamageMeter;
 using Tera.Game;
 
 namespace CasualMeter.Common.Conductors
@@ -17,6 +20,19 @@ namespace CasualMeter.Common.Conductors
 
         private CasualMessenger()
         {
+        }
+
+        public void ResetPlayerStats(bool shouldSaveCurrent)
+        {
+            Messenger.Send(new ResetPlayerStatsMessage
+            {
+                ShouldSaveCurrent = shouldSaveCurrent
+            });
+        }
+
+        public void PastePlayerStats()
+        {
+            Messenger.Send(new PastePlayerStatsMessage());
         }
     }
 }

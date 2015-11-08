@@ -20,7 +20,7 @@ namespace Tera.DamageMeter
             {
                 if (value == _damage) return;
                 _damage = value;
-                OnPropertyChanged("Damage");
+                OnPropertyChanged(nameof(Damage));
             }
         }
 
@@ -31,7 +31,7 @@ namespace Tera.DamageMeter
             {
                 if (value == _heal) return;
                 _heal = value;
-                OnPropertyChanged("Heal");
+                OnPropertyChanged(nameof(Heal));
             }
         }
 
@@ -42,7 +42,7 @@ namespace Tera.DamageMeter
             {
                 if (value == _hits) return;
                 _hits = value;
-                OnPropertyChanged("Hits");
+                OnPropertyChanged(nameof(Hits));
             }
         }
 
@@ -53,7 +53,7 @@ namespace Tera.DamageMeter
             {
                 if (value == _crits) return;
                 _crits = value;
-                OnPropertyChanged("Crits");
+                OnPropertyChanged(nameof(Crits));
             }
         }
 

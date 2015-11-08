@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -14,8 +15,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using CasualMeter.Common.Conductors;
+using CasualMeter.Common.Conductors.Messages;
 using CasualMeter.Common.Helpers;
 using Lunyx.Common;
+using Tera.DamageMeter;
 
 namespace CasualMeter
 {
@@ -34,13 +37,35 @@ namespace CasualMeter
 
         private void Initialize()
         {
-            //initialize helpers
+            //ensure initialization of helpers
             SettingsHelper.Instance.Initialize();
             HotkeyHelper.Instance.Initialize();
 
             //initialize viewmodel
-            DataContext = ViewModel = new ShellViewModel();//temp
+            DataContext = ViewModel = new ShellViewModel(); //temp
             ShellViewModel.Initialize();
+
+            //load window position
+            Left = SettingsHelper.Instance.Settings.WindowLeft;
+            Top = SettingsHelper.Instance.Settings.WindowTop;
+
+            CasualMessenger.Instance.Messenger.Register<PrepareExitMessage>(this, PrepareClose);
+        }
+
+        private void PrepareClose(PrepareExitMessage message)
+        {
+            SettingsHelper.Instance.Settings.WindowLeft = Left;
+            SettingsHelper.Instance.Settings.WindowTop = Top;
+            SettingsHelper.Instance.Save();
+
+            CasualMessenger.Instance.Messenger.Send(new ExitMessage());
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            PrepareClose(null);
+
+            base.OnClosing(e);
         }
     }
 }

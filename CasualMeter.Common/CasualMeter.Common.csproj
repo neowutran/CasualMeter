@@ -46,6 +46,10 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Nicenis, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Nicenis\Nicenis.dll</HintPath>
@@ -69,13 +73,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Conductors\CasualMessenger.cs" />
+    <Compile Include="Conductors\Messages\ExitMessage.cs" />
+    <Compile Include="Conductors\Messages\PastePlayerStatsMessage.cs" />
+    <Compile Include="Conductors\Messages\PrepareExitMessage.cs" />
+    <Compile Include="Conductors\Messages\ResetPlayerStatsMessage.cs" />
     <Compile Include="Converters\ApplicationTitleConverter.cs" />
+    <Compile Include="Converters\ContributionToWidthConverter.cs" />
+    <Compile Include="Converters\DpsToStringConverter.cs" />
+    <Compile Include="Converters\LongToStringConverter.cs" />
+    <Compile Include="Converters\DoubleToPercentStringConverter.cs" />
     <Compile Include="Converters\PlayerClassToImageConverter.cs" />
     <Compile Include="Converters\LongToTotalDamageConverter.cs" />
     <Compile Include="Converters\TimeSpanToTotalTimeConverter.cs" />
+    <Compile Include="Entities\HotKeySettings.cs" />
+    <Compile Include="Entities\Settings.cs" />
+    <Compile Include="Formatters\PlayerStatsFormatter.cs" />
     <Compile Include="Helpers\HotkeyHelper.cs" />
     <Compile Include="Helpers\ProcessHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
+    <Compile Include="Formatters\Formatter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -123,9 +139,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Arrow.cur" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Conductors\Messages\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Page Include="UI\Controls\PlayerInfoControl.xaml">
       <SubType>Designer</SubType>

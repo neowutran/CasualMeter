@@ -19,7 +19,7 @@ namespace CasualMeter.Common.UI.Controls
     /// <summary>
     /// Interaction logic for PlayerInfoControl.xaml
     /// </summary>
-    public partial class PlayerInfoControl : UserControl
+    public partial class PlayerInfoControl
     {
         public static readonly DependencyProperty PlayerInfoProperty =
         DependencyProperty.Register("PlayerInfo", typeof(PlayerInfo),

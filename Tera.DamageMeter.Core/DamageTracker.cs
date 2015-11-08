@@ -4,40 +4,43 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using Lunyx.Common.UI.Wpf;
 using Tera.Game;
 using Tera.Game.Messages;
 
 namespace Tera.DamageMeter
 {
-    public class DamageTracker : IEnumerable<PlayerInfo>
+    public class DamageTracker
     {
         public delegate void PlayerInfoEnumerableChanged(object source, EventArgs e);
         public event PlayerInfoEnumerableChanged OnPlayerInfoEnumerableChanged;
 
-        readonly Dictionary<Player, PlayerInfo> _statsByUser = new Dictionary<Player, PlayerInfo>();
+        public ThreadSafeObservableCollection<PlayerInfo> StatsByUser { get; set; }
+        
         public DateTime? FirstAttack { get; private set; }
         public DateTime? LastAttack { get; private set; }
-        public TimeSpan? Duration { get { return LastAttack - FirstAttack; } }
+        public TimeSpan? Duration => LastAttack - FirstAttack;
 
         public SkillStats TotalDealt { get; private set; }
         public SkillStats TotalReceived { get; private set; }
 
         public DamageTracker()
         {
+            StatsByUser = new ThreadSafeObservableCollection<PlayerInfo>();
             TotalDealt = new SkillStats();
             TotalReceived = new SkillStats();
         }
 
         private PlayerInfo GetOrCreate(Player player)
         {
-            PlayerInfo playerStats;
-            if (!_statsByUser.TryGetValue(player, out playerStats))
+            PlayerInfo playerStats = StatsByUser.FirstOrDefault(pi => pi.Player.Equals(player));
+            if (playerStats == null)
             {
                 playerStats = new PlayerInfo(player, this);
-                _statsByUser.Add(player, playerStats);
+                StatsByUser.Add(playerStats);
             }
-
             return playerStats;
         }
 
@@ -51,13 +54,14 @@ namespace Tera.DamageMeter
                 TotalDealt.Add(statsChange);
             }
 
-            if (skillResult.TargetPlayer != null)
-            {
-                var playerStats = GetOrCreate(skillResult.TargetPlayer);
-                var statsChange = StatsChange(skillResult);
-                playerStats.Received.Add(statsChange);
-                TotalReceived.Add(statsChange);
-            }
+            //don't care about damage received since it's useless
+            //if (skillResult.TargetPlayer != null)
+            //{
+            //    var playerStats = GetOrCreate(skillResult.TargetPlayer);
+            //    var statsChange = StatsChange(skillResult);
+            //    playerStats.Received.Add(statsChange);
+            //    TotalReceived.Add(statsChange);
+            //}
 
             if (skillResult.SourcePlayer != null && (skillResult.Damage > 0) && (skillResult.Source.Id != skillResult.Target.Id))
             {
@@ -67,6 +71,10 @@ namespace Tera.DamageMeter
                     FirstAttack = skillResult.Time;
             }
 
+            foreach (var playerStat in StatsByUser)
+            {   //force update of calculated dps metrics
+                playerStat.UpdateStats();
+            }
             OnPlayerInfoEnumerableChanged?.Invoke(this, new EventArgs());
         }
 
@@ -78,36 +86,23 @@ namespace Tera.DamageMeter
 
             result.Damage = message.Damage;
             result.Heal = message.Heal;
-            result.Hits++;
-            if (message.IsCritical)
-                result.Crits++;
+
+            if (!message.IsHeal)
+            {
+                result.Hits++;
+                if (message.IsCritical)
+                    result.Crits++;
+            }
 
             return result;
         }
 
-        public IEnumerator<PlayerInfo> GetEnumerator()
+        public long Dps(long damage)
         {
-            return _statsByUser.Values.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public long? Dps(long damage)
-        {
-            return Dps(damage, Duration);
-        }
-
-        public static long? Dps(long damage, TimeSpan? duration)
-        {
-            var durationInSeconds = (duration ?? TimeSpan.Zero).TotalSeconds;
+            var durationInSeconds = (Duration ?? TimeSpan.Zero).TotalSeconds;
             if (durationInSeconds < 1)
                 durationInSeconds = 1;
             var dps = damage / durationInSeconds;
-            if (Math.Abs(dps) > long.MaxValue)
-                return null;
             return (long)dps;
         }
     }

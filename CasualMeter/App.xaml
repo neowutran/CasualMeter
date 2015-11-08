@@ -1,19 +1,27 @@
 ﻿<Application x:Class="CasualMeter.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              StartupUri="ShellView.xaml">
     <Application.Resources>
+        <sys:Double x:Key="Width">300</sys:Double>
+        <SolidColorBrush x:Key="BrushBlack" Color="#1E1E1E"/>
+        <SolidColorBrush x:Key="BrushContribution" Color="#12676c"/>
+        <SolidColorBrush x:Key="BrushHeal" Color="LimeGreen"/>
+        <SolidColorBrush x:Key="BrushDamage" Color="Red"/>
+        <SolidColorBrush x:Key="BrushWhite" Color="GhostWhite"></SolidColorBrush>
+        
+        <Style TargetType="{x:Type Grid}" x:Key="GridStyle">
+            <Setter Property="Background" Value="{StaticResource BrushBlack}"/>
+        </Style>
         <Style TargetType="{x:Type Panel}" x:Key="PanelStyle">
-            <Setter Property="Background" Value="Black"/>
+            <Setter Property="Background" Value="{StaticResource BrushBlack}"/>
         </Style>
         <Style TargetType="Label">
-            <Setter Property="Foreground" Value="White"/>
-        </Style>
-        <Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="{StaticResource BrushWhite}"/>
         </Style>
         <Style TargetType="Border">
-            <Setter Property="BorderBrush" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BrushWhite}"/>
             <Setter Property="BorderThickness" Value="1"/>
         </Style>
     </Application.Resources>

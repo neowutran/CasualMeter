@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Threading;
 using CasualMeter.Common.Conductors;
+using CasualMeter.Common.Conductors.Messages;
+using CasualMeter.Common.Formatters;
 using CasualMeter.Common.Helpers;
 using GalaSoft.MvvmLight.CommandWpf;
 using Lunyx.Common.UI.Wpf;
@@ -32,6 +37,10 @@ namespace CasualMeter
             _teraSniffer = new TeraSniffer(BasicTeraData.Servers);
             _teraSniffer.MessageReceived += HandleMessageReceived;
             _teraSniffer.NewConnection += HandleNewConnection;
+
+            CasualMessenger.Instance.Messenger.Register<PastePlayerStatsMessage>(this, PasteStats);
+            CasualMessenger.Instance.Messenger.Register<ResetPlayerStatsMessage>(this, Reset);
+            CasualMessenger.Instance.Messenger.Register<ExitMessage>(this, Exit);
         }
 
         #region Properties
@@ -43,9 +52,9 @@ namespace CasualMeter
             set { SetProperty(value); }
         }
 
-        public IEnumerable<PlayerInfo> PlayerInfoCollection
+        public ThreadSafeObservableCollection<PlayerInfo> PlayerStats
         {
-            get { return GetProperty<IEnumerable<PlayerInfo>>(); }
+            get { return GetProperty<ThreadSafeObservableCollection<PlayerInfo>>(); }
             set { SetProperty(value); }
         }
 
@@ -58,7 +67,7 @@ namespace CasualMeter
         public DateTime? LastAttack
         {
             get { return GetProperty<DateTime?>(); }
-            set { SetProperty(value, onChanged: e => Duration = _damageTracker.Duration ?? new TimeSpan(0)); }
+            set { SetProperty(value, onChanged: e => Duration = _damageTracker.Duration ?? TimeSpan.Zero); }
         }
 
         public TimeSpan Duration
@@ -85,7 +94,7 @@ namespace CasualMeter
         public void Initialize()
         {
             //initalize commands
-            ExitCommand = new RelayCommand(Exit);
+            ExitCommand = new RelayCommand(PrepareExit);
 
             //start sniffing
             _teraSniffer.Enabled = true;
@@ -98,14 +107,31 @@ namespace CasualMeter
 
             Server = server;
             _teraData = BasicTeraData.DataForRegion(server.Region);
+
             _entityTracker = new EntityTracker();
             _playerTracker = new PlayerTracker(_entityTracker);
-            _damageTracker = new DamageTracker();
             _messageFactory = new MessageFactory(_teraData.OpCodeNamer);
 
             //manually trigger initial update and subscribe to future changes
-            UpdateProperties(null, null);
+            Reset(null);
+            _damageTracker = _damageTracker ?? new DamageTracker();
             _damageTracker.OnPlayerInfoEnumerableChanged += UpdateProperties;
+        }
+
+        private void Reset(ResetPlayerStatsMessage message)
+        {
+            if (Server == null) return;
+
+            if (message != null && message.ShouldSaveCurrent)
+            {
+                //todo: save current encounter
+            }
+
+            _damageTracker = new DamageTracker();
+
+            //update properties
+            PlayerStats = _damageTracker.StatsByUser;
+            UpdateProperties(null, null);
         }
 
         private void HandleMessageReceived(Message obj)
@@ -126,11 +152,42 @@ namespace CasualMeter
             FirstAttack = _damageTracker.FirstAttack;
             LastAttack = _damageTracker.LastAttack;
             TotalDealt = _damageTracker.TotalDealt.Damage;
-
-            PlayerInfoCollection = _damageTracker;
         }
 
-        private void Exit()
+        private void PasteStats(PastePlayerStatsMessage obj)
+        {
+            if (_damageTracker == null) return;
+
+            var playerStatsSequence = _damageTracker.StatsByUser.OrderByDescending(playerStats => playerStats.Dealt.Damage).TakeWhile(x => x.Dealt.Damage > 0);
+            const int maxLength = 300;
+
+            var sb = new StringBuilder();
+            bool first = true;
+
+            foreach (var playerInfo in playerStatsSequence)
+            {
+                var placeHolder = new PlayerStatsFormatter(playerInfo, FormatHelpers.Invariant);
+                var playerText = first ? "" : " | ";
+
+                playerText += placeHolder.Replace("{Name} {DPS} {DamagePercent}");
+
+                if (sb.Length + playerText.Length > maxLength)
+                    break;
+
+                sb.Append(playerText);
+                first = false;
+            }
+
+            var text = sb.ToString();
+            ProcessHelper.Instance.SendString(text);
+        }
+
+        private void PrepareExit()
+        {
+            CasualMessenger.Instance.Messenger.Send(new PrepareExitMessage());
+        }
+
+        private void Exit(ExitMessage message)
         {
             Environment.Exit(0);
         }

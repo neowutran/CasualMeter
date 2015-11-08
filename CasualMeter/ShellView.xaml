@@ -4,9 +4,9 @@
                             xmlns:tb="http://www.hardcodet.net/taskbar"
                             xmlns:controls="clr-namespace:CasualMeter.Common.UI.Controls;assembly=CasualMeter.Common"
                             xmlns:converters="clr-namespace:CasualMeter.Common.Converters;assembly=CasualMeter.Common"
+                            xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
                             Title="ShellView" 
-                            Height="300" 
-                            Width="300"
+                            Width="{StaticResource Width}"
                             Topmost="True"
                             ShowInTaskbar="False"
                             ResizeMode="NoResize"
@@ -15,12 +15,26 @@
                             Background="{x:Null}">
     <Grid>
         <Grid.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Padding" Value="5"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
             <ContextMenu x:Key="MainMenu">
                 <MenuItem Header="Exit" Command="{Binding ExitCommand}"></MenuItem>
             </ContextMenu>
             <converters:ApplicationTitleConverter x:Key="ApplicationTitleConverter"/>
             <converters:TimeSpanToTotalTimeConverter x:Key="TimeSpanToTotalTimeConverter"/>
             <converters:LongToTotalDamageConverter x:Key="LongToToTotalDamageConverter"/>
+            <CollectionViewSource x:Key="PlayerStatsView"
+                                  Source="{Binding PlayerStats}"
+                                  IsLiveSortingRequested="True">
+                <CollectionViewSource.SortDescriptions>
+                    <scm:SortDescription PropertyName="Damage" Direction="Descending"/>
+                    <scm:SortDescription PropertyName="Heal" Direction="Descending"/>
+                    <scm:SortDescription PropertyName="Name" Direction="Ascending"/>
+                </CollectionViewSource.SortDescriptions>
+            </CollectionViewSource>
         </Grid.Resources>
         <tb:TaskbarIcon IconSource="Resources/CasualMeter.ico"
                         ToolTipText="Casual Meter"
@@ -28,30 +42,43 @@
         </tb:TaskbarIcon>
         <StackPanel>
             <Border>
-                <StackPanel Width="300" Height="25" 
+                <Grid Width="{StaticResource Width}" Height="25" 
                             MouseDown="MoveControl" 
-                            Orientation="Horizontal" 
+                            VerticalAlignment="Center"
                             Style="{StaticResource PanelStyle}"
                             ContextMenu="{StaticResource MainMenu}">
-                    <Label Content="{Binding Server, Converter={StaticResource ApplicationTitleConverter}}"/>
-                </StackPanel>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="{Binding Server, Converter={StaticResource ApplicationTitleConverter}}"/>
+                </Grid>
             </Border>
-            <ListView ItemsSource="{Binding PlayerInfoCollection}">
-                <DataTemplate>
-                    <controls:PlayerInfoControl PlayerInfo="{Binding}"/>
-                </DataTemplate>
-            </ListView>
+            <ItemsControl Background="Transparent"
+                          ItemsSource="{Binding Source={StaticResource PlayerStatsView}}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border>
+                            <controls:PlayerInfoControl PlayerInfo="{Binding}"
+                                                        Style="{StaticResource PanelStyle}"/>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
             <Border>
-                <StackPanel Style="{StaticResource PanelStyle}"
-                            Orientation="Horizontal">
-                    <StackPanel Width="150" Height="25"
-                                Orientation="Horizontal">
-                        <Label Content="{Binding Duration, Converter={StaticResource TimeSpanToTotalTimeConverter}}"/>
-                    </StackPanel>
-                    <StackPanel Width="150" Height="25">
-                        <Label Content="{Binding TotalDealt, Converter={StaticResource LongToToTotalDamageConverter}}"/>
-                    </StackPanel>
-                </StackPanel>
+                <Grid Style="{StaticResource GridStyle}"
+                      Width="{StaticResource Width}" Height="25">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" 
+                               HorizontalAlignment="Left"
+                               Text="{Binding Duration, Converter={StaticResource TimeSpanToTotalTimeConverter}}"/>
+                    <TextBlock Grid.Column="1" 
+                               HorizontalAlignment="Right"
+                               Text="{Binding TotalDealt, Converter={StaticResource LongToToTotalDamageConverter}}"/>
+                </Grid>
             </Border>
         </StackPanel>
     </Grid>

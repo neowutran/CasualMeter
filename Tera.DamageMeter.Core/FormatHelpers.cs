@@ -8,8 +8,8 @@ namespace Tera.DamageMeter
 {
     public class FormatHelpers
     {
-        private CultureInfo CultureInfo { get; set; }
-        private string UnitSeparator { get; set; }
+        public CultureInfo CultureInfo { get; set; }
+        public string UnitSeparator { get; set; }
 
         private const string Thinspace = "\u2009";
 
@@ -83,9 +83,9 @@ namespace Tera.DamageMeter
         public string FormatPercent(double fraction)
         {
             if (double.IsNaN(fraction))
-                return null;
+                return "NaN";
 
-            return fraction.ToString("P1", CultureInfo);
+            return fraction.ToString("P1", CultureInfo).Replace(" ", string.Empty);
         }
     }
 }

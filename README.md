@@ -26,6 +26,8 @@ Here are some of the features that are currently implemented:
 ### Installation
 
 * http://casualmeter.azurewebsites.net/install/publish.htm
+* Ignore the warnings, application isn't signed
+* You may have to click more info or whatever it is to see the button to run anyway
 
 ### Development
 

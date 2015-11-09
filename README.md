@@ -25,7 +25,7 @@ Here are some of the features that are currently implemented:
 
 ### Installation
 
-* TBD
+* http://casualmeter.azurewebsites.net/install/publish.htm
 
 ### Development
 

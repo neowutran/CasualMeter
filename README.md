@@ -29,6 +29,10 @@ Here are some of the features that are currently implemented:
 * Ignore the warnings, application isn't signed
 * You may have to click more info or whatever it is to see the button to run anyway
 
+### Usage
+
+* https://github.com/lunyx/CasualMeter/wiki
+
 ### Development
 
 You may contribute by submitting a pull request for bugfixes/updates between patches. A guide to updating opcodes (when it breaks after a patch) can be found [here]. In case it goes down, here's an [imgur mirror].  Pastebins: [1] and [2]

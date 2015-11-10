@@ -26,6 +26,7 @@
             <converters:ApplicationTitleConverter x:Key="ApplicationTitleConverter"/>
             <converters:TimeSpanToTotalTimeConverter x:Key="TimeSpanToTotalTimeConverter"/>
             <converters:LongToTotalDamageConverter x:Key="LongToToTotalDamageConverter"/>
+            <converters:IsNullConverter x:Key="IsNullConverter"/>
             <CollectionViewSource x:Key="PlayerStatsView"
                                   Source="{Binding PlayerStats}"
                                   IsLiveSortingRequested="True">
@@ -74,6 +75,20 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
             <Border>
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding DamageTracker, Converter={StaticResource IsNullConverter}}" Value="False">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource BrushWhite}"/>
+                                <Setter Property="BorderThickness" Value="1"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding DamageTracker, Converter={StaticResource IsNullConverter}}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
                 <Grid Style="{StaticResource GridStyle}"
                       Width="{StaticResource Width}" Height="25">
                     <Grid.ColumnDefinitions>
@@ -82,10 +97,10 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" 
                                HorizontalAlignment="Left"
-                               Text="{Binding Duration, Converter={StaticResource TimeSpanToTotalTimeConverter}}"/>
+                               Text="{Binding DamageTracker.Duration, Converter={StaticResource TimeSpanToTotalTimeConverter}}"/>
                     <TextBlock Grid.Column="1" 
                                HorizontalAlignment="Right"
-                               Text="{Binding TotalDealt, Converter={StaticResource LongToToTotalDamageConverter}}"/>
+                               Text="{Binding DamageTracker.TotalDealt.Damage, Converter={StaticResource LongToToTotalDamageConverter}}"/>
                 </Grid>
             </Border>
         </StackPanel>

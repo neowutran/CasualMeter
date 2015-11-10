@@ -29,7 +29,6 @@ namespace CasualMeter
         private TeraData _teraData;
         private MessageFactory _messageFactory;
         private EntityTracker _entityTracker;
-        private DamageTracker _damageTracker;
         private PlayerTracker _playerTracker;
 
         public ShellViewModel()
@@ -52,33 +51,15 @@ namespace CasualMeter
             set { SetProperty(value); }
         }
 
+        public DamageTracker DamageTracker
+        {
+            get { return GetProperty<DamageTracker>(); }
+            set { SetProperty(value); }
+        }
+
         public ThreadSafeObservableCollection<PlayerInfo> PlayerStats
         {
             get { return GetProperty<ThreadSafeObservableCollection<PlayerInfo>>(); }
-            set { SetProperty(value); }
-        }
-
-        public DateTime? FirstAttack
-        {
-            get { return GetProperty<DateTime?>(); }
-            set { SetProperty(value); }
-        }
-
-        public DateTime? LastAttack
-        {
-            get { return GetProperty<DateTime?>(); }
-            set { SetProperty(value, onChanged: e => Duration = _damageTracker.Duration ?? TimeSpan.Zero); }
-        }
-
-        public TimeSpan Duration
-        {
-            get { return GetProperty<TimeSpan>(getDefault: () => new TimeSpan(0)); }
-            set { SetProperty(value); }
-        }
-
-        public long TotalDealt
-        {
-            get { return GetProperty<long>(getDefault: () => 0); }
             set { SetProperty(value); }
         }
         #endregion
@@ -102,9 +83,6 @@ namespace CasualMeter
 
         private void HandleNewConnection(Server server)
         {
-            if (_damageTracker != null)
-                _damageTracker.OnPlayerInfoEnumerableChanged -= UpdateProperties;
-
             Server = server;
             _teraData = BasicTeraData.DataForRegion(server.Region);
 
@@ -112,10 +90,8 @@ namespace CasualMeter
             _playerTracker = new PlayerTracker(_entityTracker);
             _messageFactory = new MessageFactory(_teraData.OpCodeNamer);
 
-            //manually trigger initial update and subscribe to future changes
             Reset(null);
-            _damageTracker = _damageTracker ?? new DamageTracker();
-            _damageTracker.OnPlayerInfoEnumerableChanged += UpdateProperties;
+            DamageTracker = DamageTracker ?? new DamageTracker();
         }
 
         private void Reset(ResetPlayerStatsMessage message)
@@ -127,11 +103,10 @@ namespace CasualMeter
                 //todo: save current encounter
             }
 
-            _damageTracker = new DamageTracker();
+            DamageTracker = new DamageTracker();
 
             //update properties
-            PlayerStats = _damageTracker.StatsByUser;
-            UpdateProperties(null, null);
+            PlayerStats = DamageTracker.StatsByUser;
         }
 
         private void HandleMessageReceived(Message obj)
@@ -140,25 +115,20 @@ namespace CasualMeter
             _entityTracker.Update(message);
 
             var skillResultMessage = message as EachSkillResultServerMessage;
-            if (skillResultMessage != null && !skillResultMessage.IsUseless)
-            {
-                var skillResult = new SkillResult(skillResultMessage, _entityTracker, _playerTracker, _teraData.SkillDatabase);
-                _damageTracker.Update(skillResult);
+            if (skillResultMessage != null && !skillResultMessage.IsUseless &&
+                (DamageTracker.FirstAttack != null || !skillResultMessage.IsHeal))
+            {   //only record first hit is it's a damage hit
+                var skillResult = new SkillResult(skillResultMessage, _entityTracker, _playerTracker,
+                    _teraData.SkillDatabase);
+                DamageTracker.Update(skillResult);
             }
         }
-
-        private void UpdateProperties(object source, EventArgs e)
-        {
-            FirstAttack = _damageTracker.FirstAttack;
-            LastAttack = _damageTracker.LastAttack;
-            TotalDealt = _damageTracker.TotalDealt.Damage;
-        }
-
+        
         private void PasteStats(PastePlayerStatsMessage obj)
         {
-            if (_damageTracker == null) return;
+            if (DamageTracker == null) return;
 
-            var playerStatsSequence = _damageTracker.StatsByUser.OrderByDescending(playerStats => playerStats.Dealt.Damage).TakeWhile(x => x.Dealt.Damage > 0);
+            var playerStatsSequence = DamageTracker.StatsByUser.OrderByDescending(playerStats => playerStats.Dealt.Damage).TakeWhile(x => x.Dealt.Damage > 0);
             const int maxLength = 300;
 
             var sb = new StringBuilder();

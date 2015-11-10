@@ -11,13 +11,14 @@ namespace CasualMeter.Common.Helpers
 
         public static ProcessHelper Instance => Lazy.Value;
 
-        private ProcessInfo.WinEventDelegate dele;//leave this here to prevent garbage collection
+        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
+        private readonly ProcessInfo.WinEventDelegate _dele;//leave this here to prevent garbage collection
 
         private ProcessHelper() 
         {
             //listen to window focus changed event
-            dele = (OnFocusedWindowChanged);
-            ProcessInfo.RegisterWindowFocusEvent(dele);
+            _dele = OnFocusedWindowChanged;
+            ProcessInfo.RegisterWindowFocusEvent(_dele);
         }
 
         public void Initialize()
@@ -51,7 +52,16 @@ namespace CasualMeter.Common.Helpers
             return false;
         }
 
-        public bool IsTeraActive => ProcessInfo.GetActiveProcessName().Equals("Tera", StringComparison.OrdinalIgnoreCase);
+        public bool IsTeraActive
+        {
+            get
+            {
+                var processName = ProcessInfo.GetActiveProcessName();
+                return processName.Equals("Tera", StringComparison.OrdinalIgnoreCase) ||
+                       processName.Equals("puush", StringComparison.OrdinalIgnoreCase);//exception for screenshot application
+            }
+        }
+
         public IntPtr TeraWindow => ProcessInfo.FindWindow("LaunchUnrealUWindowsClient", "TERA");
     }
 }

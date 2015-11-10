@@ -84,6 +84,7 @@
     <Compile Include="Converters\ContributionToWidthConverter.cs" />
     <Compile Include="Converters\DateTimeToTimeSpanStringConverter.cs" />
     <Compile Include="Converters\DpsToStringConverter.cs" />
+    <Compile Include="Converters\IsNullConverter.cs" />
     <Compile Include="Converters\LongToStringConverter.cs" />
     <Compile Include="Converters\DoubleToPercentStringConverter.cs" />
     <Compile Include="Converters\PlayerClassToImageConverter.cs" />

@@ -7,25 +7,62 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Lunyx.Common.UI.Wpf;
+using Nicenis.ComponentModel;
 using Tera.Game;
 using Tera.Game.Messages;
 
 namespace Tera.DamageMeter
 {
-    public class DamageTracker
+    public class DamageTracker : PropertyObservable
     {
-        public delegate void PlayerInfoEnumerableChanged(object source, EventArgs e);
-        public event PlayerInfoEnumerableChanged OnPlayerInfoEnumerableChanged;
+        public ThreadSafeObservableCollection<PlayerInfo> StatsByUser
+        {
+            get { return GetProperty<ThreadSafeObservableCollection<PlayerInfo>>(); }
+            set { SetProperty(value); }
+        }
 
-        public ThreadSafeObservableCollection<PlayerInfo> StatsByUser { get; set; }
+        public DateTime? FirstAttack
+        {
+            get { return GetProperty<DateTime?>(); }
+            set { SetProperty(value, 
+                onChanged: e =>
+                {
+                    if (LastAttack != null && e.NewValue != null) Duration = (DateTime) LastAttack - (DateTime) e.NewValue;
+                });
+            }
+        }
+
+        public DateTime? LastAttack
+        {
+            get { return GetProperty<DateTime?>(); }
+            set
+            {
+                SetProperty(value,
+                    onChanged: e =>
+                    {
+                        if (e.NewValue != null && FirstAttack != null) Duration = (DateTime)e.NewValue - (DateTime)FirstAttack;
+                    });
+            }
+        }
+
+        public TimeSpan Duration
+        {
+            get { return GetProperty<TimeSpan>(getDefault: () => TimeSpan.Zero); }
+            set { SetProperty(value); }
+        }
+
+        public SkillStats TotalDealt
+        {
+            get { return GetProperty<SkillStats>(); }
+            set { SetProperty(value); }
+        }
+
+        public SkillStats TotalReceived
+        {
+            get { return GetProperty<SkillStats>(); }
+            set { SetProperty(value); }
+        }
         
-        public DateTime? FirstAttack { get; private set; }
-        public DateTime? LastAttack { get; private set; }
-        public TimeSpan? Duration => LastAttack - FirstAttack;
-
-        public SkillStats TotalDealt { get; private set; }
-        public SkillStats TotalReceived { get; private set; }
-
         public DamageTracker()
         {
             StatsByUser = new ThreadSafeObservableCollection<PlayerInfo>();
@@ -66,17 +103,16 @@ namespace Tera.DamageMeter
 
             if (skillResult.SourcePlayer != null && (skillResult.Damage > 0) && (skillResult.Source.Id != skillResult.Target.Id))
             {
-                LastAttack = skillResult.Time;
-
                 if (FirstAttack == null)
                     FirstAttack = skillResult.Time;
+
+                LastAttack = skillResult.Time;
             }
 
             foreach (var playerStat in StatsByUser)
             {   //force update of calculated dps metrics
                 playerStat.UpdateStats();
             }
-            OnPlayerInfoEnumerableChanged?.Invoke(this, new EventArgs());
         }
 
         private SkillStats StatsChange(SkillResult message)
@@ -100,7 +136,7 @@ namespace Tera.DamageMeter
 
         public long Dps(long damage)
         {
-            var durationInSeconds = (Duration ?? TimeSpan.Zero).TotalSeconds;
+            var durationInSeconds = Duration.TotalSeconds;
             if (durationInSeconds < 1)
                 durationInSeconds = 1;
             var dps = damage / durationInSeconds;

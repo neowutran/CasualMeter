@@ -24,12 +24,14 @@ Here are some of the features that are currently implemented:
 * [Nicenis] - INotifyProperyChanged implementation
 * [Gma.UserActivityMonitor] - Global hotkeys
 * [Newtonsoft] - Json serializer/deserializer
+* [SharpPCap] - Wrapper around WinPCap, used for reading packets
 
 ### Installation
 
 * http://casualmeter.azurewebsites.net/install/publish.htm
-* Ignore the warnings, application isn't signed
+* Ignore the warnings, application isn't signed and I'm not paying several hundred dollars to get it signed by a CA
 * You may have to click more info or whatever it is to see the button to run anyway
+* You can also disable Smart Screen (only Windows 8+). Google how to do this.
 
 ### Usage
 
@@ -61,3 +63,4 @@ MIT
    [imgur mirror]: <http://i.imgur.com/VTaWEe9.png>
    [1]: <http://pastebin.com/qTGzrW8w>
    [2]: <http://pastebin.com/BTu7mm5C>
+   [SharpPCap]: <http://www.codeproject.com/Articles/12458/SharpPcap-A-Packet-Capture-Framework-for-NET>

@@ -21,6 +21,7 @@ using CasualMeter.Common.UI.Controls;
 using CasualMeter.ViewModels;
 using CasualMeter.Views;
 using Lunyx.Common;
+using Lunyx.Common.UI.Wpf.Extensions;
 using Tera.DamageMeter;
 
 namespace CasualMeter
@@ -80,7 +81,21 @@ namespace CasualMeter
                 if (playerInfo != null)
                 {
                     var vm = new SkillBreakdownViewModel(playerInfo);
-                    var v = new SkillBreakdownView(vm);
+                    var v = new SkillBreakdownView(vm)
+                    {
+                        Owner = this
+                    };
+                    var ownedWindows = OwnedWindows.Cast<Window>().Where(w => w.IsVisible).ToList();
+                    if (!ownedWindows.Any())
+                    {
+                        v.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                    }
+                    else
+                    {
+                        v.WindowStartupLocation = WindowStartupLocation.Manual;
+                        v.Left = ownedWindows.Max(w => w.Left) + 27;
+                        v.Top = ownedWindows.Max(w => w.Top) + 27;
+                    }
                     v.Show();
                 }
             }

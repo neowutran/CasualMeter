@@ -27,7 +27,7 @@ Here are some of the features that are currently implemented:
 * [SharpPCap] - Wrapper around WinPCap, used for reading packets
 
 ### Installation
-
+* Install WinPCap first: http://www.winpcap.org/install/default.htm
 * http://casualmeter.azurewebsites.net/install/publish.htm
 * Ignore the warnings, application isn't signed and I'm not paying several hundred dollars to get it signed by a CA
 * You may have to click more info or whatever it is to see the button to run anyway

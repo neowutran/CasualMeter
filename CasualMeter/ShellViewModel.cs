@@ -51,6 +51,12 @@ namespace CasualMeter
             set { SetProperty(value); }
         }
 
+        public ThreadSafeObservableCollection<DamageTracker> ArchivedDamageTrackers
+        {
+            get { return GetProperty(getDefault: () => new ThreadSafeObservableCollection<DamageTracker>()); }
+            set { SetProperty(value); }
+        }
+
         public DamageTracker DamageTracker
         {
             get { return GetProperty<DamageTracker>(); }
@@ -67,16 +73,13 @@ namespace CasualMeter
         #region Commands
         public RelayCommand ExitCommand
         {
-            get { return GetProperty<RelayCommand>(); }
+            get { return GetProperty<RelayCommand>(getDefault: () => new RelayCommand(PrepareExit)); }
             set { SetProperty(value); }
         }
         #endregion
 
         public void Initialize()
         {
-            //initalize commands
-            ExitCommand = new RelayCommand(PrepareExit);
-
             //start sniffing
             _teraSniffer.Enabled = true;
         }
@@ -98,9 +101,10 @@ namespace CasualMeter
         {
             if (Server == null) return;
 
-            if (message != null && message.ShouldSaveCurrent)
+            if (message != null && message.ShouldSaveCurrent && !DamageTracker.IsArchived && DamageTracker.StatsByUser.Count > 0)
             {
-                //todo: save current encounter
+                DamageTracker.IsArchived = true;
+                ArchivedDamageTrackers.Add(DamageTracker);
             }
 
             DamageTracker = new DamageTracker();
@@ -115,11 +119,11 @@ namespace CasualMeter
             _entityTracker.Update(message);
 
             var skillResultMessage = message as EachSkillResultServerMessage;
-            if (skillResultMessage != null && !skillResultMessage.IsUseless &&
-                (DamageTracker.FirstAttack != null || !skillResultMessage.IsHeal))
-            {   //only record first hit is it's a damage hit
-                var skillResult = new SkillResult(skillResultMessage, _entityTracker, _playerTracker,
-                    _teraData.SkillDatabase);
+            if (skillResultMessage != null && !skillResultMessage.IsUseless &&//stuff like warrior DFA
+                (DamageTracker.FirstAttack != null || !skillResultMessage.IsHeal) &&//only record first hit is it's a damage hit (heals occurring outside of fights)
+                !(skillResultMessage.Target.Equals(skillResultMessage.Source) && !skillResultMessage.IsHeal))//disregard damage dealt to self (gunner self destruct)
+            {   
+                var skillResult = new SkillResult(skillResultMessage, _entityTracker, _playerTracker, _teraData.SkillDatabase);
                 DamageTracker.Update(skillResult);
             }
         }
@@ -147,9 +151,16 @@ namespace CasualMeter
                 sb.Append(playerText);
                 first = false;
             }
-
-            var text = sb.ToString();
-            ProcessHelper.Instance.SendString(text);
+            
+            if (sb.Length > 0)
+            {
+                var text = sb.ToString();
+                //copy to clipboard in case user wants to paste outside of Tera
+                Application.Current.Dispatcher.Invoke(() => Clipboard.SetText(text));
+                if (ProcessHelper.Instance.IsTeraActive)
+                    //send text input to Tera
+                    ProcessHelper.Instance.SendString(text);
+            }
         }
 
         private void PrepareExit()

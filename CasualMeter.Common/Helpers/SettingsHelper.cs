@@ -24,7 +24,7 @@ namespace CasualMeter.Common.Helpers
         
         public static SettingsHelper Instance => Lazy.Value;
 
-        private static readonly string ConfigPath = Path.Combine(Path.GetDirectoryName(typeof(SettingsHelper).Assembly.Location) ?? string.Empty, "config");
+        private static readonly string ConfigPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CasualMeter");
         private static readonly string ConfigFilePath = Path.Combine(ConfigPath, "settings.json");
 
         public Settings Settings { get; set; }

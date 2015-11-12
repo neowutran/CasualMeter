@@ -21,6 +21,12 @@ namespace Tera.DamageMeter
             set { SetProperty(value); }
         }
 
+        public bool IsArchived
+        {
+            get { return GetProperty<bool>(getDefault: () => false); }
+            set { SetProperty(value); }
+        }
+
         public DateTime? FirstAttack
         {
             get { return GetProperty<DateTime?>(); }
@@ -83,6 +89,8 @@ namespace Tera.DamageMeter
 
         public void Update(SkillResult skillResult)
         {
+            if (IsArchived) return;//prevent archived trackers from accidentally recording stats
+
             if (skillResult.SourcePlayer != null)
             {
                 var playerStats = GetOrCreate(skillResult.SourcePlayer);

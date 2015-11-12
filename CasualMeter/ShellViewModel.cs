@@ -167,11 +167,13 @@ namespace CasualMeter
             if (sb.Length > 0)
             {
                 var text = sb.ToString();
-                //copy to clipboard in case user wants to paste outside of Tera
-                Application.Current.Dispatcher.Invoke(() => Clipboard.SetText(text));
                 if (ProcessHelper.Instance.IsTeraActive)
+                {
                     //send text input to Tera
                     ProcessHelper.Instance.SendString(text);
+                }
+                //copy to clipboard in case user wants to paste outside of Tera
+                Application.Current.Dispatcher.Invoke(() => Clipboard.SetDataObject(text));
             }
         }
 

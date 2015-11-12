@@ -55,14 +55,13 @@ namespace CasualMeter
             if (e == null) return;
             if (e.InnerException != null)
             {
-                HandleException(e);
+                HandleException(e.InnerException);
             }
             else
             {
                 Logger.Error(e.Message);
                 Logger.Error(e.StackTrace);
             }
-
         }
 
         private static void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)

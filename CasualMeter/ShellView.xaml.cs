@@ -52,6 +52,8 @@ namespace CasualMeter
             //load window position
             Left = SettingsHelper.Instance.Settings.WindowLeft;
             Top = SettingsHelper.Instance.Settings.WindowTop;
+            OpacityScaleSlider.Value = SettingsHelper.Instance.Settings.Opacity;
+            UiScaleSlider.Value = SettingsHelper.Instance.Settings.UiScale;
 
             CasualMessenger.Instance.Messenger.Register<PrepareExitMessage>(this, PrepareClose);
         }
@@ -60,6 +62,8 @@ namespace CasualMeter
         {
             SettingsHelper.Instance.Settings.WindowLeft = Left;
             SettingsHelper.Instance.Settings.WindowTop = Top;
+            SettingsHelper.Instance.Settings.Opacity = OpacityScaleSlider.Value;
+            SettingsHelper.Instance.Settings.UiScale = UiScaleSlider.Value;
             SettingsHelper.Instance.Save();
 
             CasualMessenger.Instance.Messenger.Send(new ExitMessage());

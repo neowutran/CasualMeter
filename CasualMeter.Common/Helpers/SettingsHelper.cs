@@ -6,6 +6,7 @@ using System.Net.Mime;
 using CasualMeter.Common.Conductors;
 using CasualMeter.Common.Entities;
 using Newtonsoft.Json;
+using Nicenis.ComponentModel;
 using Tera;
 using Tera.DamageMeter;
 using Tera.Data;
@@ -55,14 +56,18 @@ namespace CasualMeter.Common.Helpers
         private void Load()
         {
             if (File.Exists(ConfigFilePath))
-                Settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(ConfigFilePath));
+            {
+                Settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(ConfigFilePath),
+                    new JsonSerializerSettings
+                    {
+                        DefaultValueHandling = DefaultValueHandling.Populate
+                    });
+            }
             else
             {
                 Settings = new Settings();
-                Save();
             }
-
-            //todo: initialize missing settings that weren't loaded
+            Save();
         }
 
         public void Save()

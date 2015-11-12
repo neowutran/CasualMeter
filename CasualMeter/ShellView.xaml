@@ -7,8 +7,10 @@
                             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
                             xmlns:casualMeter="clr-namespace:CasualMeter"
                             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                            xmlns:converters1="clr-namespace:Lunyx.Common.UI.Wpf.Converters;assembly=Lunyx.Common.UI.Wpf"
                             Title="ShellView"
-                            Width = "{StaticResource Width}">
+                            Width = "{StaticResource Width}"
+                            Opacity="{Binding ElementName=OpacityScaleSlider, Path=Value}">
     <Grid>
         <Grid.Resources>
             <Style TargetType="Border">
@@ -26,7 +28,8 @@
             <converters:ApplicationTitleConverter x:Key="ApplicationTitleConverter"/>
             <converters:TimeSpanToTotalTimeConverter x:Key="TimeSpanToTotalTimeConverter"/>
             <converters:LongToTotalDamageConverter x:Key="LongToToTotalDamageConverter"/>
-            <converters:IsNullConverter x:Key="IsNullConverter"/>
+            <converters1:IsNullConverter x:Key="IsNullConverter"/>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
             <CollectionViewSource x:Key="PlayerStatsView"
                                   Source="{Binding PlayerStats}"
                                   IsLiveSortingRequested="True">
@@ -42,18 +45,28 @@
                         ContextMenu="{StaticResource MainMenu}">
         </tb:TaskbarIcon>
         <StackPanel>
-            <Border>
-                <Grid Width="{StaticResource Width}" Height="25" 
-                      MouseDown="MoveControl" 
+            <StackPanel.LayoutTransform>
+                <ScaleTransform CenterX="0" CenterY="0" 
+                            ScaleX="{Binding ElementName=UiScaleSlider, Path=Value}" 
+                            ScaleY="{Binding ElementName=UiScaleSlider, Path=Value}"/>
+            </StackPanel.LayoutTransform>
+            <Border Width="{StaticResource Width}" Height="25">
+                <Grid MouseDown="MoveControl" 
                       VerticalAlignment="Center"
                       Style="{StaticResource PanelStyle}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0"
                                Text="{Binding Server, Converter={StaticResource ApplicationTitleConverter}}"/>
-                    <casualMeter:CloseButton Grid.Column="1">
+                    <ToggleButton Grid.Column="1" x:Name="SettingsButton"
+                                  Style="{StaticResource ToggleButtonStyle}">
+                        <Image Style="{StaticResource ButtonImageStyle}"
+                               Source="{StaticResource SettingsButtonImage}"/>
+                    </ToggleButton>
+                    <casualMeter:CloseButton Grid.Column="2">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Click">
                                 <i:InvokeCommandAction Command="{Binding ExitCommand}"/>
@@ -62,7 +75,35 @@
                     </casualMeter:CloseButton>
                 </Grid>
             </Border>
-            <ItemsControl Background="Transparent"
+            <Border Visibility="{Binding ElementName=SettingsButton, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Width="{StaticResource Width}">
+                <StackPanel Orientation="Vertical"
+                            Style="{StaticResource PanelStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0">Size</TextBlock>
+                        <Slider Grid.Column="1" x:Name="UiScaleSlider" 
+                                Minimum="0.7" Maximum="1" Value="1" Width="200"
+                                Margin="3"
+                                HorizontalAlignment="Right"/>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0">Opacity</TextBlock>
+                        <Slider Grid.Column="1" x:Name="OpacityScaleSlider" 
+                                Minimum="0.2" Maximum="1" Value="1" Width="200"
+                                Margin="3"
+                                HorizontalAlignment="Right"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+            <ItemsControl Background="Transparent" Width="{StaticResource Width}"
                           ItemsSource="{Binding Source={StaticResource PlayerStatsView}}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -74,7 +115,7 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <Border>
+            <Border Width="{StaticResource Width}" Height="25">
                 <Border.Style>
                     <Style TargetType="Border">
                         <Style.Triggers>
@@ -89,11 +130,11 @@
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
-                <Grid Style="{StaticResource GridStyle}"
-                      Width="{StaticResource Width}" Height="25">
+                <Grid Style="{StaticResource GridStyle}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" 
                                HorizontalAlignment="Left"
@@ -101,6 +142,40 @@
                     <TextBlock Grid.Column="1" 
                                HorizontalAlignment="Right"
                                Text="{Binding DamageTracker.TotalDealt.Damage, Converter={StaticResource LongToToTotalDamageConverter}}"/>
+                    <ToggleButton Grid.Column="2" x:Name="EncountersButton" 
+                                  Style="{StaticResource ToggleButtonStyle}">
+                        <Image Source="{StaticResource DropdownButtonImage}"
+                               Style="{StaticResource ButtonImageStyle}"/>
+                    </ToggleButton>
+                    <Popup IsOpen="{Binding ElementName=EncountersButton, Path=IsChecked}"
+                           Grid.Column="2" HorizontalAlignment="Right"
+                           PlacementTarget="{Binding ElementName=EncountersButton}" 
+                           Placement="Bottom" Width="146">
+                        <Border BorderBrush="Black" BorderThickness="1" 
+                Background="AliceBlue">
+                            <StackPanel Orientation="Horizontal">
+                                <Grid Width="142">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto" />
+
+                                    </Grid.RowDefinitions>
+                                    <GroupBox Header="Review As" 
+                            HorizontalAlignment="Left" VerticalAlignment="Top" 
+                            Grid.Row="0">
+                                        <StackPanel>
+                                            <RadioButton x:Name="currentSelectionBtn" 
+                                    Content="CurrentSelection"/>
+                                            <RadioButton x:Name="singleFileBtn" 
+                                    Content="As Single File"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <Button x:Name="generateAsBtn" Content="Generate" 
+                            Grid.Row="1" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </Popup>
                 </Grid>
             </Border>
         </StackPanel>

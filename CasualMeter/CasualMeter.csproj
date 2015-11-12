@@ -100,6 +100,14 @@
     <Reference Include="log4net">
       <HintPath>..\lib\log4net\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Lunyx.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Lunyx\Lunyx.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Lunyx.Common.UI.Wpf, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Lunyx\Lunyx.Common.UI.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -190,14 +198,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Lunyx\Lunyx.Common.UI.Wpf\Lunyx.Common.UI.Wpf.csproj">
-      <Project>{75b43592-1666-4d78-9d7e-1240b8e3122c}</Project>
-      <Name>Lunyx.Common.UI.Wpf</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Lunyx\Lunyx.Common\Lunyx.Common.csproj">
-      <Project>{97509135-3f03-468a-b5b0-fcd65e6d1600}</Project>
-      <Name>Lunyx.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CasualMeter.Common\CasualMeter.Common.csproj">
       <Project>{1f43f250-51f4-4ddf-b0db-17dcaf175cdc}</Project>
       <Name>CasualMeter.Common</Name>
@@ -224,6 +224,8 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\close-inverted.png" />
+    <Resource Include="Resources\down-open-inverted.png" />
+    <Resource Include="Resources\settings-inverted.png" />
     <Content Include="res\opcodes-3308.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

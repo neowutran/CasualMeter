@@ -43,7 +43,12 @@ namespace CasualMeter
         }
 
         #region Properties
-        public BasicTeraData BasicTeraData => SettingsHelper.Instance.BasicTeraData;
+
+        public BasicTeraData BasicTeraData
+        {
+            get { return GetProperty(getDefault: () => SettingsHelper.Instance.BasicTeraData); }
+            set { SetProperty(value); }
+        }
 
         public Server Server
         {

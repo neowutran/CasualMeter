@@ -8,12 +8,12 @@ Here are some of the features that are currently implemented:
 * View detailed skill breakdown with three different views
 * Will only show up while you are playing Tera
 * Paste dps
+* Review previous encounters
 * Customizable hotkeys (through settings file)
 * Updates automatically (checks when you start the application)
 * Single instance (will not open up multiple meters if you launch by accident)
 
 ### Roadmap for major features
-* Save list of encounters to review
 * TBD
 
 ### Third-Party libraries

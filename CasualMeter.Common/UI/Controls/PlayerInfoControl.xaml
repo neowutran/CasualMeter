@@ -5,7 +5,6 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:converters="clr-namespace:CasualMeter.Common.Converters"
       mc:Ignorable="d"
-      x:Name="ParentControl"
       Width="{StaticResource Width}" Height="64">
     <Grid.Resources>
         <Style TargetType="TextBlock">
@@ -24,13 +23,14 @@
         <converters:LongToStringConverter x:Key="LongToStringConverter"/>
         <converters:DpsToStringConverter x:Key="DpsToStringConverter"/>
         <converters:ContributionToWidthConverter x:Key="ContributionToWidthConverter"/>
+        <converters:BooleanToContributionBrushConverter x:Key="BooleanToContributionBrushConverter"/>
     </Grid.Resources>
     <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
         <ColumnDefinition Width="*"/>
     </Grid.ColumnDefinitions>
-    <Rectangle Fill="{StaticResource BrushContribution}"
+    <Rectangle Fill="{Binding Tracker.IsArchived, Converter={StaticResource BooleanToContributionBrushConverter}}"
                Grid.Column="0" Grid.ColumnSpan="3"
                Grid.ZIndex="-99999"
                HorizontalAlignment="Left"

@@ -67,18 +67,25 @@ namespace CasualMeter
             get { return GetProperty<DamageTracker>(); }
             set { SetProperty(value); }
         }
-
-        public ThreadSafeObservableCollection<PlayerInfo> PlayerStats
-        {
-            get { return GetProperty<ThreadSafeObservableCollection<PlayerInfo>>(); }
-            set { SetProperty(value); }
-        }
         #endregion
 
         #region Commands
+
+        public RelayCommand<DamageTracker> LoadEncounterCommand
+        {
+            get { return GetProperty(getDefault: () => new RelayCommand<DamageTracker>(LoadEncounter)); }
+            set { SetProperty(value); }
+        }
+
+        public RelayCommand ClearEncountersCommand
+        {
+            get { return GetProperty(getDefault: () => new RelayCommand(ClearEncounters, () => ArchivedDamageTrackers.Count > 0)); }
+            set { SetProperty(value); }
+        }
+
         public RelayCommand ExitCommand
         {
-            get { return GetProperty<RelayCommand>(getDefault: () => new RelayCommand(PrepareExit)); }
+            get { return GetProperty(getDefault: () => new RelayCommand(PrepareExit)); }
             set { SetProperty(value); }
         }
         #endregion
@@ -106,20 +113,20 @@ namespace CasualMeter
         {
             if (Server == null) return;
 
-            if (message != null && message.ShouldSaveCurrent && !DamageTracker.IsArchived && DamageTracker.StatsByUser.Count > 0)
+            if (message != null && message.ShouldSaveCurrent && !DamageTracker.IsArchived && 
+                DamageTracker.StatsByUser.Count > 0 && DamageTracker.FirstAttack != null && DamageTracker.LastAttack != null)
             {
                 DamageTracker.IsArchived = true;
                 ArchivedDamageTrackers.Add(DamageTracker);
             }
 
             DamageTracker = new DamageTracker();
-
-            //update properties
-            PlayerStats = DamageTracker.StatsByUser;
         }
 
         private void HandleMessageReceived(Message obj)
         {
+            if (DamageTracker.IsArchived) return; //don't process while viewing a past encounter
+
             var message = _messageFactory.Create(obj);
             _entityTracker.Update(message);
 
@@ -166,6 +173,16 @@ namespace CasualMeter
                     //send text input to Tera
                     ProcessHelper.Instance.SendString(text);
             }
+        }
+
+        private void LoadEncounter(DamageTracker obj)
+        {
+            DamageTracker = obj;
+        }
+
+        private void ClearEncounters()
+        {
+            ArchivedDamageTrackers.Clear();
         }
 
         private void PrepareExit()

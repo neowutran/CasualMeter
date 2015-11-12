@@ -28,15 +28,23 @@
             <converters:ApplicationTitleConverter x:Key="ApplicationTitleConverter"/>
             <converters:TimeSpanToTotalTimeConverter x:Key="TimeSpanToTotalTimeConverter"/>
             <converters:LongToTotalDamageConverter x:Key="LongToToTotalDamageConverter"/>
+            <converters:SavedEncounterToStringConverter x:Key="SavedEncounterToStringConverter"/>
             <converters1:IsNullConverter x:Key="IsNullConverter"/>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
             <CollectionViewSource x:Key="PlayerStatsView"
-                                  Source="{Binding PlayerStats}"
+                                  Source="{Binding DamageTracker.StatsByUser}"
                                   IsLiveSortingRequested="True">
                 <CollectionViewSource.SortDescriptions>
                     <scm:SortDescription PropertyName="Damage" Direction="Descending"/>
                     <scm:SortDescription PropertyName="Heal" Direction="Descending"/>
                     <scm:SortDescription PropertyName="Name" Direction="Ascending"/>
+                </CollectionViewSource.SortDescriptions>
+            </CollectionViewSource>
+            <CollectionViewSource x:Key="SavedEncountersView"
+                                  Source="{Binding ArchivedDamageTrackers}"
+                                  IsLiveSortingRequested="True">
+                <CollectionViewSource.SortDescriptions>
+                    <scm:SortDescription PropertyName="FirstAttack" Direction="Descending"/>
                 </CollectionViewSource.SortDescriptions>
             </CollectionViewSource>
         </Grid.Resources>
@@ -147,35 +155,55 @@
                         <Image Source="{StaticResource DropdownButtonImage}"
                                Style="{StaticResource ButtonImageStyle}"/>
                     </ToggleButton>
-                    <Popup IsOpen="{Binding ElementName=EncountersButton, Path=IsChecked}"
-                           Grid.Column="2" HorizontalAlignment="Right"
-                           PlacementTarget="{Binding ElementName=EncountersButton}" 
-                           Placement="Bottom" Width="146">
-                        <Border BorderBrush="Black" BorderThickness="1" 
-                Background="AliceBlue">
-                            <StackPanel Orientation="Horizontal">
-                                <Grid Width="142">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto" />
-
-                                    </Grid.RowDefinitions>
-                                    <GroupBox Header="Review As" 
-                            HorizontalAlignment="Left" VerticalAlignment="Top" 
-                            Grid.Row="0">
-                                        <StackPanel>
-                                            <RadioButton x:Name="currentSelectionBtn" 
-                                    Content="CurrentSelection"/>
-                                            <RadioButton x:Name="singleFileBtn" 
-                                    Content="As Single File"/>
-                                        </StackPanel>
-                                    </GroupBox>
-                                    <Button x:Name="generateAsBtn" Content="Generate" 
-                            Grid.Row="1" />
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-                    </Popup>
+                </Grid>
+            </Border>
+            <Border Width="{StaticResource Width}"
+                    Style="{StaticResource BorderStyle}"
+                    Visibility="{Binding ElementName=EncountersButton, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid Style="{StaticResource PanelStyle}">
+                    <Grid.Resources>
+                        <Style TargetType="{x:Type Button}" x:Key="EncounterButtonStyle">
+                            <Setter Property="Width" Value="{StaticResource Width}"/>
+                            <Setter Property="Height" Value="25"/>
+                            <Setter Property="BorderThickness" Value="1"/>
+                            <Setter Property="BorderBrush" Value="{StaticResource BrushWhite}"/>
+                            <Setter Property="Background" Value="{StaticResource BrushBlack}"/>
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <ScrollViewer Grid.Row="0" MaxHeight="150" 
+                                  HorizontalScrollBarVisibility="Hidden"
+                                  VerticalScrollBarVisibility="Auto">
+                        <ItemsControl Background="Transparent"
+                                      ItemsSource="{Binding Source={StaticResource SavedEncountersView}}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Style="{StaticResource EncounterButtonStyle}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                                <i:InvokeCommandAction Command="{Binding ShellViewModel.LoadEncounterCommand, RelativeSource={RelativeSource AncestorType={x:Type controls:CasualMeterWindow}}}"
+                                                                       CommandParameter="{Binding}"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                        <TextBlock Text="{Binding Converter={StaticResource SavedEncounterToStringConverter}}"
+                                                   Style="{StaticResource {x:Type TextBlock}}"/>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                    <Button Style="{StaticResource EncounterButtonStyle}"
+                            Grid.Row="1">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding ClearEncountersCommand}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <TextBlock>Clear Saved Encounters</TextBlock>
+                    </Button>
                 </Grid>
             </Border>
         </StackPanel>

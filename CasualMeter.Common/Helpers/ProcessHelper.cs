@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Media;
 using CasualMeter.Common.Conductors;
 using Lunyx.Common;
 

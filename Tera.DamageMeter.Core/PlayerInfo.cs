@@ -10,7 +10,9 @@ namespace Tera.DamageMeter
 {
     public class PlayerInfo : INotifyPropertyChanged
     {
-        private readonly DamageTracker _tracker;
+
+        public DamageTracker Tracker { get; private set; }
+
         public Player Player { get; }
 
         public string Name { get { return Player.Name; } }
@@ -18,7 +20,7 @@ namespace Tera.DamageMeter
 
         public ThreadSafeObservableCollection<SkillResult> SkillLog { get; private set; }
 
-        public DateTime EncounterStartTime => _tracker.FirstAttack ?? DateTime.Now;
+        public DateTime EncounterStartTime => Tracker.FirstAttack ?? DateTime.Now;
 
         public SkillStats Received { get; private set; }
         public SkillStats Dealt { get; private set; }
@@ -27,14 +29,14 @@ namespace Tera.DamageMeter
         public long Damage => Dealt.Damage;
         public long Heal => Dealt.Heal;
 
-        public double DamageFraction { get { return (double)Dealt.Damage / _tracker.TotalDealt.Damage; } }
-        public long Dps { get { return _tracker.Dps(Dealt.Damage); } }
+        public double DamageFraction { get { return (double)Dealt.Damage / Tracker.TotalDealt.Damage; } }
+        public long Dps { get { return Tracker.Dps(Dealt.Damage); } }
         public double CritFraction { get { return (double) Dealt.Crits/Dealt.Hits; } }
 
 
         public PlayerInfo(Player user, DamageTracker tracker)
         {
-            _tracker = tracker;
+            Tracker = tracker;
             Player = user;
             Received = new SkillStats();
             Dealt = new SkillStats();

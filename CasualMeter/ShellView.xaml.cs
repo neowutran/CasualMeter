@@ -46,7 +46,7 @@ namespace CasualMeter
             HotkeyHelper.Instance.Initialize();
 
             //initialize viewmodel
-            DataContext = ViewModel = new ShellViewModel(); //temp
+            DataContext = ViewModel = new ShellViewModel();
             ShellViewModel.Initialize();
 
             //load window position

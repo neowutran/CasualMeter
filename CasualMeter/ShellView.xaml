@@ -162,13 +162,11 @@
                     Visibility="{Binding ElementName=EncountersButton, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid Style="{StaticResource PanelStyle}">
                     <Grid.Resources>
-                        <Style TargetType="{x:Type Button}" x:Key="EncounterButtonStyle">
+                        <Style TargetType="{x:Type Button}" x:Key="EncounterButtonStyle" BasedOn="{StaticResource ButtonStyle}">
                             <Setter Property="Width" Value="{StaticResource Width}"/>
-                            <Setter Property="Height" Value="25"/>
                             <Setter Property="BorderThickness" Value="1"/>
                             <Setter Property="BorderBrush" Value="{StaticResource BrushWhite}"/>
-                            <Setter Property="Background" Value="{StaticResource BrushBlack}"/>
-                        </Style>
+                            </Style>
                     </Grid.Resources>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

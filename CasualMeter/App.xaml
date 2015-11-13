@@ -8,22 +8,56 @@
         <ImageSource x:Key="CloseButtonImage">pack://application:,,,/Resources/close-inverted.png</ImageSource>
         <ImageSource x:Key="DropdownButtonImage">pack://application:,,,/Resources/down-open-inverted.png</ImageSource>
         <ImageSource x:Key="SettingsButtonImage">pack://application:,,,/Resources/settings-inverted.png</ImageSource>
-        <SolidColorBrush x:Key="BrushBlack" Color="#1E1E1E"/>
+        <SolidColorBrush x:Key="BrushBlack" Color="#1A1A1A"/>
+        <SolidColorBrush x:Key="BrushGray" Color="#4D4D4D"/>
+        <SolidColorBrush x:Key="BrushLightGray" Color="#808080"/>
         <SolidColorBrush x:Key="BrushHeal" Color="LimeGreen"/>
         <SolidColorBrush x:Key="BrushDamage" Color="Red"/>
         <SolidColorBrush x:Key="BrushWhite" Color="GhostWhite"/>
+        
+        <ControlTemplate TargetType="{x:Type Button}" x:Key="ButtonTemplate">
+            <Border Background="{TemplateBinding Background}" 
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    BorderBrush="{TemplateBinding BorderBrush}">
+                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+        </ControlTemplate>
         <Style TargetType="{x:Type Button}" x:Key="ButtonStyle">
+            <Setter Property="Background" Value="{StaticResource BrushBlack}"/>
+            <Setter Property="Template" Value="{StaticResource ButtonTemplate}"/>
             <Setter Property="Width" Value="25"/>
             <Setter Property="Height" Value="25"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="{StaticResource BrushBlack}"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource BrushGray}"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
-        <Style TargetType="{x:Type ToggleButton}" x:Key="ToggleButtonStyle">
+
+        <ControlTemplate TargetType="{x:Type ToggleButton}" x:Key="ToggleButtonTemplate">
+            <Border Background="{TemplateBinding Background}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    BorderBrush="{TemplateBinding BorderBrush}">
+                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+        </ControlTemplate>
+        <Style TargetType="ToggleButton" x:Key="ToggleButtonStyle">
+            <Setter Property="Background" Value="{StaticResource BrushBlack}"/>
+            <Setter Property="Template" Value="{StaticResource ToggleButtonTemplate}"/>
             <Setter Property="Width" Value="25"/>
             <Setter Property="Height" Value="25"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="{StaticResource BrushBlack}"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource BrushGray}"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background" Value="{StaticResource BrushLightGray}"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
+
         <Style TargetType="{x:Type Grid}" x:Key="GridStyle">
             <Setter Property="Background" Value="{StaticResource BrushBlack}"/>
         </Style>

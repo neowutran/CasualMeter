@@ -6,6 +6,7 @@
     <Application.Resources>
         <sys:Double x:Key="Width">300</sys:Double>
         <ImageSource x:Key="CloseButtonImage">pack://application:,,,/Resources/close-inverted.png</ImageSource>
+        <ImageSource x:Key="PinButtonImage">pack://application:,,,/Resources/pin-inverted.png</ImageSource>
         <ImageSource x:Key="DropdownButtonImage">pack://application:,,,/Resources/down-open-inverted.png</ImageSource>
         <ImageSource x:Key="SettingsButtonImage">pack://application:,,,/Resources/settings-inverted.png</ImageSource>
         <SolidColorBrush x:Key="BrushBlack" Color="#1A1A1A"/>

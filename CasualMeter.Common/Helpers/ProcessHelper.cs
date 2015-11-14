@@ -56,8 +56,7 @@ namespace CasualMeter.Common.Helpers
             get
             {
                 var processName = ProcessInfo.GetActiveProcessName();
-                return processName.Equals("Tera", StringComparison.OrdinalIgnoreCase) ||
-                       processName.Equals("puush", StringComparison.OrdinalIgnoreCase);//exception for screenshot application
+                return processName.Equals("Tera", StringComparison.OrdinalIgnoreCase);//exception for screenshot application
             }
         }
 

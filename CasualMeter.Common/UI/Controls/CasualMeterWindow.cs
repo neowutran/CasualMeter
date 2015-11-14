@@ -9,6 +9,7 @@ using System.Windows.Input;
 using CasualMeter.Common.Conductors;
 using CasualMeter.Common.Conductors.Messages;
 using CasualMeter.Common.Helpers;
+using CasualMeter.Common.UI.ViewModels;
 using Lunyx.Common;
 using Lunyx.Common.UI.Wpf;
 using Lunyx.Common.UI.Wpf.Controls;
@@ -17,7 +18,7 @@ namespace CasualMeter.Common.UI.Controls
 {
     public class CasualMeterWindow : ClickThroughWindow
     {
-        public ViewModelBase ViewModel { get; set; }
+        public CasualViewModelBase ViewModel { get; set; }
 
         protected override void OnInitialized(EventArgs e)
         {
@@ -51,7 +52,8 @@ namespace CasualMeter.Common.UI.Controls
 
         private void SetVisibility(RefreshVisibilityMessage message)
         {
-            Visibility = message.IsVisible ? Visibility.Visible : Visibility.Collapsed;
+            if (!SettingsHelper.Instance.Settings.IsPinned)
+                Visibility = message.IsVisible ? Visibility.Visible : Visibility.Collapsed;
         }
 
         protected override void OnClosed(EventArgs e)

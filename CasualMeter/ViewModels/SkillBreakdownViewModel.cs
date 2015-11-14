@@ -8,13 +8,15 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using CasualMeter.Common.Conductors;
 using CasualMeter.Common.Conductors.Messages;
+using CasualMeter.Common.UI;
+using CasualMeter.Common.UI.ViewModels;
 using Lunyx.Common.UI.Wpf;
 using Nicenis.ComponentModel;
 using Tera.DamageMeter;
 
 namespace CasualMeter.ViewModels
 {
-    public class SkillBreakdownViewModel : ViewModelBase
+    public class SkillBreakdownViewModel : CasualViewModelBase
     {
         public ThreadSafeObservableCollection<ComboBoxEntity> ComboBoxEntities
         {

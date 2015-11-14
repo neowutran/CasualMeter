@@ -28,9 +28,13 @@ namespace CasualMeter.Views
 
         public SkillBreakdownView(SkillBreakdownViewModel viewModel)
         {
+            ViewModel = viewModel;
             InitializeComponent();
+        }
 
-            DataContext = ViewModel = viewModel;
+        protected override void OnInitialized(EventArgs e)
+        {
+            DataContext = ViewModel;
 
             //manually switch first view, then register for all future updates
             SwitchView(SkillBreakdownViewModel?.SelectedCollectionView.Key.ToString());
@@ -38,6 +42,8 @@ namespace CasualMeter.Views
                 UpdateSkillBreakdownView);
             CasualMessenger.Instance.Messenger.Register<ScrollPlayerStatsMessage>(this, ViewModel,
                 ScrollPlayerStats);
+
+            base.OnInitialized(e);
         }
 
         private void ScrollPlayerStats(ScrollPlayerStatsMessage message)

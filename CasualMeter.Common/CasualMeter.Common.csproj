@@ -113,6 +113,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="UI\ViewModels\CasualViewModelBase.cs" />
     <Compile Include="UI\Controls\CasualMeterWindow.cs" />
     <Compile Include="UI\Controls\PlayerInfoControl.xaml.cs">
       <DependentUpon>PlayerInfoControl.xaml</DependentUpon>

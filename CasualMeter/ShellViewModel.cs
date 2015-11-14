@@ -13,6 +13,7 @@ using CasualMeter.Common.Conductors;
 using CasualMeter.Common.Conductors.Messages;
 using CasualMeter.Common.Formatters;
 using CasualMeter.Common.Helpers;
+using CasualMeter.Common.UI.ViewModels;
 using GalaSoft.MvvmLight.CommandWpf;
 using log4net;
 using Lunyx.Common.UI.Wpf;
@@ -25,7 +26,7 @@ using Tera.Sniffing;
 
 namespace CasualMeter
 {
-    public class ShellViewModel : ViewModelBase
+    public class ShellViewModel : CasualViewModelBase
     {
         private static readonly ILog Logger = LogManager.GetLogger
             (MethodBase.GetCurrentMethod().DeclaringType);
@@ -69,6 +70,19 @@ namespace CasualMeter
             set { SetProperty(value); }
         }
         #endregion
+
+        public bool IsPinned
+        {
+            get { return GetProperty(getDefault: () => SettingsHelper.Instance.Settings.IsPinned); }
+            set
+            {
+                SetProperty(value, onChanged: e =>
+                {
+                    SettingsHelper.Instance.Settings.IsPinned = value;
+                    ProcessHelper.Instance.ForceVisibilityRefresh();
+                });
+            }
+        }
 
         #region Commands
 

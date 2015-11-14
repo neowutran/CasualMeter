@@ -37,10 +37,9 @@ namespace CasualMeter
         public ShellView()
         {
             InitializeComponent();
-            Initialize();
         }
 
-        private void Initialize()
+        protected override void OnInitialized(EventArgs e)
         {
             //ensure initialization of helpers
             SettingsHelper.Instance.Initialize();
@@ -50,13 +49,16 @@ namespace CasualMeter
             DataContext = ViewModel = new ShellViewModel();
             ShellViewModel.Initialize();
 
-            //load window position
+            //load settings
             Left = SettingsHelper.Instance.Settings.WindowLeft;
             Top = SettingsHelper.Instance.Settings.WindowTop;
             OpacityScaleSlider.Value = SettingsHelper.Instance.Settings.Opacity;
             UiScaleSlider.Value = SettingsHelper.Instance.Settings.UiScale;
+            ShellViewModel.IsPinned = SettingsHelper.Instance.Settings.IsPinned;
 
             CasualMessenger.Instance.Messenger.Register<PrepareExitMessage>(this, PrepareClose);
+
+            base.OnInitialized(e);
         }
 
         private void PrepareClose(PrepareExitMessage message)
@@ -65,6 +67,7 @@ namespace CasualMeter
             SettingsHelper.Instance.Settings.WindowTop = Top;
             SettingsHelper.Instance.Settings.Opacity = OpacityScaleSlider.Value;
             SettingsHelper.Instance.Settings.UiScale = UiScaleSlider.Value;
+            SettingsHelper.Instance.Settings.IsPinned = ShellViewModel.IsPinned;
             SettingsHelper.Instance.Save();
 
             CasualMessenger.Instance.Messenger.Send(new ExitMessage());

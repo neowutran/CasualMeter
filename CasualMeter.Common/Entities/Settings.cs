@@ -21,6 +21,9 @@ namespace CasualMeter.Common.Entities
         [DefaultValue(1)]
         public double UiScale { get; set; }
 
+        [DefaultValue(true)]
+        public bool IsPinned { get; set; }
+
         //since you can't set DefaultValueAttribute on objects
         private HotKeySettings _hotkeys;
         public HotKeySettings HotKeys

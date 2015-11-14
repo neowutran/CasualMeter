@@ -132,13 +132,10 @@ namespace Tera.DamageMeter
             result.Damage = message.Damage;
             result.Heal = message.Heal;
 
-            if (!message.IsHeal)
-            {
-                result.Hits++;
-                if (message.IsCritical)
-                    result.Crits++;
-            }
-
+            result.Hits++;
+            if (message.IsCritical)
+                result.Crits++;
+            
             return result;
         }
 

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Tera.Game.Messages;
 
 namespace Tera.Game
 {
@@ -13,8 +14,16 @@ namespace Tera.Game
     public class SkillDatabase
     {
         private readonly Dictionary<RaceGenderClass, List<UserSkill>> _userSkilldata = new Dictionary<RaceGenderClass, List<UserSkill>>();
+        private readonly Dictionary<PlayerClass, List<Skill>> _damageSkillIdOverrides = new Dictionary<PlayerClass, List<Skill>>();
+        private readonly Dictionary<PlayerClass, List<Skill>> _healSkillIdOverrides = new Dictionary<PlayerClass, List<Skill>>();
 
-        public SkillDatabase(string filename)
+        public SkillDatabase(string directory)
+        {
+            InitializeSkillDatabase(Path.Combine(directory, "user_skills.txt"));
+            InitializeSkillDatabaseOverrides(Path.Combine(directory, "skill-overrides"));
+        }
+
+        private void InitializeSkillDatabase(string filename)
         {
             var lines = File.ReadLines(filename);
             var listOfParts = lines.Select(s => s.Split(new[] { ' ' }, 5));
@@ -27,9 +36,68 @@ namespace Tera.Game
             }
         }
 
-        // skillIds are reused across races and class, so we need a RaceGenderClass to disambiguate them
-        public UserSkill Get(UserEntity user, int skillId)
+        private void InitializeSkillDatabaseOverrides(string directory)
         {
+            InitializeSkillDatabaseOverrides(Path.Combine(directory, "damage"), _damageSkillIdOverrides);
+            InitializeSkillDatabaseOverrides(Path.Combine(directory, "heal"), _healSkillIdOverrides);
+        }
+
+        private void InitializeSkillDatabaseOverrides(string directory, Dictionary<PlayerClass, List<Skill>> collection)
+        {
+            foreach (var file in Directory.GetFiles(directory))
+            {
+                PlayerClass playerClass;
+                if (Enum.TryParse(Path.GetFileNameWithoutExtension(file), true, out playerClass))
+                {
+                    collection[playerClass] = new List<Skill>();
+                    var lines = File.ReadLines(file);
+                    var listOfParts = lines.Select(s => s.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
+                    foreach (var parts in listOfParts)
+                    {
+                        int skillId;
+                        string skillName;
+                        bool? isChained = null;
+
+                        if (parts.Length >= 3)
+                        {
+                            isChained = parts[2].Equals("Chained", StringComparison.OrdinalIgnoreCase) ? (bool?)true :
+                                        parts[2].Equals("Unchained", StringComparison.OrdinalIgnoreCase) ? (bool?)false :
+                                        null;
+                        }
+                        if (parts.Length >= 2)
+                        {
+                            if (int.TryParse(parts[0], out skillId))
+                            {
+                                skillName = parts[1];
+                                collection[playerClass].Add(new Skill(skillId, skillName, isChained));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // skillIds are reused across races and class, so we need a RaceGenderClass to disambiguate them
+        public Skill Get(UserEntity user, EachSkillResultServerMessage message)
+        {
+            var skillId = message.SkillId;
+
+            //check if we have an override first
+
+            var overrideCollection = message.IsHeal ? _healSkillIdOverrides : _damageSkillIdOverrides;
+            if (overrideCollection.ContainsKey(user.RaceGenderClass.Class))
+            {   //check class specific overrides
+                var skill = overrideCollection[user.RaceGenderClass.Class].FirstOrDefault(s => s.Id == skillId);
+                //check common overrides
+                if (skill == null && overrideCollection.ContainsKey(PlayerClass.Common))
+                {
+                    skill = overrideCollection[PlayerClass.Common].FirstOrDefault(s => s.Id == skillId);
+                }
+                
+                if (skill != null)
+                    return skill;
+            } 
+
             var raceGenderClass = user.RaceGenderClass;
             var comparer = new Helpers.ProjectingEqualityComparer<Skill, int>(x => x.Id);
             foreach (var rgc2 in raceGenderClass.Fallbacks())
@@ -49,23 +117,6 @@ namespace Tera.Game
                 return item;
             }
             return null;
-        }
-
-        public UserSkill GetOrPlaceholder(UserEntity user, int skillId)
-        {
-            if (user == null)
-                throw new ArgumentNullException("user");
-
-            var existing = Get(user, skillId);
-            if (existing != null)
-                return existing;
-
-            return new UserSkill(skillId, user.RaceGenderClass, "Unknown " + skillId);
-        }
-
-        public string GetName(UserEntity user, int skillId)
-        {
-            return GetOrPlaceholder(user, skillId).Name;
         }
     }
 }

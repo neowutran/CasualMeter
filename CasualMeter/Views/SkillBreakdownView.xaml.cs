@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -8,11 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using CasualMeter.Common.Conductors;
 using CasualMeter.Common.Conductors.Messages;
 using CasualMeter.Common.Converters;
@@ -110,8 +105,18 @@ namespace CasualMeter.Views
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
+                        Header = "Is Heal?",
+                        Binding = new Binding(nameof(SkillResult.IsHeal))
+                    });
+                    SkillResultsGrid.Columns.Add(new DataGridTextColumn
+                    {
                         Header = "Is Crit?",
                         Binding = new Binding(nameof(SkillResult.IsCritical))
+                    });
+                    SkillResultsGrid.Columns.Add(new DataGridTextColumn
+                    {
+                        Header = "Is Chained?",
+                        Binding = new Binding(nameof(SkillResult.IsChained))
                     });
                     break;
                 case nameof(SkillViewType.AggregatedSkillIdView):
@@ -133,6 +138,11 @@ namespace CasualMeter.Views
                         {
                             Converter = _longToStringConverter
                         }
+                    });
+                    SkillResultsGrid.Columns.Add(new DataGridTextColumn
+                    {
+                        Header = "Is Heal?",
+                        Binding = new Binding(nameof(AggregatedSkillResult.IsHeal))
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {

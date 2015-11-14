@@ -9,7 +9,7 @@
         xmlns:lc="clr-namespace:Lunyx.Common.UI.Wpf.Controls;assembly=Lunyx.Common.UI.Wpf"
         mc:Ignorable="d"
         Title="SkillBreakdownView"
-        Width="700">
+        Width="800">
     <Grid x:Name="LayoutGrid">
         <Grid.Resources>
             <Style TargetType="TextBlock">

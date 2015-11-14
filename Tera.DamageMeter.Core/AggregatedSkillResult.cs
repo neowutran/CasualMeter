@@ -10,6 +10,7 @@ namespace Tera.DamageMeter
     {
         public string DisplayName { get; set; }
         public long Amount { get; set; }
+        public bool? IsHeal { get; set; }
         public int Hits { get; set; }
         public double CritRate { get; set; }
         public long HighestCrit { get; set; }

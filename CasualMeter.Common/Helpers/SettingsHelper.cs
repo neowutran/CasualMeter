@@ -2,17 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Net.Mime;
-using CasualMeter.Common.Conductors;
 using CasualMeter.Common.Entities;
 using Newtonsoft.Json;
-using Nicenis.ComponentModel;
-using Tera;
-using Tera.DamageMeter;
 using Tera.Data;
 using Tera.Game;
-using Tera.Game.Messages;
-using Tera.Sniffing;
 
 namespace CasualMeter.Common.Helpers
 {

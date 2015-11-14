@@ -149,7 +149,7 @@ namespace CasualMeter
 
             var skillResultMessage = message as EachSkillResultServerMessage;
             if (skillResultMessage != null && !skillResultMessage.IsUseless &&//stuff like warrior DFA
-                (DamageTracker.FirstAttack != null || !skillResultMessage.IsHeal) &&//only record first hit is it's a damage hit (heals occurring outside of fights)
+                (DamageTracker.FirstAttack != null || (!skillResultMessage.IsHeal && skillResultMessage.Amount > 0)) &&//only record first hit is it's a damage hit (heals occurring outside of fights)
                 !(skillResultMessage.Target.Equals(skillResultMessage.Source) && !skillResultMessage.IsHeal))//disregard damage dealt to self (gunner self destruct)
             {   
                 var skillResult = new SkillResult(skillResultMessage, _entityTracker, _playerTracker, _teraData.SkillDatabase);

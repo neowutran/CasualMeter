@@ -7,11 +7,13 @@ namespace Tera.Game
     {
         public int Id { get; private set; }
         public string Name { get; private set; }
-
-        internal Skill(int id, string name)
+        public bool? IsChained { get; private set; }
+        
+        internal Skill(int id, string name, bool? isChained = null)
         {
             Id = id;
             Name = name;
+            IsChained = isChained;
         }
     }
 

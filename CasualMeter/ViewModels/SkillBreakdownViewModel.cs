@@ -111,7 +111,7 @@ namespace CasualMeter.ViewModels
             };
 
             //set the intial view
-            var initialView = SkillViewType.AggregatedSkillIdView;
+            var initialView = SkillViewType.AggregatedSkillNameView;
             SortDescriptionSource = SortDescriptionMappings[initialView];
             SelectedCollectionView = ComboBoxEntities.First(cbe => cbe.Key == initialView);
 
@@ -137,15 +137,16 @@ namespace CasualMeter.ViewModels
                                  group s by s.SkillId into grps
                                  select new AggregatedSkillResult
                                  {
-                                     DisplayName = grps.FirstOrDefault()?.SkillName ?? "Unknown Skill",
+                                     DisplayName = grps.FirstOrDefault()?.SkillNameDetailed ?? "Unknown Skill",
                                      Amount = grps.Sum(g => g.Amount),
+                                     IsHeal = grps.FirstOrDefault()?.IsHeal,
                                      Hits = grps.Count(),
                                      CritRate = (double)grps.Count(g => g.IsCritical) / grps.Count(),
                                      HighestCrit = grps.Any(g => g.IsCritical) ? grps.Where(g => g.IsCritical).Max(g => g.Amount) : 0,
                                      LowestCrit = grps.Any(g => g.IsCritical) ? grps.Where(g => g.IsCritical).Min(g => g.Amount) : 0,
                                      AverageCrit = grps.Any(g => g.IsCritical) ? Convert.ToInt64(grps.Where(g => g.IsCritical).Average(g => g.Amount)) : 0,
                                      AverageWhite = grps.Any(g => !g.IsCritical) ? Convert.ToInt64(grps.Where(g => !g.IsCritical).Average(g => g.Amount)) : 0,
-                                     DamagePercent = (double)grps.Sum(g => g.Amount) / SkillLog.Sum(s => s.Amount)
+                                     DamagePercent = (double)grps.Where(g => !g.IsHeal).Sum(g => g.Amount) / SkillLog.Where(s => !s.IsHeal).Sum(s => s.Amount)
                                  }).ToList();
 
             var aggregatedByName =  (from s in SkillLog
@@ -154,13 +155,14 @@ namespace CasualMeter.ViewModels
                                      {
                                          DisplayName = grps.Key,
                                          Amount = grps.Sum(g => g.Amount),
+                                         IsHeal = grps.FirstOrDefault()?.IsHeal,
                                          Hits = grps.Count(),
                                          CritRate = (double)grps.Count(g => g.IsCritical) / grps.Count(),
                                          HighestCrit = grps.Any(g => g.IsCritical) ? grps.Where(g => g.IsCritical).Max(g => g.Amount) : 0,
                                          LowestCrit = grps.Any(g => g.IsCritical) ? grps.Where(g => g.IsCritical).Min(g => g.Amount) : 0,
                                          AverageCrit = grps.Any(g => g.IsCritical) ? Convert.ToInt64(grps.Where(g => g.IsCritical).Average(g => g.Amount)) : 0,
                                          AverageWhite = grps.Any(g => !g.IsCritical) ? Convert.ToInt64(grps.Where(g => !g.IsCritical).Average(g => g.Amount)) : 0,
-                                         DamagePercent = (double)grps.Sum(g => g.Amount) / SkillLog.Sum(s => s.Amount)
+                                         DamagePercent = (double)grps.Where(g => !g.IsHeal).Sum(g => g.Amount) / SkillLog.Where(s => !s.IsHeal).Sum(s => s.Amount)
                                      }).ToList();
 
             FillSkillLog(AggregatedSkillLogById, aggregatedById);

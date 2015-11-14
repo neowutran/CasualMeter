@@ -7,23 +7,8 @@ using System.Threading.Tasks;
 
 namespace CasualMeter.Common.Entities
 {
-    public class Settings
+    public class Settings : DefaultValueEntity
     {
-        public Settings() : this(100, 100, new HotKeySettings(), 1, 1)
-        {
-
-        }
-
-        public Settings(double windowLeft, double windowTop, HotKeySettings hotKeys,
-            double opacity, double uiScale)
-        {
-            WindowLeft = windowLeft;
-            WindowTop = windowTop;
-            HotKeys = hotKeys;
-            Opacity = opacity;
-            UiScale = uiScale;
-        }
-
         [DefaultValue(100)]
         public double WindowLeft { get; set; }
 

@@ -4,40 +4,28 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using CasualMeter.Common.Helpers;
-using Nicenis.ComponentModel;
+using System.Windows.Input;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace CasualMeter.Common.Entities
 {
-    public class HotKeySettings
+    public class HotKeySettings : DefaultValueEntity
     {
-        public HotKeySettings() : this(Keys.ControlKey.AsString(),
-                                       Keys.Insert.AsString(),
-                                       Keys.Delete.AsString(),
-                                       Keys.End.AsString())
-        {
-            
-        }
+        [JsonConverter(typeof(StringEnumConverter))]
+        [DefaultValue(ModifierKeys.Control)]
+        public ModifierKeys Modifier { get; set; }
 
-        public HotKeySettings(string modifier, string pasteStats, string reset, string saveAndReset)
-        {
-            Modifier = modifier;
-            PasteStats = pasteStats;
-            Reset = reset;
-            SaveAndReset = saveAndReset;
-        }
+        [JsonConverter(typeof(StringEnumConverter))]
+        [DefaultValue(Key.Insert)]
+        public Key PasteStats { get; set; }
 
-        [DefaultValue("ControlKey")]
-        public string Modifier { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        [DefaultValue(Key.Delete)]
+        public Key Reset { get; set; }
 
-        [DefaultValue("Ins")]
-        public string PasteStats { get; set; }
-
-        [DefaultValue("Del")]
-        public string Reset { get; set; }
-
-        [DefaultValue("End")]
-        public string SaveAndReset { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        [DefaultValue(Key.End)]
+        public Key SaveAndReset { get; set; }
     }
 }

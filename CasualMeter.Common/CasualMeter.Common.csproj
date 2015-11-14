@@ -40,8 +40,9 @@
     <Reference Include="GalaSoft.MvvmLight.Platform">
       <HintPath>..\packages\MvvmLightLibs.5.2.0.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
     </Reference>
-    <Reference Include="Gma.UserActivityMonitor">
-      <HintPath>..\lib\HookManager\Gma.UserActivityMonitor.dll</HintPath>
+    <Reference Include="GlobalHotKey, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GlobalHotKey.1.1.0\lib\GlobalHotKey.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Lunyx.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -67,7 +68,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.2.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -99,6 +99,7 @@
     <Compile Include="Converters\LongToTotalDamageConverter.cs" />
     <Compile Include="Converters\SavedEncounterToStringConverter.cs" />
     <Compile Include="Converters\TimeSpanToTotalTimeConverter.cs" />
+    <Compile Include="Entities\DefaultValueEntity.cs" />
     <Compile Include="Entities\HotKeySettings.cs" />
     <Compile Include="Entities\Settings.cs" />
     <Compile Include="Formatters\PlayerStatsFormatter.cs" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,6 +14,7 @@ using CasualMeter.Common.Conductors.Messages;
 using CasualMeter.Common.Formatters;
 using CasualMeter.Common.Helpers;
 using GalaSoft.MvvmLight.CommandWpf;
+using log4net;
 using Lunyx.Common.UI.Wpf;
 using Tera;
 using Tera.DamageMeter;
@@ -25,7 +27,10 @@ namespace CasualMeter
 {
     public class ShellViewModel : ViewModelBase
     {
-        private readonly TeraSniffer _teraSniffer;
+        private static readonly ILog Logger = LogManager.GetLogger
+            (MethodBase.GetCurrentMethod().DeclaringType);
+
+        private ITeraSniffer _teraSniffer;
         private TeraData _teraData;
         private MessageFactory _messageFactory;
         private EntityTracker _entityTracker;
@@ -33,10 +38,6 @@ namespace CasualMeter
 
         public ShellViewModel()
         {
-            _teraSniffer = new TeraSniffer(BasicTeraData.Servers);
-            _teraSniffer.MessageReceived += HandleMessageReceived;
-            _teraSniffer.NewConnection += HandleNewConnection;
-
             CasualMessenger.Instance.Messenger.Register<PastePlayerStatsMessage>(this, PasteStats);
             CasualMessenger.Instance.Messenger.Register<ResetPlayerStatsMessage>(this, Reset);
             CasualMessenger.Instance.Messenger.Register<ExitMessage>(this, Exit);
@@ -92,8 +93,22 @@ namespace CasualMeter
 
         public void Initialize()
         {
-            //start sniffing
+            if (_teraSniffer != null)
+            {   //dereference the existing sniffer if it exists
+                var sniffer = _teraSniffer;
+                _teraSniffer = null;
+                sniffer.Enabled = false;
+                sniffer.MessageReceived -= HandleMessageReceived;
+                sniffer.NewConnection -= HandleNewConnection;
+                Logger.Info("Sniffer has been disabled.");
+            }
+            
+            _teraSniffer = new TeraSniffer(BasicTeraData.Servers);
+            _teraSniffer.MessageReceived += HandleMessageReceived;
+            _teraSniffer.NewConnection += HandleNewConnection;
             _teraSniffer.Enabled = true;
+
+            Logger.Info("Sniffer has been enabled.");
         }
 
         private void HandleNewConnection(Server server)
@@ -107,6 +122,8 @@ namespace CasualMeter
 
             Reset(null);
             DamageTracker = DamageTracker ?? new DamageTracker();
+
+            Logger.Info($"Connected to server {server.Name}.");
         }
 
         private void Reset(ResetPlayerStatsMessage message)

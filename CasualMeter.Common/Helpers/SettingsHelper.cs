@@ -56,15 +56,22 @@ namespace CasualMeter.Common.Helpers
         private void Load()
         {
             if (File.Exists(ConfigFilePath))
-            {
-                Settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(ConfigFilePath),
-                    new JsonSerializerSettings
-                    {
-                        DefaultValueHandling = DefaultValueHandling.Populate
-                    });
+            {   //load settings if the file exists
+                try
+                {
+                    Settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(ConfigFilePath),
+                        new JsonSerializerSettings
+                        {
+                            DefaultValueHandling = DefaultValueHandling.Populate
+                        });
+                }
+                catch (JsonSerializationException)
+                {   //someone fucked up their settings...
+                    Settings = new Settings();
+                }
             }
             else
-            {
+            {   //no saved settings found
                 Settings = new Settings();
             }
             Save();

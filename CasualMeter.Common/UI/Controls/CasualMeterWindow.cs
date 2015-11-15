@@ -32,7 +32,7 @@ namespace CasualMeter.Common.UI.Controls
             ShowInTaskbar = false;
             ResizeMode = ResizeMode.NoResize;
             WindowStyle= WindowStyle.None;
-            SizeToContent = SizeToContent.Height;
+            AllowsTransparency = true;
             Background = null;
                             
             //set cursor

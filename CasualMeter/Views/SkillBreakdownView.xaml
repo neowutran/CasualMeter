@@ -8,7 +8,7 @@
         xmlns:sys="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:lc="clr-namespace:Lunyx.Common.UI.Wpf.Controls;assembly=Lunyx.Common.UI.Wpf"
         mc:Ignorable="d"
-        Title="SkillBreakdownView"
+        Title="{Binding PlayerInfo.Name, StringFormat=Skill Breakdown - {0}}"
         Width="800">
     <Grid x:Name="LayoutGrid">
         <Grid.Resources>

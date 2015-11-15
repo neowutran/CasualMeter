@@ -8,7 +8,7 @@
                             xmlns:casualMeter="clr-namespace:CasualMeter"
                             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                             xmlns:converters1="clr-namespace:Lunyx.Common.UI.Wpf.Converters;assembly=Lunyx.Common.UI.Wpf"
-                            Title="ShellView"
+                            Title="Casual Meter"
                             Width = "{StaticResource Width}"
                             Opacity="{Binding ElementName=OpacityScaleSlider, Path=Value}">
     <Grid>

@@ -10,3 +10,8 @@
 80200;Whipsaw II;Unchained
 120200;Shadow Burst II (1)
 120201;Shadow Burst II (2)
+100230;Pendulum Strike II;Chained
+100200;Pendulum Strike II;Unchained
+60231;Death Spiral II (2)
+60230;Death Spiral II (1);Chained
+60200;Death Spiral II (1);Unchained

@@ -29,10 +29,10 @@
     <SupportUrl>https://github.com/lunyx/CasualMeter</SupportUrl>
     <ProductName>CasualMeter</ProductName>
     <PublisherName>Lunyx</PublisherName>
-    <MinimumRequiredVersion>1.0.2.1</MinimumRequiredVersion>
+    <MinimumRequiredVersion>1.0.2.2</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationRevision>3</ApplicationRevision>
     <ApplicationVersion>1.0.2.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>

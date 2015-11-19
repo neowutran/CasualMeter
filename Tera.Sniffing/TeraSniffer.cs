@@ -28,7 +28,7 @@ namespace Tera.Sniffing
             _serversByIp = servers.ToDictionary(x => x.Ip);
             var netmasks =
                 _serversByIp.Keys.Select(s => string.Join(".", s.Split('.').Take(3)) + ".0/24").Distinct().ToArray();
-            string filter = string.Join(" or ", netmasks.Select(x => string.Format("(net {0})", x)));
+            string filter = string.Join(" or ", netmasks.Select(x => $"(net {x})"));
             filter = "tcp and (" + filter + ")";
 
             _ipSniffer = new IpSnifferWinPcap(filter);

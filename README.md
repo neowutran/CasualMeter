@@ -22,7 +22,7 @@ Here are some of the features that are currently implemented:
 * [Hardcodet] - WPF Taskbar Notification Icon
 * [log4net] - Logging
 * [Nicenis] - INotifyProperyChanged implementation
-* [Gma.UserActivityMonitor] - Global hotkeys
+* [GlobalHotKey] - Global hotkeys
 * [Newtonsoft] - Json serializer/deserializer
 * [SharpPCap] - Wrapper around WinPCap, used for reading packets
 
@@ -55,7 +55,7 @@ MIT
    [Hardcodet]: <http://www.hardcodet.net/wpf-notifyicon>
    [log4net]: <https://logging.apache.org/log4net/>
    [Nicenis]: <https://nicenis.codeplex.com/>
-   [Gma.UserActivityMonitor]: <http://www.codeproject.com/Articles/7294/Processing-Global-Mouse-and-Keyboard-Hooks-in-C>
+   [GlobalHotKey]: <https://github.com/kirmir/GlobalHotKey/>
    [Newtonsoft]: <http://www.newtonsoft.com/json>
    [TeraDamageMeter]: <https://github.com/gothos-folly/TeraDamageMeter>
    [fork]: <https://github.com/bonekid/TeraDamageMeter>

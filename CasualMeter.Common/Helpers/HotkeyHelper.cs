@@ -31,21 +31,6 @@ namespace CasualMeter.Common.Helpers
 
         public void Initialize()
         {
-            //ModifierKeys modifier;
-            //Key pasteStatsKey;
-            //Key resetKey;
-            //Key saveAndResetKey;
-
-            //if (!(Enum.TryParse(HotKeys.Modifier, out modifier) &&
-            //      Enum.TryParse(HotKeys.PasteStats, out pasteStatsKey) &&
-            //      Enum.TryParse(HotKeys.Reset, out resetKey) &&
-            //      Enum.TryParse(HotKeys.SaveAndReset, out saveAndResetKey)))
-            //{
-            //    //if we can't parse all of the hotkeys, reset to default and save
-            //    HotKeys = new HotKeySettings();
-            //    SettingsHelper.Instance.Save();
-            //}
-
             Register(HotKeys.Modifier, HotKeys.PasteStats, CasualMessenger.Instance.PastePlayerStats);
             Register(HotKeys.Modifier, HotKeys.Reset, () => CasualMessenger.Instance.ResetPlayerStats(false));
             Register(HotKeys.Modifier, HotKeys.SaveAndReset, () => CasualMessenger.Instance.ResetPlayerStats(true));

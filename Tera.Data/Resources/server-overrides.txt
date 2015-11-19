@@ -1,0 +1,13 @@
+﻿###########################################################
+# Add additional servers in this file
+#
+# Format must follow the format IP Region ServerName
+#
+# Example:
+# 123.22.22.211 NA Some Random Test Server
+#
+# Current possible regions: EU, KR, NA, RU
+#
+# Lines starting with '#' are ignored
+# Place servers below the next line
+###########################################################

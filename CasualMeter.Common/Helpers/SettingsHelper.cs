@@ -18,15 +18,16 @@ namespace CasualMeter.Common.Helpers
         
         public static SettingsHelper Instance => Lazy.Value;
 
-        private static readonly string ConfigPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CasualMeter");
-        private static readonly string ConfigFilePath = Path.Combine(ConfigPath, "settings.json");
+        private static readonly string SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CasualMeter");
+        private static readonly string ConfigFilePath = Path.Combine(SettingsPath, "settings.json");
 
         public Settings Settings { get; set; }
 
         private SettingsHelper()
         {
+            Directory.CreateDirectory(SettingsPath);//ensure settings directory is created
             _classIcons = new Dictionary<PlayerClass, string>();
-            BasicTeraData = new BasicTeraData();
+            BasicTeraData = new BasicTeraData(SettingsPath);
             LoadClassIcons();
             Load();
         }
@@ -72,7 +73,6 @@ namespace CasualMeter.Common.Helpers
 
         public void Save()
         {
-            Directory.CreateDirectory(ConfigPath);
             File.WriteAllText(ConfigFilePath, JsonConvert.SerializeObject(Settings, Formatting.Indented));
         }
 

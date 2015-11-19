@@ -59,8 +59,7 @@ namespace CasualMeter
             }
             else
             {
-                Logger.Error(e.Message);
-                Logger.Error(e.StackTrace);
+                Logger.Error(e);
             }
         }
 

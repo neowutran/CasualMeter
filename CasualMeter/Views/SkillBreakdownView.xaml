@@ -7,7 +7,9 @@
         xmlns:casualMeter="clr-namespace:CasualMeter"
         xmlns:sys="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:lc="clr-namespace:Lunyx.Common.UI.Wpf.Controls;assembly=Lunyx.Common.UI.Wpf"
+        xmlns:viewModels="clr-namespace:CasualMeter.ViewModels"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance d:Type=viewModels:SkillBreakdownViewModel}"
         Title="{Binding PlayerInfo.Name, StringFormat=Skill Breakdown - {0}}"
         Width="800">
     <Grid x:Name="LayoutGrid">

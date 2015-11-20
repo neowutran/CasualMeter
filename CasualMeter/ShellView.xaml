@@ -7,10 +7,14 @@
                             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
                             xmlns:casualMeter="clr-namespace:CasualMeter"
                             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                             xmlns:converters1="clr-namespace:Lunyx.Common.UI.Wpf.Converters;assembly=Lunyx.Common.UI.Wpf"
+                            mc:Ignorable="d"
                             Title="Casual Meter"
                             Width = "{StaticResource Width}"
-                            Opacity="{Binding ElementName=OpacityScaleSlider, Path=Value}">
+                            Opacity="{Binding ElementName=OpacityScaleSlider, Path=Value}"
+                            d:DataContext="{d:DesignInstance d:Type=casualMeter:ShellViewModel}">
     <Grid>
         <Grid.Resources>
             <Style TargetType="Border">

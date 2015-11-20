@@ -141,7 +141,12 @@ namespace Tera.DamageMeter
 
         public long Dps(long damage)
         {
-            var durationInSeconds = Duration.TotalSeconds;
+            return Dps(damage, Duration);
+        }
+
+        public long Dps(long damage, TimeSpan duration)
+        {
+            var durationInSeconds = duration.TotalSeconds;
             if (durationInSeconds < 1)
                 durationInSeconds = 1;
             var dps = damage / durationInSeconds;

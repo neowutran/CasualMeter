@@ -4,7 +4,9 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:converters="clr-namespace:CasualMeter.Common.Converters"
+      xmlns:damageMeter="clr-namespace:Tera.DamageMeter;assembly=Tera.DamageMeter.Core"
       mc:Ignorable="d"
+      d:DataContext="{d:DesignInstance d:Type=damageMeter:PlayerInfo}"
       Width="{StaticResource Width}" Height="64">
     <Grid.Resources>
         <Style TargetType="TextBlock">
@@ -18,6 +20,8 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="FontSize" Value="20"/>
         </Style>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" True="Collapsed" False="Visible"/>
         <converters:PlayerClassToImageConverter x:Key="PlayerClassToImageConverter"/>
         <converters:DoubleToPercentStringConverter x:Key="DoubleToPercentStringConverter"/>
         <converters:LongToStringConverter x:Key="LongToStringConverter"/>
@@ -54,7 +58,15 @@
             <TextBlock Text="{Binding Dealt.Damage, Converter={StaticResource LongToStringConverter}}"
                    Foreground="{StaticResource BrushDamage}"/>
         </StackPanel>
-        <TextBlock Text="{Binding Dps, Converter={StaticResource DpsToStringConverter}}"
-                   TextAlignment="Right"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <TextBlock Text="{Binding Dps, Converter={StaticResource DpsToStringConverter}}"
+                       TextAlignment="Right"
+                       Visibility="{Binding ElementName=ShowPersonalDpsCheckBox, Path=IsChecked, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
+            <TextBlock Text="{Binding PersonalDps, Converter={StaticResource DpsToStringConverter}}"
+                       TextAlignment="Right"
+                       Visibility="{Binding ElementName=ShowPersonalDpsCheckBox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+        </StackPanel>
+        
     </StackPanel>
 </Grid>

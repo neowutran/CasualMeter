@@ -61,20 +61,18 @@ namespace CasualMeter
             base.OnInitialized(e);
         }
 
-        private void SaveSettings()
+        private void SaveUiSettings()
         {
             SettingsHelper.Instance.Settings.WindowLeft = Left;
             SettingsHelper.Instance.Settings.WindowTop = Top;
             SettingsHelper.Instance.Settings.Opacity = OpacityScaleSlider.Value;
             SettingsHelper.Instance.Settings.UiScale = UiScaleSlider.Value;
-            SettingsHelper.Instance.Settings.IsPinned = ShellViewModel.IsPinned;
             SettingsHelper.Instance.Save();
         }
 
         private void PrepareClose(PrepareExitMessage message)
         {
-            SaveSettings();
-
+            SaveUiSettings();
             CasualMessenger.Instance.Messenger.Send(new ExitMessage());
         }
 
@@ -87,7 +85,7 @@ namespace CasualMeter
 
         private void SettingsButton_OnUnchecked(object sender, RoutedEventArgs e)
         {
-            SaveSettings();
+            SaveUiSettings();
         }
 
         private void SkillInfo_OnMouseDown(object sender, MouseButtonEventArgs e)

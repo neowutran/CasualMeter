@@ -121,6 +121,17 @@
                                 Margin="3"
                                 HorizontalAlignment="Right"/>
                     </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0">Show Personal DPS</TextBlock>
+                        <CheckBox Grid.Column="1" x:Name="ShowPersonalDpsCheckBox"
+                                  IsChecked="{Binding ShowPersonalDps}"
+                                  HorizontalAlignment="Right"
+                                  Margin="0,6,1,0"/>
+                    </Grid>
                 </StackPanel>
             </Border>
             <ItemsControl Background="Transparent" Width="{StaticResource Width}"

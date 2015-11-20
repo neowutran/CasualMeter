@@ -84,6 +84,12 @@ namespace CasualMeter
             }
         }
 
+        public bool ShowPersonalDps
+        {
+            get { return GetProperty(getDefault: () => SettingsHelper.Instance.Settings.ShowPersonalDps); }
+            set { SetProperty(value, onChanged: e => SettingsHelper.Instance.Settings.ShowPersonalDps = value); }
+        }
+
         #region Commands
 
         public RelayCommand<DamageTracker> LoadEncounterCommand

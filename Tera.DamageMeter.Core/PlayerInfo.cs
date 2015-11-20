@@ -3,6 +3,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Linq;
 using Lunyx.Common.UI.Wpf;
 using Tera.Game;
 
@@ -33,6 +34,17 @@ namespace Tera.DamageMeter
         public long Dps { get { return Tracker.Dps(Dealt.Damage); } }
         public double CritFraction { get { return (double) Dealt.Crits/Dealt.Hits; } }
 
+        public long PersonalDps
+        {
+            get
+            {
+                var firstOrDefault = SkillLog.FirstOrDefault(s => s.Damage > 0);
+                var lastOrDefault = SkillLog.LastOrDefault(s => s.Damage > 0);
+                if (firstOrDefault != null && lastOrDefault != null)
+                    return Tracker.Dps(Dealt.Damage, lastOrDefault.Time - firstOrDefault.Time);
+                return Tracker.Dps(Dealt.Damage, TimeSpan.Zero);
+            }
+        }
 
         public PlayerInfo(Player user, DamageTracker tracker)
         {
@@ -54,6 +66,7 @@ namespace Tera.DamageMeter
         {
             OnPropertyChanged(nameof(DamageFraction));
             OnPropertyChanged(nameof(Dps));
+            OnPropertyChanged(nameof(PersonalDps));
         }
 
         private void DealtOnPropertyChanged(object sender, PropertyChangedEventArgs e)

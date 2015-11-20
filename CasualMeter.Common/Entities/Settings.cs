@@ -24,6 +24,9 @@ namespace CasualMeter.Common.Entities
         [DefaultValue(true)]
         public bool IsPinned { get; set; }
 
+        [DefaultValue("{Name} {DPS} {DamagePercent}")]
+        public string DpsPasteFormat { get; set; }
+
         //since you can't set DefaultValueAttribute on objects
         private HotKeySettings _hotkeys;
         public HotKeySettings HotKeys

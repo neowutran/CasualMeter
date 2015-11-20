@@ -186,7 +186,7 @@ namespace CasualMeter
                 var placeHolder = new PlayerStatsFormatter(playerInfo, FormatHelpers.Invariant);
                 var playerText = first ? "" : " | ";
 
-                playerText += placeHolder.Replace("{Name} {DPS} {DamagePercent}");
+                playerText += placeHolder.Replace(SettingsHelper.Instance.Settings.DpsPasteFormat);
 
                 if (sb.Length + playerText.Length > maxLength)
                     break;

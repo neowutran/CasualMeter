@@ -81,7 +81,8 @@
                                Source="{StaticResource PinButtonImage}"></Image>
                     </ToggleButton>
                     <ToggleButton Grid.Column="2" x:Name="SettingsButton"
-                                  Style="{StaticResource ToggleButtonStyle}">
+                                  Style="{StaticResource ToggleButtonStyle}" 
+                                  Unchecked="SettingsButton_OnUnchecked">
                         <Image Style="{StaticResource ButtonImageStyle}"
                                Source="{StaticResource SettingsButtonImage}"/>
                     </ToggleButton>

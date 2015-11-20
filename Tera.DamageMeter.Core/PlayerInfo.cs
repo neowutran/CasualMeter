@@ -38,8 +38,8 @@ namespace Tera.DamageMeter
         {
             get
             {
-                var firstOrDefault = SkillLog.FirstOrDefault(s => s.Damage > 0);
-                var lastOrDefault = SkillLog.LastOrDefault(s => s.Damage > 0);
+                var firstOrDefault = SkillLog.FirstOrDefault(s => Tracker.IsValidAttack(s));
+                var lastOrDefault = SkillLog.LastOrDefault(s => Tracker.IsValidAttack(s));
                 if (firstOrDefault != null && lastOrDefault != null)
                     return Tracker.Dps(Dealt.Damage, lastOrDefault.Time - firstOrDefault.Time);
                 return Tracker.Dps(Dealt.Damage, TimeSpan.Zero);

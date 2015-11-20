@@ -109,7 +109,7 @@ namespace Tera.DamageMeter
             //    TotalReceived.Add(statsChange);
             //}
 
-            if (skillResult.SourcePlayer != null && (skillResult.Damage > 0) && (skillResult.Source.Id != skillResult.Target.Id))
+            if (IsValidAttack(skillResult))
             {
                 if (FirstAttack == null)
                     FirstAttack = skillResult.Time;
@@ -121,6 +121,12 @@ namespace Tera.DamageMeter
             {   //force update of calculated dps metrics
                 playerStat.UpdateStats();
             }
+        }
+
+        public bool IsValidAttack(SkillResult skillResult)
+        {
+            return skillResult.SourcePlayer != null && (skillResult.Damage > 0) &&
+                   (skillResult.Source.Id != skillResult.Target.Id);
         }
 
         private SkillStats StatsChange(SkillResult message)

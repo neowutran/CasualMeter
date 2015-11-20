@@ -1,5 +1,5 @@
 # CasualMeter
-[CasualMeter] is a free open-source damage meter based off [TeraDamageMeter].  The majority of the new stuff is UI and UX improvements, but there are some bug fixes as well.  This [fork] is also worth mentioning since I borrowed the dps paste and settings storage from there.
+[CasualMeter] is a free open-source DPS meter for TERA based off [TeraDamageMeter].  The majority of the new stuff is UI and UX improvements, but there are some bug fixes as well.  This [fork] is also worth mentioning since I borrowed the dps paste and settings storage from there.
 
 ### Features
 

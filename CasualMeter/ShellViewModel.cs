@@ -84,6 +84,12 @@ namespace CasualMeter
             }
         }
 
+        public bool UseCompactView
+        {
+            get { return GetProperty(getDefault: () => SettingsHelper.Instance.Settings.UseCompactView); }
+            set { SetProperty(value, onChanged: e => SettingsHelper.Instance.Settings.UseCompactView = value); }
+        }
+
         public bool ShowPersonalDps
         {
             get { return GetProperty(getDefault: () => SettingsHelper.Instance.Settings.ShowPersonalDps); }

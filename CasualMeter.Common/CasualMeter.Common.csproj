@@ -118,6 +118,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="UI\Controls\CompactPlayerInfoControl.xaml.cs">
+      <DependentUpon>CompactPlayerInfoControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\ViewModels\CasualViewModelBase.cs" />
     <Compile Include="UI\Controls\CasualMeterWindow.cs" />
     <Compile Include="UI\Controls\PlayerInfoControl.xaml.cs">
@@ -153,6 +156,10 @@
     <EmbeddedResource Include="Resources\Arrow.cur" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="UI\Controls\CompactPlayerInfoControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Controls\PlayerInfoControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -25,6 +25,9 @@ namespace CasualMeter.Common.Entities
         public bool IsPinned { get; set; }
 
         [DefaultValue(false)]
+        public bool UseCompactView { get; set; }
+
+        [DefaultValue(false)]
         public bool ShowPersonalDps { get; set; }
 
         [DefaultValue("{Name} {DPS} {DamagePercent}")]

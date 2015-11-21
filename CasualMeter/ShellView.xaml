@@ -126,6 +126,17 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0">Use Compact View</TextBlock>
+                        <CheckBox Grid.Column="1" x:Name="UseCompactViewCheckBox"
+                                  IsChecked="{Binding UseCompactView}"
+                                  HorizontalAlignment="Right"
+                                  Margin="0,6,1,0"/>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0">Show Personal DPS</TextBlock>
                         <CheckBox Grid.Column="1" x:Name="ShowPersonalDpsCheckBox"
                                   IsChecked="{Binding ShowPersonalDps}"
@@ -136,13 +147,36 @@
             </Border>
             <ItemsControl Background="Transparent" Width="{StaticResource Width}"
                           ItemsSource="{Binding Source={StaticResource PlayerStatsView}}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
+                <ItemsControl.Resources>
+                    <DataTemplate x:Key="FullViewTemplate">
                         <Border Style="{StaticResource BorderStyle}">
                             <controls:PlayerInfoControl PlayerInfo="{Binding}"
                                                         Style="{StaticResource PanelStyle}"
                                                         MouseDown="SkillInfo_OnMouseDown"/>
                         </Border>
+                    </DataTemplate>
+                    <DataTemplate x:Key="CompactViewTemplate">
+                        <Border Style="{StaticResource BorderStyle}">
+                            <controls:CompactPlayerInfoControl PlayerInfo="{Binding}"
+                                                               Style="{StaticResource PanelStyle}"
+                                                               MouseDown="SkillInfo_OnMouseDown"/>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.Resources>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ContentControl Content="{Binding}">
+                            <ContentControl.Style>
+                                <Style TargetType="{x:Type ContentControl}">
+                                    <Setter Property="ContentTemplate" Value="{StaticResource FullViewTemplate}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=UseCompactViewCheckBox, Path=IsChecked}" Value="True">
+                                            <Setter Property="ContentTemplate" Value="{StaticResource CompactViewTemplate}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ContentControl.Style>
+                        </ContentControl>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

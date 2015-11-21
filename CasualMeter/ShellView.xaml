@@ -150,9 +150,9 @@
                 <ItemsControl.Resources>
                     <DataTemplate x:Key="FullViewTemplate">
                         <Border Style="{StaticResource BorderStyle}">
-                            <controls:PlayerInfoControl PlayerInfo="{Binding}"
-                                                        Style="{StaticResource PanelStyle}"
-                                                        MouseDown="SkillInfo_OnMouseDown"/>
+                            <controls:FullPlayerInfoControl PlayerInfo="{Binding}"
+                                                            Style="{StaticResource PanelStyle}"
+                                                            MouseDown="SkillInfo_OnMouseDown"/>
                         </Border>
                     </DataTemplate>
                     <DataTemplate x:Key="CompactViewTemplate">

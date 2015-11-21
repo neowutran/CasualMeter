@@ -121,10 +121,11 @@
     <Compile Include="UI\Controls\CompactPlayerInfoControl.xaml.cs">
       <DependentUpon>CompactPlayerInfoControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Controls\PlayerInfoControl.cs" />
     <Compile Include="UI\ViewModels\CasualViewModelBase.cs" />
     <Compile Include="UI\Controls\CasualMeterWindow.cs" />
-    <Compile Include="UI\Controls\PlayerInfoControl.xaml.cs">
-      <DependentUpon>PlayerInfoControl.xaml</DependentUpon>
+    <Compile Include="UI\Controls\FullPlayerInfoControl.xaml.cs">
+      <DependentUpon>FullPlayerInfoControl.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -160,7 +161,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Controls\PlayerInfoControl.xaml">
+    <Page Include="UI\Controls\FullPlayerInfoControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

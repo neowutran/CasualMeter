@@ -17,21 +17,11 @@ using Tera.DamageMeter;
 namespace CasualMeter.Common.UI.Controls
 {
     /// <summary>
-    /// Interaction logic for PlayerInfoControl.xaml
+    /// Interaction logic for FullPlayerInfoControl.xaml
     /// </summary>
-    public partial class PlayerInfoControl
+    public partial class FullPlayerInfoControl
     {
-        public static readonly DependencyProperty PlayerInfoProperty =
-        DependencyProperty.Register("PlayerInfo", typeof(PlayerInfo),
-            typeof(PlayerInfoControl), new UIPropertyMetadata(null));
-
-        public PlayerInfo PlayerInfo
-        {
-            get { return (PlayerInfo)GetValue(PlayerInfoProperty); }
-            set { SetValue(PlayerInfoProperty, value); }
-        }
-
-        public PlayerInfoControl()
+        public FullPlayerInfoControl()
         {
             InitializeComponent();
         }

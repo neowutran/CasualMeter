@@ -162,13 +162,12 @@ namespace CasualMeter
 
         private void HandleMessageReceived(Message obj)
         {
-            if (DamageTracker.IsArchived) return; //don't process while viewing a past encounter
-
             var message = _messageFactory.Create(obj);
             _entityTracker.Update(message);
 
             var skillResultMessage = message as EachSkillResultServerMessage;
-            if (skillResultMessage != null && !skillResultMessage.IsUseless &&//stuff like warrior DFA
+            if (!DamageTracker.IsArchived && //don't process while viewing a past encounter
+                skillResultMessage != null && !skillResultMessage.IsUseless &&//stuff like warrior DFA
                 (DamageTracker.FirstAttack != null || (!skillResultMessage.IsHeal && skillResultMessage.Amount > 0)) &&//only record first hit is it's a damage hit (heals occurring outside of fights)
                 !(skillResultMessage.Target.Equals(skillResultMessage.Source) && !skillResultMessage.IsHeal))//disregard damage dealt to self (gunner self destruct)
             {   

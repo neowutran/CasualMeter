@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
+using log4net;
 using PacketDotNet;
 using SharpPcap;
 using SharpPcap.WinPcap;
@@ -14,6 +16,9 @@ namespace NetworkSniffer
     // Only works when WinPcap is installed
     public class IpSnifferWinPcap : IpSniffer
     {
+        private static readonly ILog Logger = LogManager.GetLogger
+            (MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly string _filter;
         private WinPcapDeviceList _devices;
         private volatile uint _droppedPackets;
@@ -26,7 +31,8 @@ namespace NetworkSniffer
 
         public IEnumerable<string> Status()
         {
-            return _devices.Select(device => string.Format("Device {0} {1} {2}\r\n{3}", device.LinkType, device.Opened ? "Open" : "Closed", device.LastError, device));
+            return _devices.Select(device =>
+                $"Device {device.LinkType} {(device.Opened ? "Open" : "Closed")} {device.LastError}\r\n{device}");
         }
 
         public int? BufferSize { get; set; }
@@ -55,7 +61,16 @@ namespace NetworkSniffer
                 device.Open(DeviceMode.Promiscuous, 1000);
                 device.Filter = _filter;
                 if (BufferSize != null)
-                    device.KernelBufferSize = (uint)BufferSize.Value;
+                {
+                    try
+                    {
+                        device.KernelBufferSize = (uint) BufferSize.Value;
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Warn($"Failed to set KernelBufferSize to {BufferSize.Value} on {device.Name}. {e.Message}");
+                    }
+                }
                 device.StartCapture();
             }
         }

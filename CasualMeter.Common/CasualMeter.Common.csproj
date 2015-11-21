@@ -44,6 +44,9 @@
       <HintPath>..\packages\GlobalHotKey.1.1.0\lib\GlobalHotKey.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\lib\log4net\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Lunyx.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Lunyx\Lunyx.Common.dll</HintPath>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CasualMeter.Common.Helpers;
 using Tera.DamageMeter;
 
 namespace CasualMeter.Common.Formatters
@@ -23,7 +24,7 @@ namespace CasualMeter.Common.Formatters
 
             placeHolders.Add(new KeyValuePair<string, object>("Damage", formatHelpers.FormatValue(playerInfo.Dealt.Damage)));
             placeHolders.Add(new KeyValuePair<string, object>("DamageReceived", formatHelpers.FormatValue(playerInfo.Received.Damage)));
-            placeHolders.Add(new KeyValuePair<string, object>("DPS", $"{formatHelpers.FormatValue(playerInfo.Dps)}/s"));
+            placeHolders.Add(new KeyValuePair<string, object>("DPS", $"{formatHelpers.FormatValue(SettingsHelper.Instance.Settings.ShowPersonalDps ? playerInfo.PersonalDps : playerInfo.Dps)}/s"));
 
             Placeholders = placeHolders.ToDictionary(x => x.Key, y => y.Value);
             FormatProvider = formatHelpers.CultureInfo;

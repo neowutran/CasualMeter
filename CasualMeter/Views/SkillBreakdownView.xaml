@@ -15,7 +15,7 @@
     <Grid x:Name="LayoutGrid">
         <Grid.Resources>
             <Style TargetType="TextBlock">
-                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Foreground" Value="{StaticResource BrushWhite}"/>
                 <Setter Property="Padding" Value="5"/>
                 <Setter Property="VerticalAlignment" Value="Center"/>
             </Style>
@@ -54,6 +54,9 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
+            <Style TargetType="{x:Type DataGridCell}">
+                <Setter Property="Foreground" Value="{StaticResource BrushBlack}"></Setter>
+            </Style>
         </Grid.Resources>
         <StackPanel>
             <Border Style="{StaticResource BorderStyle}">
@@ -77,11 +80,11 @@
             </Border>
             <Grid MaxHeight="700">
                 <lc:SortableDataGrid x:Name="SkillResultsGrid"
-                                            ItemsSource="{Binding}"
-                                            AutoGenerateColumns="False"
-                                            CanUserResizeRows="False"
-                                            SelectionChanged="SkillResultsGrid_OnSelectionChanged"
-                                            SortDescriptionSource="{Binding SkillBreakdownViewModel.SortDescriptionSource, RelativeSource={RelativeSource FindAncestor, AncestorType=controls:CasualMeterWindow}}"/>
+                                     ItemsSource="{Binding}"
+                                     AutoGenerateColumns="False"
+                                     CanUserResizeRows="False"
+                                     SelectionChanged="SkillResultsGrid_OnSelectionChanged"
+                                     SortDescriptionSource="{Binding SkillBreakdownViewModel.SortDescriptionSource, RelativeSource={RelativeSource FindAncestor, AncestorType=controls:CasualMeterWindow}}"/>
             </Grid>
         </StackPanel>
     </Grid>

@@ -161,6 +161,11 @@ namespace CasualMeter
             {
                 DamageTracker.IsArchived = true;
                 ArchivedDamageTrackers.Add(DamageTracker);
+                return;
+            }
+            if (message != null && !message.ShouldSaveCurrent && DamageTracker.IsArchived)
+            {
+                ArchivedDamageTrackers.Remove(DamageTracker);
             }
 
             DamageTracker = new DamageTracker();

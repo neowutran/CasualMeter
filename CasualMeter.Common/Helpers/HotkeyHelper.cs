@@ -41,13 +41,20 @@ namespace CasualMeter.Common.Helpers
             Register(HotKeys.Modifier, HotKeys.SaveAndReset, () => CasualMessenger.Instance.ResetPlayerStats(true));
         }
 
+        public void Deactivate()
+        {
+            Unregister(HotKeys.Modifier, HotKeys.PasteStats);
+            Unregister(HotKeys.Modifier, HotKeys.Reset);
+            Unregister(HotKeys.Modifier, HotKeys.SaveAndReset);
+        }
+
         private void Manager_KeyPressed(object sender, KeyPressedEventArgs e)
         {
             if (e.HotKey != null)
                 _actions[e.HotKey]();
         }
 
-        public void Register(ModifierKeys modKey, Key key, Action action)
+        private void Register(ModifierKeys modKey, Key key, Action action)
         {
             try
             {
@@ -64,7 +71,7 @@ namespace CasualMeter.Common.Helpers
             }
         }
 
-        public void Unregister(ModifierKeys modKey, Key key)
+        private void Unregister(ModifierKeys modKey, Key key)
         {
             var hotkey = new HotKey(key, modKey);
             if (_actions.ContainsKey(hotkey))

@@ -30,9 +30,18 @@ namespace CasualMeter.Common.Helpers
             CasualMessenger.Instance.RefreshVisibility(IsTeraActive);
         }
 
+        public void UpdateHotKeys()
+        {
+            if (IsTeraActive)
+                HotkeyHelper.Instance.Initialize();
+            else
+                HotkeyHelper.Instance.Deactivate();
+        }
+
         private void OnFocusedWindowChanged(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
             ForceVisibilityRefresh();
+            UpdateHotKeys();
         }
 
         public bool SendString(string s)

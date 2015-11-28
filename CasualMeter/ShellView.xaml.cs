@@ -43,7 +43,7 @@ namespace CasualMeter
         {
             //ensure initialization of helpers
             SettingsHelper.Instance.Initialize();
-            HotkeyHelper.Instance.Initialize();
+            ProcessHelper.Instance.UpdateHotKeys();
 
             //initialize viewmodel
             DataContext = ViewModel = new ShellViewModel();

@@ -10,6 +10,7 @@ namespace Tera.Game
         private UserEntity _user;
         public uint PlayerId { get { return User.PlayerId; } }
         public string Name { get { return User.Name; } }
+        public bool IsHealer => Class == PlayerClass.Priest || Class == PlayerClass.Mystic;
         public string GuildName { get { return User.GuildName; } }
         public RaceGenderClass RaceGenderClass { get { return User.RaceGenderClass; } }
         public PlayerClass Class { get { return RaceGenderClass.Class; } }

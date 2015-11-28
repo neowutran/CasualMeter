@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -21,6 +22,12 @@ namespace CasualMeter.ViewModels
         public ThreadSafeObservableCollection<ComboBoxEntity> ComboBoxEntities
         {
             get { return GetProperty<ThreadSafeObservableCollection<ComboBoxEntity>>(); }
+            set { SetProperty(value); }
+        }
+
+        public ConcurrentDictionary<int, bool> SkillIsAttackDictionary
+        {
+            get { return GetProperty(getDefault: () => new ConcurrentDictionary<int, bool>()); }
             set { SetProperty(value); }
         }
 
@@ -117,33 +124,47 @@ namespace CasualMeter.ViewModels
             SortDescriptionSource = SortDescriptionMappings[initialView];
             SelectedCollectionView = ComboBoxEntities.First(cbe => cbe.Key == initialView);
 
+            bool isPlayerHealer = playerInfo.Player.IsHealer;
             PlayerInfo = playerInfo;
             SkillLog = PlayerInfo.SkillLog;
 
             //subscribe to future changes and invoke manually
             SkillLog.CollectionChanged += (sender, args) =>
             {
-                PopulateAggregatedSkillLogs();
+                PopulateAggregatedSkillLogs(isPlayerHealer);
                 CasualMessenger.Instance.Messenger.Send(new ScrollPlayerStatsMessage(), this);
             };
             
-            PopulateAggregatedSkillLogs();
+            PopulateAggregatedSkillLogs(isPlayerHealer);
         }
 
-        private void PopulateAggregatedSkillLogs()
+        private void PopulateAggregatedSkillLogs(bool isPlayerHealer)
         {
             AggregatedSkillLogById = new ThreadSafeObservableCollection<AggregatedSkillResult>();
             AggregatedSkillLogByName = new ThreadSafeObservableCollection<AggregatedSkillResult>();
 
+            foreach (var skillId in SkillLog.Where(s => !SkillIsAttackDictionary.ContainsKey(s.SkillId)).Select(s => s.SkillId).ToList())
+            {
+                SkillIsAttackDictionary.GetOrAdd(skillId, false);
+            }
+            foreach (
+                var skill in
+                    SkillIsAttackDictionary.Where(kvp => !kvp.Value).ToList()
+                        .Where(kvp => SkillLog.Any(s => s.SkillId == kvp.Key && s.Amount > 0))
+                        .ToList())
+            {
+                SkillIsAttackDictionary[skill.Key] = true;
+            }
+            
             var aggregatedById =(from s in SkillLog
-                                 group s by s.SkillId into grps
+                                 group s by new { s.SkillId , s.SkillName } into grps
                                  select new AggregatedSkillResult
                                  {
                                      DisplayName = grps.FirstOrDefault()?.SkillNameDetailed ?? "Unknown Skill",
                                      Amount = grps.Sum(g => g.Amount),
                                      IsHeal = grps.FirstOrDefault()?.IsHeal,
-                                     Hits = grps.Count(),
-                                     CritRate = (double)grps.Count(g => g.IsCritical) / grps.Count(),
+                                     Hits = grps.Count(g => !SkillIsAttackDictionary[g.SkillId] || g.Amount >  0),
+                                     CritRate = (double)grps.Count(g => g.IsCritical) / grps.Count(g => !SkillIsAttackDictionary[g.SkillId] || g.Amount > 0),
                                      HighestCrit = grps.Any(g => g.IsCritical) ? grps.Where(g => g.IsCritical).Max(g => g.Amount) : 0,
                                      LowestCrit = grps.Any(g => g.IsCritical) ? grps.Where(g => g.IsCritical).Min(g => g.Amount) : 0,
                                      AverageCrit = grps.Any(g => g.IsCritical) ? Convert.ToInt64(grps.Where(g => g.IsCritical).Average(g => g.Amount)) : 0,
@@ -158,8 +179,8 @@ namespace CasualMeter.ViewModels
                                          DisplayName = grps.Key,
                                          Amount = grps.Sum(g => g.Amount),
                                          IsHeal = grps.FirstOrDefault()?.IsHeal,
-                                         Hits = grps.Count(),
-                                         CritRate = (double)grps.Count(g => g.IsCritical) / grps.Count(),
+                                         Hits = grps.Count(g => !SkillIsAttackDictionary[g.SkillId] || g.Amount > 0),
+                                         CritRate = (double)grps.Count(g => g.IsCritical) / grps.Count(g => !SkillIsAttackDictionary[g.SkillId] || g.Amount > 0),
                                          HighestCrit = grps.Any(g => g.IsCritical) ? grps.Where(g => g.IsCritical).Max(g => g.Amount) : 0,
                                          LowestCrit = grps.Any(g => g.IsCritical) ? grps.Where(g => g.IsCritical).Min(g => g.Amount) : 0,
                                          AverageCrit = grps.Any(g => g.IsCritical) ? Convert.ToInt64(grps.Where(g => g.IsCritical).Average(g => g.Amount)) : 0,

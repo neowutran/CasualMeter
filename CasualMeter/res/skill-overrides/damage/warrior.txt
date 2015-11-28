@@ -9,3 +9,7 @@
 300230;Scythe II;Chained
 300200;Scythe II;Unchained
 67044431;Smoke Aggressor
+80400;Assault Stance IV (On)
+80450;Assault Stance IV (Off)
+90400;Defensive Stance IV (On)
+90450;Defensive Stance IV (Off)

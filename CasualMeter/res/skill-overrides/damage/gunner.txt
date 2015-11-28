@@ -1,5 +1,6 @@
 67044435;Command: Self-Destruct
 67044430;ST-4 Attack
+67044432;ST Construct
 70820;Arcane Barrage VIII (1)
 70821;Arcane Barrage VIII (2)
 110900;Rocket Jump IX;Unchained

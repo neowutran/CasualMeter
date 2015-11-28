@@ -50,7 +50,7 @@ namespace Tera.Game
                 if (Enum.TryParse(Path.GetFileNameWithoutExtension(file), true, out playerClass))
                 {
                     collection[playerClass] = new List<Skill>();
-                    var lines = File.ReadLines(file).Where(l => !string.IsNullOrWhiteSpace(l));
+                    var lines = File.ReadLines(file).Where(l => !l.StartsWith("#") && !string.IsNullOrWhiteSpace(l));
                     var listOfParts = lines.Select(s => s.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
                     foreach (var parts in listOfParts)
                     {

@@ -76,10 +76,12 @@ namespace Tera.DamageMeter
             TotalReceived = new SkillStats();
         }
 
-        private PlayerInfo GetOrCreate(Player player)
+        private PlayerInfo GetOrCreate(SkillResult skillResult)
         {
+            var player = skillResult.SourcePlayer;
             PlayerInfo playerStats = StatsByUser.FirstOrDefault(pi => pi.Player.Equals(player));
-            if (playerStats == null)
+            if (playerStats == null && (IsFromHealer(skillResult) ||//either healer
+               (!IsFromHealer(skillResult) && IsValidAttack(skillResult))))//or damage from non-healer
             {
                 playerStats = new PlayerInfo(player, this);
                 StatsByUser.Add(playerStats);
@@ -93,7 +95,8 @@ namespace Tera.DamageMeter
 
             if (skillResult.SourcePlayer != null)
             {
-                var playerStats = GetOrCreate(skillResult.SourcePlayer);
+                var playerStats = GetOrCreate(skillResult);
+                if (playerStats == null) return;//if this is null, that means we should ignore it
                 var statsChange = StatsChange(skillResult);
                 playerStats.Dealt.Add(statsChange);
                 playerStats.LogSkillUsage(skillResult);
@@ -123,6 +126,18 @@ namespace Tera.DamageMeter
             }
         }
 
+        public bool IsValidMessage(EachSkillResultServerMessage message)
+        {
+            return message != null && !message.IsUseless && //stuff like warrior DFA
+                   (FirstAttack != null || (!message.IsHeal && message.Amount > 0)) &&//only record first hit is it's a damage hit (heals occurring outside of fights)
+                   !(message.Target.Equals(message.Source) && !message.IsHeal && message.Amount > 0);//disregard damage dealt to self (gunner self destruct)
+        }
+
+        public bool IsFromHealer(SkillResult skillResult)
+        {
+            return skillResult.SourcePlayer.IsHealer;
+        }
+
         public bool IsValidAttack(SkillResult skillResult)
         {
             return skillResult.SourcePlayer != null && (skillResult.Damage > 0) &&
@@ -138,9 +153,12 @@ namespace Tera.DamageMeter
             result.Damage = message.Damage;
             result.Heal = message.Heal;
 
-            result.Hits++;
-            if (message.IsCritical)
-                result.Crits++;
+            if (IsFromHealer(message) || (!IsFromHealer(message) && !message.IsHeal))
+            {
+                result.Hits++;
+                if (message.IsCritical)
+                    result.Crits++;
+            }
             
             return result;
         }

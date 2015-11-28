@@ -14,8 +14,8 @@ namespace Tera.Game.Messages
         public SkillResultFlags Flags { get; private set; }
         public bool IsCritical { get; private set; }
         public bool IsHeal => (Flags & SkillResultFlags.Heal) != 0;
-        public bool IsResolve => (Flags & SkillResultFlags.Resolve) != 0;
-        public bool IsUseless => Flags == 0 || IsResolve;
+        public bool IsMana => Flags == SkillResultFlags.Mana;
+        public bool IsUseless => (Flags & SkillResultFlags.IsDfaResolve) != 0;
 
         internal EachSkillResultServerMessage(TeraMessageReader reader)
             : base(reader)
@@ -36,7 +36,8 @@ namespace Tera.Game.Messages
         {
             Bit0 = 1,// Usually 1 for attacks, 0 for blocks/dodges but I don't understand its exact semantics yet
             Heal = 2,
-            Resolve = 4,//dfa resolve has this flag set, nothing else seems to, this is just an assumption for now
+            Mana = Bit0 | Heal,
+            IsDfaResolve = 4,//dfa resolve has this flag set, nothing else seems to, this is just an assumption for now
             Bit16 = 0x10000,
             Bit18 = 0x40000
         }

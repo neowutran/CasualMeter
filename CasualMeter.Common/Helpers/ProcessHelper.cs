@@ -36,7 +36,7 @@ namespace CasualMeter.Common.Helpers
             if (!isActive.HasValue)
                 return;
             if (isActive.Value)
-                HotkeyHelper.Instance.Initialize();
+                HotkeyHelper.Instance.Activate();
             else
                 HotkeyHelper.Instance.Deactivate();
         }

@@ -38,6 +38,11 @@ namespace CasualMeter.Common.Helpers
 
         public void Initialize()
         {
+            //empty method to ensure initialization
+        }
+
+        public void Activate()
+        {
             lock (_lock)
             {
                 Register(HotKeys.Modifier, HotKeys.PasteStats, CasualMessenger.Instance.PastePlayerStats);

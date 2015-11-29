@@ -43,7 +43,8 @@ namespace CasualMeter
         {
             //ensure initialization of helpers
             SettingsHelper.Instance.Initialize();
-            ProcessHelper.Instance.UpdateHotKeys();
+            HotkeyHelper.Instance.Initialize();
+            ProcessHelper.Instance.Initialize();
 
             //initialize viewmodel
             DataContext = ViewModel = new ShellViewModel();
@@ -55,6 +56,7 @@ namespace CasualMeter
             OpacityScaleSlider.Value = SettingsHelper.Instance.Settings.Opacity;
             UiScaleSlider.Value = SettingsHelper.Instance.Settings.UiScale;
             ShellViewModel.IsPinned = SettingsHelper.Instance.Settings.IsPinned;
+            ProcessHelper.Instance.UpdateHotKeys();
 
             CasualMessenger.Instance.Messenger.Register<ExitMessage>(this, Exit);
 

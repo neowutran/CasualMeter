@@ -36,6 +36,7 @@ namespace CasualMeter
 
                 var application = new App();
                 application.InitializeComponent();
+                application.ShutdownMode = ShutdownMode.OnMainWindowClose;
 
                 // register unhandled exceptions
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
@@ -44,9 +45,10 @@ namespace CasualMeter
 
                 application.Run();
 
-                Logger.Info("Cleaning up.");
+                Logger.Info("Closing.");
                 // Allow single instance code to perform cleanup operations
                 SingleInstance<App>.Cleanup();
+                Environment.Exit(0);//application doesn't fully exit without this for some reason
             }
         }
 

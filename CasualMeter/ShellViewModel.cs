@@ -41,7 +41,6 @@ namespace CasualMeter
         {
             CasualMessenger.Instance.Messenger.Register<PastePlayerStatsMessage>(this, PasteStats);
             CasualMessenger.Instance.Messenger.Register<ResetPlayerStatsMessage>(this, Reset);
-            CasualMessenger.Instance.Messenger.Register<ExitMessage>(this, Exit);
         }
 
         #region Properties
@@ -112,7 +111,7 @@ namespace CasualMeter
 
         public RelayCommand ExitCommand
         {
-            get { return GetProperty(getDefault: () => new RelayCommand(PrepareExit)); }
+            get { return GetProperty(getDefault: () => new RelayCommand(Exit)); }
             set { SetProperty(value); }
         }
         #endregion
@@ -231,14 +230,9 @@ namespace CasualMeter
             ArchivedDamageTrackers.Clear();
         }
 
-        private void PrepareExit()
+        private void Exit()
         {
-            CasualMessenger.Instance.Messenger.Send(new PrepareExitMessage());
-        }
-
-        private void Exit(ExitMessage message)
-        {
-            Environment.Exit(0);
+            CasualMessenger.Instance.Messenger.Send(new ExitMessage());
         }
     }
 }

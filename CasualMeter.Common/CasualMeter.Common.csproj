@@ -86,7 +86,6 @@
     <Compile Include="Conductors\CasualMessenger.cs" />
     <Compile Include="Conductors\Messages\ExitMessage.cs" />
     <Compile Include="Conductors\Messages\PastePlayerStatsMessage.cs" />
-    <Compile Include="Conductors\Messages\PrepareExitMessage.cs" />
     <Compile Include="Conductors\Messages\RefreshVisibilityMessage.cs" />
     <Compile Include="Conductors\Messages\ResetPlayerStatsMessage.cs" />
     <Compile Include="Conductors\Messages\ScrollPlayerStatsMessage.cs" />

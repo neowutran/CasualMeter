@@ -56,7 +56,7 @@ namespace CasualMeter
             UiScaleSlider.Value = SettingsHelper.Instance.Settings.UiScale;
             ShellViewModel.IsPinned = SettingsHelper.Instance.Settings.IsPinned;
 
-            CasualMessenger.Instance.Messenger.Register<PrepareExitMessage>(this, PrepareClose);
+            CasualMessenger.Instance.Messenger.Register<ExitMessage>(this, Exit);
 
             base.OnInitialized(e);
         }
@@ -70,17 +70,10 @@ namespace CasualMeter
             SettingsHelper.Instance.Save();
         }
 
-        private void PrepareClose(PrepareExitMessage message)
+        private void Exit(ExitMessage message)
         {
             SaveUiSettings();
-            CasualMessenger.Instance.Messenger.Send(new ExitMessage());
-        }
-
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            PrepareClose(null);
-
-            base.OnClosing(e);
+            Close();
         }
 
         private void SettingsButton_OnUnchecked(object sender, RoutedEventArgs e)

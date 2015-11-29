@@ -210,7 +210,8 @@ namespace CasualMeter
             if (sb.Length > 0)
             {
                 var text = sb.ToString();
-                if (ProcessHelper.Instance.IsTeraActive)
+                var isActive = ProcessHelper.Instance.IsTeraActive;
+                if (isActive.HasValue && isActive.Value)
                 {
                     //send text input to Tera
                     ProcessHelper.Instance.SendString(text);

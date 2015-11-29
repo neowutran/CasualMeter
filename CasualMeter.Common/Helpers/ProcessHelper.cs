@@ -32,7 +32,10 @@ namespace CasualMeter.Common.Helpers
 
         public void UpdateHotKeys()
         {
-            if (IsTeraActive)
+            var isActive = IsTeraActive;
+            if (!isActive.HasValue)
+                return;
+            if (isActive.Value)
                 HotkeyHelper.Instance.Initialize();
             else
                 HotkeyHelper.Instance.Deactivate();
@@ -60,14 +63,7 @@ namespace CasualMeter.Common.Helpers
             return false;
         }
 
-        public bool IsTeraActive
-        {
-            get
-            {
-                var processName = ProcessInfo.GetActiveProcessName();
-                return processName.Equals("Tera", StringComparison.OrdinalIgnoreCase);//exception for screenshot application
-            }
-        }
+        public bool? IsTeraActive => ProcessInfo.GetActiveProcessName()?.Equals("Tera", StringComparison.OrdinalIgnoreCase);
 
         public IntPtr TeraWindow => ProcessInfo.FindWindow("LaunchUnrealUWindowsClient", "TERA");
     }

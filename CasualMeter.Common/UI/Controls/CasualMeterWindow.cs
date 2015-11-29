@@ -52,8 +52,9 @@ namespace CasualMeter.Common.UI.Controls
 
         private void SetVisibility(RefreshVisibilityMessage message)
         {
+            if (message.IsVisible == null) return;
             if (!SettingsHelper.Instance.Settings.IsPinned)
-                Visibility = message.IsVisible ? Visibility.Visible : Visibility.Collapsed;
+                Visibility = message.IsVisible.Value ? Visibility.Visible : Visibility.Collapsed;
         }
 
         protected override void OnClosed(EventArgs e)

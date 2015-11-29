@@ -32,7 +32,7 @@ namespace CasualMeter.Common.Conductors
             Messenger.Send(new PastePlayerStatsMessage());
         }
 
-        public void RefreshVisibility(bool isVisible)
+        public void RefreshVisibility(bool? isVisible)
         {
             Messenger.Send(new RefreshVisibilityMessage
             {

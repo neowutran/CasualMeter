@@ -26,9 +26,11 @@ namespace CasualMeter.Common.Helpers
 
         private readonly HotKeyManager _manager;
         private readonly Dictionary<HotKey, Action> _actions;
+        private readonly object _lock;
 
         private HotkeyHelper()
         {
+            _lock = new object();
             _manager = new HotKeyManager();
             _actions = new Dictionary<HotKey, Action>();
             _manager.KeyPressed += Manager_KeyPressed;
@@ -36,16 +38,22 @@ namespace CasualMeter.Common.Helpers
 
         public void Initialize()
         {
-            Register(HotKeys.Modifier, HotKeys.PasteStats, CasualMessenger.Instance.PastePlayerStats);
-            Register(HotKeys.Modifier, HotKeys.Reset, () => CasualMessenger.Instance.ResetPlayerStats(false));
-            Register(HotKeys.Modifier, HotKeys.SaveAndReset, () => CasualMessenger.Instance.ResetPlayerStats(true));
+            lock (_lock)
+            {
+                Register(HotKeys.Modifier, HotKeys.PasteStats, CasualMessenger.Instance.PastePlayerStats);
+                Register(HotKeys.Modifier, HotKeys.Reset, () => CasualMessenger.Instance.ResetPlayerStats(false));
+                Register(HotKeys.Modifier, HotKeys.SaveAndReset, () => CasualMessenger.Instance.ResetPlayerStats(true));
+            }
         }
 
         public void Deactivate()
         {
-            Unregister(HotKeys.Modifier, HotKeys.PasteStats);
-            Unregister(HotKeys.Modifier, HotKeys.Reset);
-            Unregister(HotKeys.Modifier, HotKeys.SaveAndReset);
+            lock (_lock)
+            {
+                Unregister(HotKeys.Modifier, HotKeys.PasteStats);
+                Unregister(HotKeys.Modifier, HotKeys.Reset);
+                Unregister(HotKeys.Modifier, HotKeys.SaveAndReset);
+            }
         }
 
         private void Manager_KeyPressed(object sender, KeyPressedEventArgs e)
@@ -60,7 +68,7 @@ namespace CasualMeter.Common.Helpers
             {
                 var hotkey = new HotKey(key, modKey);
                 if (_actions.ContainsKey(hotkey))
-                    throw new ArgumentException("Hotkey already registered!");
+                    return;
                 _actions[hotkey] = action;
 
                 _manager.Register(hotkey);

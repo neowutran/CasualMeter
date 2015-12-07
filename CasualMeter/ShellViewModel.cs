@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -37,10 +38,12 @@ namespace CasualMeter
         private EntityTracker _entityTracker;
         private PlayerTracker _playerTracker;
 
+        private Stopwatch _inactivityTimer = new Stopwatch();
+
         public ShellViewModel()
         {
             CasualMessenger.Instance.Messenger.Register<PastePlayerStatsMessage>(this, PasteStats);
-            CasualMessenger.Instance.Messenger.Register<ResetPlayerStatsMessage>(this, Reset);
+            CasualMessenger.Instance.Messenger.Register<ResetPlayerStatsMessage>(this, ResetDamageTracker);
         }
 
         #region Properties
@@ -66,7 +69,7 @@ namespace CasualMeter
         public DamageTracker DamageTracker
         {
             get { return GetProperty<DamageTracker>(); }
-            set { SetProperty(value); }
+            set { SetProperty(value, onChanged: e => _inactivityTimer.Restart()); }
         }
         #endregion
 
@@ -93,6 +96,12 @@ namespace CasualMeter
         {
             get { return GetProperty(getDefault: () => SettingsHelper.Instance.Settings.ShowPersonalDps); }
             set { SetProperty(value, onChanged: e => SettingsHelper.Instance.Settings.ShowPersonalDps = value); }
+        }
+
+        public bool UseGlobalHotkeys
+        {
+            get { return GetProperty(getDefault: () => SettingsHelper.Instance.Settings.UseGlobalHotkeys); }
+            set { SetProperty(value, onChanged: e => SettingsHelper.Instance.Settings.UseGlobalHotkeys = value); }
         }
 
         #region Commands
@@ -145,13 +154,13 @@ namespace CasualMeter
             _playerTracker = new PlayerTracker(_entityTracker);
             _messageFactory = new MessageFactory(_teraData.OpCodeNamer);
 
-            Reset(null);
+            ResetDamageTracker();
             DamageTracker = DamageTracker ?? new DamageTracker();
 
             Logger.Info($"Connected to server {server.Name}.");
         }
 
-        private void Reset(ResetPlayerStatsMessage message)
+        private void ResetDamageTracker(ResetPlayerStatsMessage message = null)
         {
             if (Server == null) return;
 
@@ -176,11 +185,19 @@ namespace CasualMeter
             _entityTracker.Update(message);
 
             var skillResultMessage = message as EachSkillResultServerMessage;
-            if (!DamageTracker.IsArchived && DamageTracker.IsValidMessage(skillResultMessage)) //don't process while viewing a past encounter
-            {   
+            if (SettingsHelper.Instance.Settings.InactivityResetDuration > 0
+                && _inactivityTimer.Elapsed > TimeSpan.FromSeconds(SettingsHelper.Instance.Settings.InactivityResetDuration)
+                && skillResultMessage.IsValid())
+            {
+                ResetDamageTracker();
+            }
+            if (!DamageTracker.IsArchived && skillResultMessage.IsValid(DamageTracker)) //don't process while viewing a past encounter
+            {
                 var skillResult = new SkillResult(skillResultMessage, _entityTracker, _playerTracker, _teraData.SkillDatabase);
                 DamageTracker.Update(skillResult);
-            }
+                if (!skillResult.IsHeal && skillResult.Amount > 0)
+                    _inactivityTimer.Restart();
+            }    
         }
         
         private void PasteStats(PastePlayerStatsMessage obj)

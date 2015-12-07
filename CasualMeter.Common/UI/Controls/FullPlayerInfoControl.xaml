@@ -6,6 +6,7 @@
                             xmlns:converters="clr-namespace:CasualMeter.Common.Converters"
                             xmlns:damageMeter="clr-namespace:Tera.DamageMeter;assembly=Tera.DamageMeter.Core"
                             xmlns:controls="clr-namespace:CasualMeter.Common.UI.Controls"
+                            xmlns:converters1="clr-namespace:Lunyx.Common.UI.Wpf.Converters;assembly=Lunyx.Common.UI.Wpf"
                             mc:Ignorable="d"
                             d:DataContext="{d:DesignInstance d:Type=damageMeter:PlayerInfo}"
                             Width="{StaticResource Width}" Height="64">
@@ -22,7 +23,7 @@
             <Setter Property="FontSize" Value="20"/>
         </Style>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" True="Collapsed" False="Visible"/>
+        <converters1:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" True="Collapsed" False="Visible"/>
         <converters:PlayerClassToImageConverter x:Key="PlayerClassToImageConverter"/>
         <converters:DoubleToPercentStringConverter x:Key="DoubleToPercentStringConverter"/>
         <converters:LongToStringConverter x:Key="LongToStringConverter"/>

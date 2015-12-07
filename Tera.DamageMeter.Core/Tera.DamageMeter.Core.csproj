@@ -53,6 +53,7 @@
     <Compile Include="AggregatedSkillResult.cs" />
     <Compile Include="DamageTracker.cs" />
     <Compile Include="FormatHelpers.cs" />
+    <Compile Include="MessageExtensions.cs" />
     <Compile Include="PlayerInfo.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

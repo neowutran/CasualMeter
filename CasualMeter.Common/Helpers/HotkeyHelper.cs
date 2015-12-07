@@ -52,7 +52,8 @@ namespace CasualMeter.Common.Helpers
         }
 
         public void Deactivate()
-        {
+        {   //don't do anything if we want to use hotkeys across all applications
+            if (SettingsHelper.Instance.Settings.UseGlobalHotkeys) return;
             lock (_lock)
             {
                 Unregister(HotKeys.Modifier, HotKeys.PasteStats);

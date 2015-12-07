@@ -126,6 +126,17 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0">Use Global Hotkeys</TextBlock>
+                        <CheckBox Grid.Column="1" x:Name="UseGlobalHotKeysCheckBox"
+                                  IsChecked="{Binding UseGlobalHotkeys}"
+                                  HorizontalAlignment="Right"
+                                  Margin="0,6,1,0"/>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0">Use Compact View</TextBlock>
                         <CheckBox Grid.Column="1" x:Name="UseCompactViewCheckBox"
                                   IsChecked="{Binding UseCompactView}"

@@ -33,6 +33,12 @@ namespace CasualMeter.Common.Entities
         [DefaultValue("{Name} {DPS} {DamagePercent}")]
         public string DpsPasteFormat { get; set; }
 
+        [DefaultValue(30)]
+        public int InactivityResetDuration { get; set; }
+
+        [DefaultValue(false)]
+        public bool UseGlobalHotkeys { get; set; }
+
         //since you can't set DefaultValueAttribute on objects
         private HotKeySettings _hotkeys;
         public HotKeySettings HotKeys

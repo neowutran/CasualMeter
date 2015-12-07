@@ -91,9 +91,7 @@
     <Compile Include="Conductors\Messages\ScrollPlayerStatsMessage.cs" />
     <Compile Include="Conductors\Messages\UpdateSkillBreakdownViewMessage.cs" />
     <Compile Include="Converters\ApplicationTitleConverter.cs" />
-    <Compile Include="Converters\BooleanConverter.cs" />
     <Compile Include="Converters\BooleanToContributionBrushConverter.cs" />
-    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\ContributionToWidthConverter.cs" />
     <Compile Include="Converters\DateTimeToTimeSpanStringConverter.cs" />
     <Compile Include="Converters\DpsToStringConverter.cs" />

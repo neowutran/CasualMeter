@@ -13,3 +13,5 @@
 300130;Axe Counter
 310100;Overwhelm
 310101;Overwhelm
+280100;Intimidation (On)
+280150;Intimidation (Off)

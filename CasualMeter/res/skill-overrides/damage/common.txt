@@ -1,5 +1,7 @@
 # Misc.
 200002;Outlaw Declaration
+60401301;Personalized Greeting
+9020100;Skirmish Running
 7004701;Sarberry Deliciousness
 60411110;Heart Chocolate
 60411100;Heart Candy Cane
@@ -125,6 +127,9 @@
 60411212;Summon NPC: Phargo
 60411213;Summon NPC: Schwab
 # Brooches
+65000300;Iridescent Powerful Brooch
+65000400;Iridescent Keen Brooch
+65000450;Iridescent Threatening Brooch
 65000500;Empowered Brooch
 65000501;Simple Empowered Brooch
 65000600;Quickcarve Brooch

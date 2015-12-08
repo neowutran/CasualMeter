@@ -181,7 +181,7 @@
                                 <Style TargetType="{x:Type ContentControl}">
                                     <Setter Property="ContentTemplate" Value="{StaticResource FullViewTemplate}"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ElementName=UseCompactViewCheckBox, Path=IsChecked}" Value="True">
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=casualMeter:ShellView}, Path=ShellViewModel.ShowCompactView}" Value="True">
                                             <Setter Property="ContentTemplate" Value="{StaticResource CompactViewTemplate}"/>
                                         </DataTrigger>
                                     </Style.Triggers>

@@ -69,7 +69,14 @@ namespace CasualMeter
         public DamageTracker DamageTracker
         {
             get { return GetProperty<DamageTracker>(); }
-            set { SetProperty(value, onChanged: e => _inactivityTimer.Restart()); }
+            set
+            {
+                SetProperty(value, onChanged: e =>
+                {
+                    _inactivityTimer.Restart();
+                    PlayerCount = value.StatsByUser.Count;
+                });
+            }
         }
         #endregion
 
@@ -86,10 +93,28 @@ namespace CasualMeter
             }
         }
 
+        public bool ShowCompactView => UseCompactView || (SettingsHelper.Instance.Settings.ExpandedViewPlayerLimit > 0 
+                                                          && PlayerCount > SettingsHelper.Instance.Settings.ExpandedViewPlayerLimit);
+
+        public int PlayerCount
+        {
+            get { return GetProperty<int>(); }
+            // ReSharper disable once ExplicitCallerInfoArgument
+            set { SetProperty(value, onChanged: e => OnPropertyChanged(nameof(ShowCompactView))); }
+        }
+
         public bool UseCompactView
         {
             get { return GetProperty(getDefault: () => SettingsHelper.Instance.Settings.UseCompactView); }
-            set { SetProperty(value, onChanged: e => SettingsHelper.Instance.Settings.UseCompactView = value); }
+            set
+            {
+                SetProperty(value, onChanged: e =>
+                {
+                    SettingsHelper.Instance.Settings.UseCompactView = value;
+                    // ReSharper disable once ExplicitCallerInfoArgument
+                    OnPropertyChanged(nameof(ShowCompactView));
+                });
+            }
         }
 
         public bool ShowPersonalDps
@@ -197,6 +222,7 @@ namespace CasualMeter
                 DamageTracker.Update(skillResult);
                 if (!skillResult.IsHeal && skillResult.Amount > 0)
                     _inactivityTimer.Restart();
+                PlayerCount = DamageTracker.StatsByUser.Count;
             }    
         }
         

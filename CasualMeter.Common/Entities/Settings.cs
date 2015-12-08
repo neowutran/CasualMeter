@@ -36,6 +36,9 @@ namespace CasualMeter.Common.Entities
         [DefaultValue(30)]
         public int InactivityResetDuration { get; set; }
 
+        [DefaultValue(5)]
+        public int ExpandedViewPlayerLimit { get; set; }
+
         [DefaultValue(false)]
         public bool UseGlobalHotkeys { get; set; }
 

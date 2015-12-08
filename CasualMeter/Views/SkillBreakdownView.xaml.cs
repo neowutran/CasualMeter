@@ -111,11 +111,6 @@ namespace CasualMeter.Views
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
-                        Header = "Is Heal?",
-                        Binding = new Binding(nameof(SkillResult.IsHeal))
-                    });
-                    SkillResultsGrid.Columns.Add(new DataGridTextColumn
-                    {
                         Header = "Is Crit?",
                         Binding = new Binding(nameof(SkillResult.IsCritical))
                     });
@@ -123,6 +118,11 @@ namespace CasualMeter.Views
                     {
                         Header = "Is Chained?",
                         Binding = new Binding(nameof(SkillResult.IsChained))
+                    });
+                    SkillResultsGrid.Columns.Add(new DataGridTextColumn
+                    {
+                        Header = "Is Heal?",
+                        Binding = new Binding(nameof(SkillResult.IsHeal))
                     });
                     break;
                 case nameof(SkillViewType.AggregatedSkillIdView):
@@ -147,16 +147,24 @@ namespace CasualMeter.Views
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
-                        Header = "Is Heal?",
-                        Binding = new Binding(nameof(AggregatedSkillResult.IsHeal))
-                    });
-                    SkillResultsGrid.Columns.Add(new DataGridTextColumn
-                    {
                         Header = "Crit Rate",
                         Binding = new Binding(nameof(AggregatedSkillResult.CritRate))
                         {
                             Converter = _doubleToPercentStringConverter
                         }
+                    });
+                    SkillResultsGrid.Columns.Add(new DataGridTextColumn
+                    {
+                        Header = "Damage Percent",
+                        Binding = new Binding(nameof(AggregatedSkillResult.DamagePercent))
+                        {
+                            Converter = _doubleToPercentStringConverter
+                        }
+                    });
+                    SkillResultsGrid.Columns.Add(new DataGridTextColumn
+                    {
+                        Header = "Is Heal?",
+                        Binding = new Binding(nameof(AggregatedSkillResult.IsHeal))
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
@@ -188,14 +196,6 @@ namespace CasualMeter.Views
                         Binding = new Binding(nameof(AggregatedSkillResult.AverageWhite))
                         {
                             Converter = _longToStringConverter
-                        }
-                    });
-                    SkillResultsGrid.Columns.Add(new DataGridTextColumn
-                    {
-                        Header = "Damage Percent",
-                        Binding = new Binding(nameof(AggregatedSkillResult.DamagePercent))
-                        {
-                            Converter = _doubleToPercentStringConverter
                         }
                     });
                     break;

@@ -28,10 +28,8 @@ Here are some of the features that are currently implemented:
 
 ### Installation
 * Install WinPCap first: http://www.winpcap.org/install/default.htm
-* http://casualmeter.azurewebsites.net/install/publish.htm
-* Ignore the warnings, application isn't signed and I'm not paying several hundred dollars to get it signed by a CA
-* You may have to click more info or whatever it is to see the button to run anyway
-* You can also disable Smart Screen (only Windows 8+). Google how to do this.
+* http://lunyx.net/CasualMeter/Setup.exe
+* If you see an issue with download on Chrome, right-click and choose Keep
 
 ### Usage
 

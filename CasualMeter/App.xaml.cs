@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using CasualMeter.Common.Helpers;
 using log4net;
-using log4net.Core;
 using Lunyx.Common.UI.Wpf;
+using Squirrel;
 
 namespace CasualMeter
 {
@@ -29,8 +29,10 @@ namespace CasualMeter
         {
             if (SingleInstance<App>.InitializeAsFirstInstance(Unique))
             {
+#if !DEBUG
+                Update().Wait();
+#endif
                 Logger.Info("Starting up.");
-
                 // Initialize process helper
                 ProcessHelper.Instance.Initialize();
 
@@ -49,6 +51,37 @@ namespace CasualMeter
                 // Allow single instance code to perform cleanup operations
                 SingleInstance<App>.Cleanup();
                 Environment.Exit(0);//application doesn't fully exit without this for some reason
+            }
+        }
+
+        private static async Task Update()
+        {
+            try
+            {
+                using (var mgr = new UpdateManager("http://lunyx.net/CasualMeter"))
+                {
+                    Logger.Info("Checking for updates.");
+                    if (mgr.IsInstalledApp)
+                    {
+                        Logger.Info($"Current Version: v{mgr.CurrentlyInstalledVersion()}");
+                        var updates = await mgr.CheckForUpdate();
+                        if (updates.ReleasesToApply.Any())
+                        {
+                            Logger.Info("Updates found. Applying updates.");
+                            var release = await mgr.UpdateApp();
+
+                            MessageBox.Show(CleanReleaseNotes(release.GetReleaseNotes(Path.Combine(mgr.RootAppDirectory, "packages"))),
+                                $"Casual Meter Update - v{release.Version}");
+
+                            Logger.Info("Updates applied. Restarting app.");
+                            UpdateManager.RestartApp();
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {   //log exception and move on
+                HandleException(e);
             }
         }
 
@@ -87,6 +120,13 @@ namespace CasualMeter
             // handle command line arguments of second instance
             // ...
             return true;
+        }
+
+        private static string CleanReleaseNotes(string value)
+        {
+            var r = new Regex(@".*<p>(?<content>.*)</p>.*", RegexOptions.Singleline);
+            var match = r.Match(value);
+            return match.Success ? match.Groups["content"].Value : value;
         }
     }
 }

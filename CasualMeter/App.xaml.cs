@@ -126,7 +126,14 @@ namespace CasualMeter
         {
             var r = new Regex(@".*<p>(?<content>.*)</p>.*", RegexOptions.Singleline);
             var match = r.Match(value);
-            return match.Success ? match.Groups["content"].Value : value;
+            return match.Success ? ScrubHtml(match.Groups["content"].Value) : value;
+        }
+
+        private static string ScrubHtml(string value)
+        {
+            var step1 = Regex.Replace(value, @"<[^>]+>|&nbsp;", "").Trim();
+            var step2 = Regex.Replace(step1, @"\s{2,}", " ");
+            return step2;
         }
     }
 }

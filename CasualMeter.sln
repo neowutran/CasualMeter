@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tera.Data", "Tera.Data\Tera
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tera.Sniffing", "Tera.Sniffing\Tera.Sniffing.csproj", "{66BB1685-8FF5-4431-B77F-7F80C92A5DA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CasualMeter.ClickOncePublish", "CasualMeter.ClickOncePublish\CasualMeter.ClickOncePublish.csproj", "{7227C609-E14B-4287-B452-1BCEF3098E28}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,10 +51,6 @@ Global
 		{66BB1685-8FF5-4431-B77F-7F80C92A5DA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66BB1685-8FF5-4431-B77F-7F80C92A5DA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66BB1685-8FF5-4431-B77F-7F80C92A5DA4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7227C609-E14B-4287-B452-1BCEF3098E28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7227C609-E14B-4287-B452-1BCEF3098E28}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7227C609-E14B-4287-B452-1BCEF3098E28}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7227C609-E14B-4287-B452-1BCEF3098E28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

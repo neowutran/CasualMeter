@@ -270,6 +270,9 @@
     <Resource Include="Resources\down-open-inverted.png" />
     <Resource Include="Resources\settings-inverted.png" />
     <Resource Include="Resources\pin-inverted.png" />
+    <Content Include="res\class-icons\brawler.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="res\opcodes-3308.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -287,6 +290,9 @@
     </Content>
     <Content Include="res\opcodes-3603GF.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\opcodes-NA.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="res\regions.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

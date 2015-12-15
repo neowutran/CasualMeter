@@ -52,9 +52,14 @@ namespace CasualMeter.Common.UI.Controls
 
         private void SetVisibility(RefreshVisibilityMessage message)
         {
-            if (message.IsVisible == null) return;
-            if (!SettingsHelper.Instance.Settings.IsPinned)
-                Visibility = message.IsVisible.Value ? Visibility.Visible : Visibility.Collapsed;
+            if (SettingsHelper.Instance.Settings.IsPinned)
+            {
+                Visibility = Visibility.Visible;
+                return;
+            }
+            // at this point, it means that we are not pinned, so set the visibility accordingly
+            if (message.IsVisible == null) return; //if this is null, there was an error getting active process
+            Visibility = message.IsVisible.Value ? Visibility.Visible : Visibility.Collapsed;
         }
 
         protected override void OnClosed(EventArgs e)

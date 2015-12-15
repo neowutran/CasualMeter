@@ -122,7 +122,7 @@ namespace Tera.DamageMeter
 
             foreach (var playerStat in StatsByUser)
             {   //force update of calculated dps metrics
-                playerStat.UpdateStats();
+                playerStat.Dealt.UpdateStats();
             }
         }
 
@@ -156,12 +156,12 @@ namespace Tera.DamageMeter
             return result;
         }
 
-        public long Dps(long damage)
+        public long CalculateDps(long damage)
         {
-            return Dps(damage, Duration);
+            return CalculateDps(damage, Duration);
         }
 
-        public long Dps(long damage, TimeSpan duration)
+        public long CalculateDps(long damage, TimeSpan duration)
         {
             var durationInSeconds = duration.TotalSeconds;
             if (durationInSeconds < 1)

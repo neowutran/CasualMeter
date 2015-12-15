@@ -39,9 +39,9 @@
                                   Source="{Binding DamageTracker.StatsByUser}"
                                   IsLiveSortingRequested="True">
                 <CollectionViewSource.SortDescriptions>
-                    <scm:SortDescription PropertyName="Damage" Direction="Descending"/>
-                    <scm:SortDescription PropertyName="Heal" Direction="Descending"/>
-                    <scm:SortDescription PropertyName="Name" Direction="Ascending"/>
+                    <scm:SortDescription PropertyName="Dealt.Damage" Direction="Descending"/>
+                    <scm:SortDescription PropertyName="Dealt.Heal" Direction="Descending"/>
+                    <scm:SortDescription PropertyName="Dealt.Name" Direction="Ascending"/>
                 </CollectionViewSource.SortDescriptions>
             </CollectionViewSource>
             <CollectionViewSource x:Key="SavedEncountersView"

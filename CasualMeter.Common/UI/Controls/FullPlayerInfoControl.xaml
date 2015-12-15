@@ -40,18 +40,18 @@
                Grid.Column="0" Grid.ColumnSpan="3"
                Grid.ZIndex="-99999"
                HorizontalAlignment="Left"
-               Width="{Binding DamageFraction, Converter={StaticResource ContributionToWidthConverter}, ConverterParameter={StaticResource Width}}"/>
+               Width="{Binding Dealt.DamageFraction, Converter={StaticResource ContributionToWidthConverter}, ConverterParameter={StaticResource Width}}"/>
     <Image Source="{Binding Class, Converter={StaticResource PlayerClassToImageConverter}}"
            Grid.Column="0"
            Height="60" Width="60"/>
     <StackPanel Grid.Column="1">
         <TextBlock Text="{Binding Name}"
                    Style="{StaticResource BigText}"/>
-        <TextBlock Text="{Binding CritFraction, Converter={StaticResource DoubleToPercentStringConverter}, StringFormat=Crits: {0}}"/>
+        <TextBlock Text="{Binding Dealt.CritFraction, Converter={StaticResource DoubleToPercentStringConverter}, StringFormat=Crits: {0}}"/>
         <TextBlock Text="{Binding Dealt.Hits, StringFormat=Hits: {0}}"/>
     </StackPanel>
     <StackPanel Grid.Column="2">
-        <TextBlock Text="{Binding DamageFraction, Converter={StaticResource DoubleToPercentStringConverter}}"
+        <TextBlock Text="{Binding Dealt.DamageFraction, Converter={StaticResource DoubleToPercentStringConverter}}"
                    TextAlignment="Right"
                    Style="{StaticResource BigText}"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -61,10 +61,10 @@
                    Foreground="{StaticResource BrushDamage}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <TextBlock Text="{Binding Dps, Converter={StaticResource DpsToStringConverter}}"
+            <TextBlock Text="{Binding Dealt.Dps, Converter={StaticResource DpsToStringConverter}}"
                        TextAlignment="Right"
                        Visibility="{Binding ElementName=ShowPersonalDpsCheckBox, Path=IsChecked, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
-            <TextBlock Text="{Binding PersonalDps, Converter={StaticResource DpsToStringConverter}}"
+            <TextBlock Text="{Binding Dealt.PersonalDps, Converter={StaticResource DpsToStringConverter}}"
                        TextAlignment="Right"
                        Visibility="{Binding ElementName=ShowPersonalDpsCheckBox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 

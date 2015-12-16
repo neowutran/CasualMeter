@@ -15,7 +15,6 @@ namespace Tera.Data
     {
         public string ResourceDirectory { get; private set; }
         public IEnumerable<Server> Servers { get; private set; }
-        public IEnumerable<Region> Regions { get;private set; }
         private readonly Func<string, TeraData> _dataForRegion;
         private readonly string _overridesDirectory;
         
@@ -30,7 +29,6 @@ namespace Tera.Data
             _overridesDirectory = overridesDirectory;
             _dataForRegion = Memoize<string, TeraData>(region => new TeraData(this, region));
             LoadServers();
-            LoadRegions();
         }
 
         private void LoadServers()
@@ -46,11 +44,6 @@ namespace Tera.Data
             Servers = overriddenServers.Concat(defaultServers.Where(ds => overriddenServers.All(os => os.Ip != ds.Ip)));
         }
 
-        private void LoadRegions()
-        {
-            Regions = GetRegions(Path.Combine(ResourceDirectory, "regions.txt")).ToList();
-        }
-
         private static string FindResourceDirectory()
         {
             var directory = Path.GetDirectoryName(typeof(BasicTeraData).Assembly.Location);
@@ -62,14 +55,6 @@ namespace Tera.Data
                 directory = Path.GetDirectoryName(directory);
             }
             throw new InvalidOperationException("Could not find the resource directory");
-        }
-        
-        private static IEnumerable<Region> GetRegions(string filename)
-        {
-            return File.ReadAllLines(filename)
-                       .Where(s => !s.StartsWith("#") && !string.IsNullOrWhiteSpace(s))
-                       .Select(s => s.Split(new[] { ' ' }))
-                       .Select(parts => new Region(parts[0], parts[1]));
         }
 
         private static IEnumerable<Server> GetServers(string filename)

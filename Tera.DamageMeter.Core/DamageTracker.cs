@@ -6,18 +6,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
+using log4net;
 using Lunyx.Common.UI.Wpf;
 using Nicenis.ComponentModel;
-using Tera.Game;
-using Tera.Game.Messages;
 
 namespace Tera.DamageMeter
 {
     public class DamageTracker : PropertyObservable
     {
+        private static readonly ILog Logger = LogManager.GetLogger
+            (MethodBase.GetCurrentMethod().DeclaringType);
+
         public ThreadSafeObservableCollection<PlayerInfo> StatsByUser
         {
-            get { return GetProperty<ThreadSafeObservableCollection<PlayerInfo>>(); }
+            get { return GetProperty(getDefault: () => new ThreadSafeObservableCollection<PlayerInfo>()); }
             set { SetProperty(value); }
         }
 
@@ -59,23 +62,10 @@ namespace Tera.DamageMeter
 
         public SkillStats TotalDealt
         {
-            get { return GetProperty<SkillStats>(); }
-            set { SetProperty(value); }
-        }
-
-        public SkillStats TotalReceived
-        {
-            get { return GetProperty<SkillStats>(); }
+            get { return GetProperty(getDefault: () => new SkillStats()); }
             set { SetProperty(value); }
         }
         
-        public DamageTracker()
-        {
-            StatsByUser = new ThreadSafeObservableCollection<PlayerInfo>();
-            TotalDealt = new SkillStats();
-            TotalReceived = new SkillStats();
-        }
-
         private PlayerInfo GetOrCreate(SkillResult skillResult)
         {
             var player = skillResult.SourcePlayer;
@@ -96,21 +86,15 @@ namespace Tera.DamageMeter
             if (skillResult.SourcePlayer != null)
             {
                 var playerStats = GetOrCreate(skillResult);
-                if (playerStats == null) return;//if this is null, that means we should ignore it
+                if (playerStats == null) return; //if this is null, that means we should ignore it
                 var statsChange = StatsChange(skillResult);
-                playerStats.Dealt.Add(statsChange);
-                playerStats.LogSkillUsage(skillResult);
-                TotalDealt.Add(statsChange);
-            }
+                if (statsChange == null) Logger.Warn($"Generated null SkillStats from {skillResult}");
 
-            //don't care about damage received since it's useless
-            //if (skillResult.TargetPlayer != null)
-            //{
-            //    var playerStats = GetOrCreate(skillResult.TargetPlayer);
-            //    var statsChange = StatsChange(skillResult);
-            //    playerStats.Received.Add(statsChange);
-            //    TotalReceived.Add(statsChange);
-            //}
+                playerStats.LogSkillUsage(skillResult);
+
+                TotalDealt.Add(statsChange);
+                playerStats.Dealt.Add(statsChange);
+            }
 
             if (IsValidAttack(skillResult))
             {

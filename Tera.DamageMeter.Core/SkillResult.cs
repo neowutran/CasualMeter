@@ -60,5 +60,10 @@ namespace Tera.DamageMeter
                 TargetPlayer = playerTracker.Get(targetUser.PlayerId);
             }
         }
+
+        public override string ToString()
+        {
+            return $"{SkillName}({SkillId}) [{Amount}]";
+        }
     }
 }

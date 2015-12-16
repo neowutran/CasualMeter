@@ -16,9 +16,8 @@ namespace Tera.Data
 
         internal TeraData(BasicTeraData basicData, string region)
         {
-            Region = basicData.Regions.Single(x => x.Key == region);
             SkillDatabase = new SkillDatabase(basicData.ResourceDirectory);
-            OpCodeNamer = new OpCodeNamer(Path.Combine(basicData.ResourceDirectory, $"opcodes-{Region.Version}.txt"));
+            OpCodeNamer = new OpCodeNamer(Path.Combine(basicData.ResourceDirectory, $"opcodes-{region}.txt"));
         }
     }
 }

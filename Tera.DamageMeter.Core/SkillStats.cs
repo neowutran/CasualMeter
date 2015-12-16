@@ -35,7 +35,7 @@ namespace Tera.DamageMeter
             if (IsPartyStats) return;
 
             //update stats
-            DamageFraction = (double)Damage / _tracker.TotalDealt.Damage;
+            DamageFraction = _tracker.TotalDealt.Damage == 0 ? 1 : (double)Damage / _tracker.TotalDealt.Damage;
             Dps = _tracker.CalculateDps(Damage);
 
             //update personal DPS
@@ -48,25 +48,25 @@ namespace Tera.DamageMeter
 
         public long Damage
         {
-            get { return GetProperty<long>(); }
+            get { return GetProperty<long>(getDefault: () => 0); }
             set { SetProperty(value, onChanged: e => UpdateStats()); }
         }
 
         public long Heal
         {
-            get { return GetProperty<long>(); }
+            get { return GetProperty<long>(getDefault: () => 0); }
             set { SetProperty(value); }
         }
 
         public int Hits
         {
-            get { return GetProperty<int>(); }
+            get { return GetProperty<int>(getDefault: () => 0); }
             set { SetProperty(value, onChanged: e => CritFraction = (double)Crits/Hits); }
         }
 
         public int Crits
         {
-            get { return GetProperty<int>(); }
+            get { return GetProperty<int>(getDefault: () => 0); }
             set { SetProperty(value); }
         }
 
@@ -98,8 +98,8 @@ namespace Tera.DamageMeter
         {
             Damage += other.Damage;
             Heal += other.Heal;
-            Hits += other.Hits;
             Crits += other.Crits;
+            Hits += other.Hits;
         }
     }
 }

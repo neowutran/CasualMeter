@@ -96,6 +96,7 @@
     <Compile Include="Converters\DpsToStringConverter.cs" />
     <Compile Include="Converters\LongToStringConverter.cs" />
     <Compile Include="Converters\DoubleToPercentStringConverter.cs" />
+    <Compile Include="Converters\OpacityValueConverter.cs" />
     <Compile Include="Converters\PlayerClassToImageConverter.cs" />
     <Compile Include="Converters\LongToTotalDamageConverter.cs" />
     <Compile Include="Converters\SavedEncounterToStringConverter.cs" />

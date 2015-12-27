@@ -24,6 +24,7 @@
         <converters:DpsToStringConverter x:Key="DpsToStringConverter"/>
         <converters:ContributionToWidthConverter x:Key="ContributionToWidthConverter"/>
         <converters:BooleanToContributionBrushConverter x:Key="BooleanToContributionBrushConverter"/>
+        <converters:OpacityValueConverter x:Key="OpacityValueConverter"></converters:OpacityValueConverter>
     </controls:PlayerInfoControl.Resources>
     <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
@@ -31,6 +32,7 @@
         <ColumnDefinition Width="Auto"/>
     </Grid.ColumnDefinitions>
     <Rectangle Fill="{Binding Tracker.IsArchived, Converter={StaticResource BooleanToContributionBrushConverter}}"
+               Opacity="{Binding ElementName=OpacityScaleSlider, Path=Value, Converter={StaticResource OpacityValueConverter}}"
                Grid.Column="0" Grid.ColumnSpan="3"
                Grid.ZIndex="-99999"
                HorizontalAlignment="Left"

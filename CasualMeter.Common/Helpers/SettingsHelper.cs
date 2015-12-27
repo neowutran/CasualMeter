@@ -2,13 +2,37 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Net;
 using CasualMeter.Common.Entities;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Tera.Data;
 using Tera.Game;
 
 namespace CasualMeter.Common.Helpers
 {
+
+    class IPAddressConverter : JsonConverter
+    {
+        public override bool CanConvert(Type objectType)
+        {
+            return (objectType == typeof(IPAddress));
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            IPAddress ip = (IPAddress)value;
+            writer.WriteValue(ip.ToString());
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            JToken token = JToken.Load(reader);
+
+            return token.Value<string>() != null ? IPAddress.Parse(token.Value<string>()) : null;
+        }
+    }
+
     public sealed class SettingsHelper
     {
         private static readonly Lazy<SettingsHelper> Lazy = new Lazy<SettingsHelper>(() => new SettingsHelper());
@@ -21,12 +45,18 @@ namespace CasualMeter.Common.Helpers
         private static readonly string SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CasualMeter");
         private static readonly string ConfigFilePath = Path.Combine(SettingsPath, "settings.json");
 
+        private readonly JsonSerializerSettings _jsonSerializerSettings ;
+
         public Settings Settings { get; set; }
 
         private SettingsHelper()
         {
             Directory.CreateDirectory(SettingsPath);//ensure settings directory is created
             _classIcons = new Dictionary<PlayerClass, string>();
+            _jsonSerializerSettings = new JsonSerializerSettings();
+            _jsonSerializerSettings.DefaultValueHandling = DefaultValueHandling.Populate;
+            _jsonSerializerSettings.Converters.Add(new IPAddressConverter());
+
             BasicTeraData = new BasicTeraData(SettingsPath);
             LoadClassIcons();
             Load();
@@ -54,13 +84,11 @@ namespace CasualMeter.Common.Helpers
                 try
                 {
                     Settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(ConfigFilePath),
-                        new JsonSerializerSettings
-                        {
-                            DefaultValueHandling = DefaultValueHandling.Populate
-                        });
+                        _jsonSerializerSettings);
                 }
                 catch (JsonSerializationException)
-                {   //someone fucked up their settings...
+                {
+                    //someone fucked up their settings...
                     Settings = new Settings();
                 }
             }
@@ -73,7 +101,7 @@ namespace CasualMeter.Common.Helpers
 
         public void Save()
         {
-            File.WriteAllText(ConfigFilePath, JsonConvert.SerializeObject(Settings, Formatting.Indented));
+            File.WriteAllText(ConfigFilePath, JsonConvert.SerializeObject(Settings, Formatting.Indented, _jsonSerializerSettings));
         }
 
         public string GetImage(PlayerClass @class)

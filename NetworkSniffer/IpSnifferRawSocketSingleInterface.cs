@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
 namespace NetworkSniffer
@@ -20,18 +21,21 @@ namespace NetworkSniffer
         public IpSnifferRawSocketSingleInterface(IPAddress localIp)
         {
             _localIp = localIp;
-            _buffer = new byte[1024 * 64];
+            _buffer = new byte[1<<17];
         }
 
         private void Init()
         {
             Debug.Assert(_socket == null);
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.IP);
+
             if (_localIp != null)
                 _socket.Bind(new IPEndPoint(_localIp, 0));
             _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.HeaderIncluded, true);
             var receiveAllOn = BitConverter.GetBytes(1);
             _socket.IOControl(IOControlCode.ReceiveAll, receiveAllOn, null);
+
+            _socket.ReceiveBufferSize = (1 << 16);
             Read();
         }
 
@@ -53,6 +57,7 @@ namespace NetworkSniffer
                 return;
             var socket = (Socket)ar.AsyncState;
             int count = socket.EndReceive(ar);
+            
             OnPacketReceived(new ArraySegment<byte>(_buffer, 0, count));
             Read();
         }

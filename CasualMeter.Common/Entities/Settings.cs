@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -41,6 +42,12 @@ namespace CasualMeter.Common.Entities
 
         [DefaultValue(false)]
         public bool UseGlobalHotkeys { get; set; }
+
+        [DefaultValue(false)]
+        public bool UseRawSockets { get; set; }
+
+        [DefaultValue(null)]
+        public IPAddress LocalIpAddress { get; set; }
 
         //since you can't set DefaultValueAttribute on objects
         private HotKeySettings _hotkeys;

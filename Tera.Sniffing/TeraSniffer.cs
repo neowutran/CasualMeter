@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using NetworkSniffer;
 using Tera.Game;
 
@@ -21,18 +22,24 @@ namespace Tera.Sniffing
         private TcpConnection _serverToClient;
         private ConnectionDecrypter _decrypter;
         private MessageSplitter _messageSplitter;
-        private readonly IpSnifferWinPcap _ipSniffer;
+        private readonly IpSniffer _ipSniffer;
 
-        public TeraSniffer(IEnumerable<Server> servers)
+        public TeraSniffer(IpSniffer ipSniffer, IEnumerable<Server> servers)
         {
             _serversByIp = servers.ToDictionary(x => x.Ip);
-            var netmasks =
-                _serversByIp.Keys.Select(s => string.Join(".", s.Split('.').Take(3)) + ".0/24").Distinct().ToArray();
-            string filter = string.Join(" or ", netmasks.Select(x => $"(net {x})"));
-            filter = "tcp and (" + filter + ")";
 
-            _ipSniffer = new IpSnifferWinPcap(filter);
-            _ipSniffer.Warning += OnWarning;
+            if (ipSniffer == null)
+            {
+                var netmasks = _serversByIp.Keys.Select(s => string.Join(".", s.Split('.').Take(3)) + ".0/24").Distinct().ToArray();
+
+                string filter = string.Join(" or ", netmasks.Select(x => $"(net {x})"));
+                filter = "tcp and (" + filter + ")";
+
+                ipSniffer = new IpSnifferWinPcap(filter);
+            }
+
+            _ipSniffer = ipSniffer;
+            
             var tcpSniffer = new TcpSniffer(_ipSniffer);
             tcpSniffer.NewConnection += HandleNewConnection;
         }
@@ -48,23 +55,6 @@ namespace Tera.Sniffing
             {
                 _ipSniffer.Enabled = value;
             }
-        }
-
-        public int? BufferSize
-        {
-            get
-            {
-                return _ipSniffer.BufferSize;
-            }
-            set
-            {
-                _ipSniffer.BufferSize = value;
-            }
-        }
-
-        public IEnumerable<string> SnifferStatus()
-        {
-            return _ipSniffer.Status();
         }
 
         public event Action<Message> MessageReceived;
@@ -112,10 +102,10 @@ namespace Tera.Sniffing
                     return;
                 if (_isNew.Contains(connection))
                 {
-                    _isNew.Remove(connection);
                     if (_serversByIp.ContainsKey(connection.Source.Address.ToString()) &&
                         data.Array.Skip(data.Offset).Take(4).SequenceEqual(new byte[] { 1, 0, 0, 0 }))
                     {
+                        _isNew.Remove(connection);
                         var server = _serversByIp[connection.Source.Address.ToString()];
                         _serverToClient = connection;
                         _clientToServer = null;
@@ -132,6 +122,7 @@ namespace Tera.Sniffing
                         (_serverToClient.Destination.Equals(connection.Source) &&
                          _serverToClient.Source.Equals(connection.Destination)))
                     {
+                        _isNew.Remove(connection);
                         _clientToServer = connection;
                     }
                 }

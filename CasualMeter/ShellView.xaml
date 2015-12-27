@@ -27,7 +27,7 @@
                 <Setter Property="VerticalAlignment" Value="Center"/>
             </Style>
             <ContextMenu x:Key="MainMenu">
-                <MenuItem Header="Exit" Command="{Binding ExitCommand}"></MenuItem>
+                <MenuItem Header="Exit" Click="Exit_OnClick"></MenuItem>
             </ContextMenu>
             <converters:ApplicationTitleConverter x:Key="ApplicationTitleConverter"/>
             <converters:TimeSpanToTotalTimeConverter x:Key="TimeSpanToTotalTimeConverter"/>
@@ -86,13 +86,7 @@
                         <Image Style="{StaticResource ButtonImageStyle}"
                                Source="{StaticResource SettingsButtonImage}"/>
                     </ToggleButton>
-                    <casualMeter:CloseButton Grid.Column="3">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Click">
-                                <i:InvokeCommandAction Command="{Binding ExitCommand}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </casualMeter:CloseButton>
+                    <casualMeter:CloseButton Grid.Column="3" Click="Exit_OnClick"/>
                 </Grid>
             </Border>
             <Border Visibility="{Binding ElementName=SettingsButton, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -153,6 +147,38 @@
                                   IsChecked="{Binding ShowPersonalDps}"
                                   HorizontalAlignment="Right"
                                   Margin="0,6,1,0"/>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0">Use Raw Sockets instead of WinPcap</TextBlock>
+                        <CheckBox Grid.Column="1" x:Name="UseRawSocketsCheckBox"
+                                  IsChecked="{Binding UseRawSockets}"
+                                  HorizontalAlignment="Right"
+                                  Margin="0,6,1,0"/>
+                    </Grid>
+                    <Grid Visibility="{Binding ElementName=UseRawSocketsCheckBox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0">Bind to which local IP?</TextBlock>
+                        <ComboBox Grid.Column="1" x:Name="LocalIpAddress"
+                                  IsEnabled="{Binding UseRawSockets}"
+                                  IsEditable="False"
+                                  SelectedItem="{Binding LocalIpAddress}"
+                                  ItemsSource="{Binding AllLocalIpAddresses}"
+                                  HorizontalAlignment="Right"
+                                  Margin="0,6,1,0"
+                                  >
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path=.}" Foreground="Black" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -234,7 +260,7 @@
                             <Setter Property="Width" Value="{StaticResource Width}"/>
                             <Setter Property="BorderThickness" Value="1"/>
                             <Setter Property="BorderBrush" Value="{StaticResource BrushWhite}"/>
-                            </Style>
+                        </Style>
                     </Grid.Resources>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

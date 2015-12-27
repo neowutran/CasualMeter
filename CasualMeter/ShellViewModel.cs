@@ -4,6 +4,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +21,7 @@ using CasualMeter.Common.UI.ViewModels;
 using GalaSoft.MvvmLight.CommandWpf;
 using log4net;
 using Lunyx.Common.UI.Wpf;
+using NetworkSniffer;
 using Tera;
 using Tera.DamageMeter;
 using Tera.Data;
@@ -129,6 +133,43 @@ namespace CasualMeter
             set { SetProperty(value, onChanged: e => SettingsHelper.Instance.Settings.UseGlobalHotkeys = value); }
         }
 
+        public bool UseRawSockets
+        {
+            get { return GetProperty(getDefault: () => SettingsHelper.Instance.Settings.UseRawSockets); }
+            set
+            {
+                SetProperty(value, onChanged: e =>
+                {
+                    SettingsHelper.Instance.Settings.UseRawSockets = value;
+                    Initialize();
+                });
+            }
+        }
+
+        public IPAddress LocalIpAddress
+        {
+            get { return GetProperty(getDefault: () => SettingsHelper.Instance.Settings.LocalIpAddress); }
+            set
+            {
+                SetProperty(value, onChanged: e =>
+                {
+                    SettingsHelper.Instance.Settings.LocalIpAddress = value;
+                    if (value != null) Initialize();//reinitialize the sniffer if local ip is changed
+                });
+            }
+        }
+
+        public IEnumerable<IPAddress> AllLocalIpAddresses
+        {
+            get
+            {
+                return NetworkInterface.GetAllNetworkInterfaces()
+                                       .SelectMany(x => x.GetIPProperties().UnicastAddresses)
+                                       .Select(x => x.Address)
+                                       .Where(x => x.AddressFamily == AddressFamily.InterNetwork);
+            }
+        }
+
         #region Commands
 
         public RelayCommand<DamageTracker> LoadEncounterCommand
@@ -142,32 +183,40 @@ namespace CasualMeter
             get { return GetProperty(getDefault: () => new RelayCommand(ClearEncounters, () => ArchivedDamageTrackers.Count > 0)); }
             set { SetProperty(value); }
         }
-
-        public RelayCommand ExitCommand
-        {
-            get { return GetProperty(getDefault: () => new RelayCommand(Exit)); }
-            set { SetProperty(value); }
-        }
         #endregion
+
+        private object _snifferLock = new object();
 
         public void Initialize()
         {
-            if (_teraSniffer != null)
-            {   //dereference the existing sniffer if it exists
-                var sniffer = _teraSniffer;
-                _teraSniffer = null;
-                sniffer.Enabled = false;
-                sniffer.MessageReceived -= HandleMessageReceived;
-                sniffer.NewConnection -= HandleNewConnection;
-                Logger.Info("Sniffer has been disabled.");
-            }
-            
-            _teraSniffer = new TeraSniffer(BasicTeraData.Servers);
-            _teraSniffer.MessageReceived += HandleMessageReceived;
-            _teraSniffer.NewConnection += HandleNewConnection;
-            _teraSniffer.Enabled = true;
+            Task.Factory.StartNew(() =>
+            {
+                lock (_snifferLock)
+                {
+                    if (_teraSniffer != null)
+                    {   //dereference the existing sniffer if it exists
+                        var sniffer = _teraSniffer;
+                        _teraSniffer = null;
+                        sniffer.Enabled = false;
+                        sniffer.MessageReceived -= HandleMessageReceived;
+                        sniffer.NewConnection -= HandleNewConnection;
+                        Logger.Info("Sniffer has been disabled.");
+                    }
 
-            Logger.Info("Sniffer has been enabled.");
+                    IpSniffer ipSniffer = null;
+                    if (UseRawSockets && LocalIpAddress != null)
+                    {
+                        ipSniffer = new IpSnifferRawSocketSingleInterface(LocalIpAddress);
+                    }
+
+                    _teraSniffer = new TeraSniffer(ipSniffer, BasicTeraData.Servers);
+                    _teraSniffer.MessageReceived += HandleMessageReceived;
+                    _teraSniffer.NewConnection += HandleNewConnection;
+                    _teraSniffer.Enabled = true;
+
+                    Logger.Info("Sniffer has been enabled.");
+                }
+            }, TaskCreationOptions.LongRunning);//provide hint to start on new thread
         }
 
         private void HandleNewConnection(Server server)
@@ -272,11 +321,6 @@ namespace CasualMeter
         private void ClearEncounters()
         {
             ArchivedDamageTrackers.Clear();
-        }
-
-        private void Exit()
-        {
-            CasualMessenger.Instance.Messenger.Send(new ExitMessage());
         }
     }
 }

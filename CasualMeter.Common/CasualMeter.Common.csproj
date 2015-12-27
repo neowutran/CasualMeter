@@ -84,7 +84,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Conductors\CasualMessenger.cs" />
-    <Compile Include="Conductors\Messages\ExitMessage.cs" />
     <Compile Include="Conductors\Messages\PastePlayerStatsMessage.cs" />
     <Compile Include="Conductors\Messages\RefreshVisibilityMessage.cs" />
     <Compile Include="Conductors\Messages\ResetPlayerStatsMessage.cs" />
@@ -109,6 +108,7 @@
     <Compile Include="Helpers\ProcessHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Formatters\Formatter.cs" />
+    <Compile Include="JsonConverters\IPAddressConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

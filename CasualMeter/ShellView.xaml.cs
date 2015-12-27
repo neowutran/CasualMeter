@@ -58,8 +58,6 @@ namespace CasualMeter
             ShellViewModel.IsPinned = SettingsHelper.Instance.Settings.IsPinned;
             ProcessHelper.Instance.UpdateHotKeys();
 
-            CasualMessenger.Instance.Messenger.Register<ExitMessage>(this, Exit);
-
             base.OnInitialized(e);
         }
 
@@ -72,7 +70,7 @@ namespace CasualMeter
             SettingsHelper.Instance.Save();
         }
 
-        private void Exit(ExitMessage message)
+        private void Exit_OnClick(object sender, RoutedEventArgs e)
         {
             SaveUiSettings();
             Close();

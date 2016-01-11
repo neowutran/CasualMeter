@@ -45,6 +45,13 @@
                 <Setter Property="AlternationCount" Value="2" />
             </Style>
             <Style TargetType="{x:Type DataGridRow}">
+                <Style.Resources>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{StaticResource ColorBlack}" />
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="{StaticResource ColorWhite}" />
+                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{StaticResource ColorBlack}" />
+                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{StaticResource ColorWhite}" />
+                    <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="{StaticResource ColorBlack}" />
+                </Style.Resources>
                 <Style.Triggers>
                     <Trigger Property="ItemsControl.AlternationIndex" Value="0">
                         <Setter Property="Background" Value="#CCC"></Setter>
@@ -54,9 +61,6 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
-            <Style TargetType="{x:Type DataGridCell}">
-                <Setter Property="Foreground" Value="{StaticResource BrushBlack}"></Setter>
-            </Style>
         </Grid.Resources>
         <StackPanel>
             <Border Style="{StaticResource BorderStyle}">
@@ -65,7 +69,7 @@
                     VerticalAlignment="Center"
                     Style="{StaticResource PanelStyle}">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
@@ -78,11 +82,17 @@
                     <casualMeter:CloseButton Grid.Column="2" Click="CloseButton_OnClick"/>
                 </Grid>
             </Border>
-            <Grid MaxHeight="700">
+            <Grid x:Name="SkillResultsGridContainer" MaxHeight="700">
                 <lc:SortableDataGrid x:Name="SkillResultsGrid"
                                      ItemsSource="{Binding}"
                                      AutoGenerateColumns="False"
                                      CanUserResizeRows="False"
+                                     CanUserDeleteRows="False"
+                                     CanUserAddRows="False"
+                                     AllowDrop="False"
+                                     IsReadOnly="True"
+                                     ClipboardCopyMode="IncludeHeader"
+                                     IsSynchronizedWithCurrentItem="False"
                                      SelectionChanged="SkillResultsGrid_OnSelectionChanged"
                                      SortDescriptionSource="{Binding SkillBreakdownViewModel.SortDescriptionSource, RelativeSource={RelativeSource FindAncestor, AncestorType=controls:CasualMeterWindow}}"/>
             </Grid>

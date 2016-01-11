@@ -24,6 +24,7 @@ using CasualMeter.Views;
 using Lunyx.Common;
 using Lunyx.Common.UI.Wpf.Extensions;
 using Tera.DamageMeter;
+using System.Windows.Forms;
 
 namespace CasualMeter
 {
@@ -56,6 +57,8 @@ namespace CasualMeter
             OpacityScaleSlider.Value = SettingsHelper.Instance.Settings.Opacity;
             UiScaleSlider.Value = SettingsHelper.Instance.Settings.UiScale;
             ShellViewModel.IsPinned = SettingsHelper.Instance.Settings.IsPinned;
+            ShellViewModel.OnlyBosses = SettingsHelper.Instance.Settings.OnlyBosses;
+            ShellViewModel.IgnoreOneshots = SettingsHelper.Instance.Settings.IgnoreOneshots;
             ProcessHelper.Instance.UpdateHotKeys();
 
             base.OnInitialized(e);
@@ -94,16 +97,39 @@ namespace CasualMeter
                     {
                         Owner = this
                     };
+                    var headerHeight = 27;//approximate height of the title bar on the skill breakdown window
                     var ownedWindows = OwnedWindows.Cast<Window>().Where(w => w.IsVisible).ToList();
                     if (!ownedWindows.Any())
                     {
-                        v.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                        //we should move away from windows form here if possible.
+                        Screen screen = Screen.FromHandle(new WindowInteropHelper(this).Handle);
+                        // Transform screen point to WPF device independent point
+                        PresentationSource source = PresentationSource.FromVisual(this);
+
+                        if (source?.CompositionTarget == null)
+                        {   //if this can't be determined, just use the center screen logic
+                            v.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                        }
+                        else
+                        {
+                            // WindowStartupLocation.CenterScreen sometimes put window out of screen in multi monitor environment
+                            v.WindowStartupLocation = WindowStartupLocation.Manual;
+                            Matrix m = source.CompositionTarget.TransformToDevice;
+                            double dx = m.M11;
+                            double dy = m.M22;
+                            Point locationFromScreen = new Point(
+                                screen.Bounds.X + (screen.Bounds.Width - v.Width * dx) / 2,
+                                screen.Bounds.Y + (screen.Bounds.Height - (v.SkillResultsGridContainer.MaxHeight + headerHeight) * dy) / 2);
+                            Point targetPoints = source.CompositionTarget.TransformFromDevice.Transform(locationFromScreen);
+                            v.Left = targetPoints.X;
+                            v.Top = targetPoints.Y;
+                        }
                     }
                     else
                     {
                         v.WindowStartupLocation = WindowStartupLocation.Manual;
-                        v.Left = ownedWindows.Max(w => w.Left) + 27;
-                        v.Top = ownedWindows.Max(w => w.Top) + 27;
+                        v.Left = ownedWindows.Max(w => w.Left) + headerHeight;
+                        v.Top = ownedWindows.Max(w => w.Top) + headerHeight;
                     }
                     v.Show();
                 }

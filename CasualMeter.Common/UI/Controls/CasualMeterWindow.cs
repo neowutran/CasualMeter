@@ -29,6 +29,7 @@ namespace CasualMeter.Common.UI.Controls
 
             Topmost = true;
             ShowInTaskbar = false;
+            Height = SystemParameters.VirtualScreenHeight; //Fix clipping window on large monitors
             ResizeMode = ResizeMode.NoResize;
             WindowStyle= WindowStyle.None;
             AllowsTransparency = true;
@@ -51,6 +52,8 @@ namespace CasualMeter.Common.UI.Controls
 
         private void SetVisibility(RefreshVisibilityMessage message)
         {
+            Topmost = false;
+            Topmost = true;// sometimes disappears, need refresh
             if (SettingsHelper.Instance.Settings.IsPinned)
             {
                 Visibility = Visibility.Visible;

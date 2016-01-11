@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using CasualMeter.Common.Conductors;
 using CasualMeter.Common.Conductors.Messages;
 using CasualMeter.Common.Converters;
 using CasualMeter.ViewModels;
+using Lunyx.Common.UI.Wpf.Controls;
 using Tera.DamageMeter;
 
 namespace CasualMeter.Views
@@ -99,7 +101,7 @@ namespace CasualMeter.Views
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
                         Header = "Skill Name",
-                        Binding = new Binding(nameof(SkillResult.SkillName))
+                        Binding = new Binding(nameof(SkillResult.SkillNameDetailed))
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
@@ -107,18 +109,19 @@ namespace CasualMeter.Views
                         Binding = new Binding(nameof(SkillResult.Amount))
                         {
                             Converter = _longToStringConverter
-                        }
+                        },
+                        ClipboardContentBinding = new Binding(nameof(SkillResult.Amount))
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
                         Header = "Is Crit?",
                         Binding = new Binding(nameof(SkillResult.IsCritical))
                     });
-                    SkillResultsGrid.Columns.Add(new DataGridTextColumn
-                    {
-                        Header = "Is Chained?",
-                        Binding = new Binding(nameof(SkillResult.IsChained))
-                    });
+                    //SkillResultsGrid.Columns.Add(new DataGridTextColumn
+                    //{
+                    //    Header = "Is Chained?",
+                    //    Binding = new Binding(nameof(SkillResult.IsChained))
+                    //});
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
                         Header = "Is Heal?",
@@ -143,7 +146,8 @@ namespace CasualMeter.Views
                         Binding = new Binding(nameof(AggregatedSkillResult.Amount))
                         {
                             Converter = _longToStringConverter
-                        }
+                        },
+                        ClipboardContentBinding = new Binding(nameof(AggregatedSkillResult.Amount))
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
@@ -151,7 +155,8 @@ namespace CasualMeter.Views
                         Binding = new Binding(nameof(AggregatedSkillResult.CritRate))
                         {
                             Converter = _doubleToPercentStringConverter
-                        }
+                        },
+                        ClipboardContentBinding = new Binding(nameof(AggregatedSkillResult.CritRate))
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
@@ -159,7 +164,8 @@ namespace CasualMeter.Views
                         Binding = new Binding(nameof(AggregatedSkillResult.DamagePercent))
                         {
                             Converter = _doubleToPercentStringConverter
-                        }
+                        },
+                        ClipboardContentBinding = new Binding(nameof(AggregatedSkillResult.DamagePercent))
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
@@ -172,7 +178,8 @@ namespace CasualMeter.Views
                         Binding = new Binding(nameof(AggregatedSkillResult.HighestCrit))
                         {
                             Converter = _longToStringConverter
-                        }
+                        },
+                        ClipboardContentBinding = new Binding(nameof(AggregatedSkillResult.HighestCrit))
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
@@ -180,7 +187,8 @@ namespace CasualMeter.Views
                         Binding = new Binding(nameof(AggregatedSkillResult.LowestCrit))
                         {
                             Converter = _longToStringConverter
-                        }
+                        },
+                        ClipboardContentBinding = new Binding(nameof(AggregatedSkillResult.LowestCrit))
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
@@ -188,7 +196,8 @@ namespace CasualMeter.Views
                         Binding = new Binding(nameof(AggregatedSkillResult.AverageCrit))
                         {
                             Converter = _longToStringConverter
-                        }
+                        },
+                        ClipboardContentBinding = new Binding(nameof(AggregatedSkillResult.AverageCrit))
                     });
                     SkillResultsGrid.Columns.Add(new DataGridTextColumn
                     {
@@ -196,7 +205,8 @@ namespace CasualMeter.Views
                         Binding = new Binding(nameof(AggregatedSkillResult.AverageWhite))
                         {
                             Converter = _longToStringConverter
-                        }
+                        },
+                        ClipboardContentBinding = new Binding(nameof(AggregatedSkillResult.AverageWhite))
                     });
                     break;
             }
@@ -209,8 +219,13 @@ namespace CasualMeter.Views
         }
 
         private void SkillResultsGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {   //prevent selection
-            SkillResultsGrid.UnselectAllCells();
+        {   
+            //copy to clipboard
+            try
+            {
+                ApplicationCommands.Copy.Execute(null, (SortableDataGrid) sender);
+            }
+            catch (Exception) { /* eat it */ }
         }
     }
 }

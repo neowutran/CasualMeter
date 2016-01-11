@@ -31,7 +31,7 @@ namespace CasualMeter.Common.Entities
         [DefaultValue(false)]
         public bool ShowPersonalDps { get; set; }
 
-        [DefaultValue("{Name} {DPS} {DamagePercent}")]
+        [DefaultValue("{Name} {Damage} {DPS} {DamagePercent}")]
         public string DpsPasteFormat { get; set; }
 
         [DefaultValue(30)]
@@ -44,10 +44,16 @@ namespace CasualMeter.Common.Entities
         public bool UseGlobalHotkeys { get; set; }
 
         [DefaultValue(false)]
+        public bool OnlyBosses { get; set; }
+
+        [DefaultValue(true)]
+        public bool IgnoreOneshots { get; set; }
+
+        [DefaultValue(false)]
         public bool UseRawSockets { get; set; }
 
-        [DefaultValue(null)]
-        public IPAddress LocalIpAddress { get; set; }
+        [DefaultValue("Auto")]
+        public string Language { get; set; }
 
         //since you can't set DefaultValueAttribute on objects
         private HotKeySettings _hotkeys;

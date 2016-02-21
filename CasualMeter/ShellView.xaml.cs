@@ -98,20 +98,28 @@ namespace CasualMeter
                     var ownedWindows = OwnedWindows.Cast<Window>().Where(w => w.IsVisible).ToList();
                     if (!ownedWindows.Any())
                     {
-                        // WindowStartupLocation.CenterScreen sometimes put window out of screen in multi monitor environment
-                        v.WindowStartupLocation = WindowStartupLocation.Manual;
                         Screen screen = Screen.FromHandle(new WindowInteropHelper(this).Handle);
                         // Transform screen point to WPF device independent point
                         PresentationSource source = PresentationSource.FromVisual(this);
-                        Matrix m = source.CompositionTarget.TransformToDevice;
-                        double dx = m.M11;
-                        double dy = m.M22;
-                        Point locationFromScreen = new Point(
-                            screen.Bounds.X + ((screen.Bounds.Width - 800*dx) / 2), 
-                            screen.Bounds.Y + ((screen.Bounds.Height - 725*dy) / 2));
-                        Point targetPoints = source.CompositionTarget.TransformFromDevice.Transform(locationFromScreen);
-                        v.Left = targetPoints.X;
-                        v.Top = targetPoints.Y;
+
+                        if (source?.CompositionTarget == null)
+                        {   //if this can't be determined, just use the center screen logic
+                            v.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                        }
+                        else
+                        {
+                            // WindowStartupLocation.CenterScreen sometimes put window out of screen in multi monitor environment
+                            v.WindowStartupLocation = WindowStartupLocation.Manual;
+                            Matrix m = source.CompositionTarget.TransformToDevice;
+                            double dx = m.M11;
+                            double dy = m.M22;
+                            Point locationFromScreen = new Point(
+                                screen.Bounds.X + (screen.Bounds.Width - 800 * dx) / 2,
+                                screen.Bounds.Y + (screen.Bounds.Height - 725 * dy) / 2);
+                            Point targetPoints = source.CompositionTarget.TransformFromDevice.Transform(locationFromScreen);
+                            v.Left = targetPoints.X;
+                            v.Top = targetPoints.Y;
+                        }
                     }
                     else
                     {

@@ -90,8 +90,9 @@
                                      AllowDrop="False"
                                      IsReadOnly="True"
                                      ClipboardCopyMode="IncludeHeader"
-                                     SelectionChanged="SkillResultsGrid_OnSelectionChanged"
                                      IsSynchronizedWithCurrentItem="False"
+                                     SelectionChanged="SkillResultsGrid_OnSelectionChanged"
+                                     LostFocus="SkillResultsGrid_OnLostFocus"
                                      SortDescriptionSource="{Binding SkillBreakdownViewModel.SortDescriptionSource, RelativeSource={RelativeSource FindAncestor, AncestorType=controls:CasualMeterWindow}}"/>
             </Grid>
         </StackPanel>

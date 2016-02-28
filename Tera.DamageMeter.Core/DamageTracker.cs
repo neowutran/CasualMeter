@@ -80,14 +80,13 @@ namespace Tera.DamageMeter
 
         private PlayerInfo GetOrCreate(SkillResult skillResult)
         {
-            /// not count bosses
             NpcEntity npctarget = skillResult.Target as NpcEntity;
             if (npctarget != null)
             {
-                if (OnlyBosses) /// not count bosses
+                if (OnlyBosses)//not count bosses
                     if (!npctarget.Info.Boss)
                         return null;
-                if (IgnoreOneshots) /// ignore damage that is more than 10x times than mob's hp
+                if (IgnoreOneshots)//ignore damage that is more than 10x times than mob's hp
                     if ((npctarget.Info.HP>0) && (npctarget.Info.HP <= skillResult.Damage/10))
                         return null;
             }

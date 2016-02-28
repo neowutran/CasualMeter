@@ -239,9 +239,11 @@ namespace CasualMeter
             _messageFactory = new MessageFactory(_teraData.OpCodeNamer);
 
             ResetDamageTracker();
-            DamageTracker = DamageTracker ?? new DamageTracker();
-            DamageTracker.OnlyBosses = OnlyBosses;
-            DamageTracker.IgnoreOneshots = IgnoreOneshots;
+            DamageTracker = DamageTracker ?? new DamageTracker
+            {
+                OnlyBosses = OnlyBosses,
+                IgnoreOneshots = IgnoreOneshots
+            };
 
             Logger.Info($"Connected to server {server.Name}.");
         }
@@ -262,9 +264,11 @@ namespace CasualMeter
                 ArchivedDamageTrackers.Remove(DamageTracker);
             }
 
-            DamageTracker = new DamageTracker();
-            DamageTracker.OnlyBosses = OnlyBosses;
-            DamageTracker.IgnoreOneshots = IgnoreOneshots;
+            DamageTracker = new DamageTracker
+            {
+                OnlyBosses = OnlyBosses,
+                IgnoreOneshots = IgnoreOneshots
+            };
         }
 
         private void HandleMessageReceived(Message obj)

@@ -33,7 +33,7 @@ namespace CasualMeter.Common.Entities
         [DefaultValue(false)]
         public bool ShowPersonalDps { get; set; }
 
-        [DefaultValue("{Name} {Damage} {DPS} {DamagePercent}")]
+        [DefaultValue("{Name} {DPS} {DamagePercent}")]
         public string DpsPasteFormat { get; set; }
 
         [DefaultValue(30)]
@@ -53,7 +53,7 @@ namespace CasualMeter.Common.Entities
 
         [DefaultValue(false)]
         public bool UseRawSockets { get; set; }
-
+        
         [JsonConverter(typeof(LanguageConverter))]
         [DefaultValue("Auto")]
         public string Language { get; set; }

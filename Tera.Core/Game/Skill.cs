@@ -1,6 +1,8 @@
 // Copyright (c) Gothos
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Text.RegularExpressions;
+
 namespace Tera.Game
 {
     public class Skill
@@ -14,7 +16,7 @@ namespace Tera.Game
             Id = id;
             Name = name;
             IsChained = isChained;
-            Detail = detail;
+            Detail = Regex.Replace(detail, @"(^\w)|(\s\w)", m => m.Value.ToUpper());//capitalize first letter of each word
         }
     }
 
@@ -22,7 +24,7 @@ namespace Tera.Game
     {
         public RaceGenderClass RaceGenderClass { get; private set; }
 
-        public UserSkill(int id, RaceGenderClass raceGenderClass, string name, bool? isChained=null,string detail="")
+        public UserSkill(int id, RaceGenderClass raceGenderClass, string name, bool? isChained = null, string detail = "")
             : base(id, name,isChained,detail)
         {
             RaceGenderClass = raceGenderClass;

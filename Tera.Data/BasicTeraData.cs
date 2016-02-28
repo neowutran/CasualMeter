@@ -15,19 +15,21 @@ namespace Tera.Data
     {
         public string ResourceDirectory { get; private set; }
         public IEnumerable<Server> Servers { get; private set; }
+        public string Language { get; private set; }
         private readonly Func<string, TeraData> _dataForRegion;
         private readonly string _overridesDirectory;
-        
+
         public TeraData DataForRegion(string region)
         {
             return _dataForRegion(region);
         }
 
-        public BasicTeraData(string overridesDirectory)
+        public BasicTeraData(string overridesDirectory,string language)
         {
             ResourceDirectory = FindResourceDirectory();
+            Language = language;
             _overridesDirectory = overridesDirectory;
-            _dataForRegion = Memoize<string, TeraData>(region => new TeraData(this, region));
+            _dataForRegion = Helpers.Memoize<string, TeraData>(region => new TeraData(this, region));
             LoadServers();
         }
 
@@ -63,12 +65,6 @@ namespace Tera.Data
                        .Where(s => !s.StartsWith("#") && !string.IsNullOrWhiteSpace(s))
                        .Select(s => s.Split(new[] { ' ' }, 3))
                        .Select(parts => new Server(parts[2], parts[1], parts[0]));
-        }
-
-        private static Func<T, TResult> Memoize<T, TResult>(Func<T, TResult> func)
-        {
-            var lookup = new ConcurrentDictionary<T, TResult>();
-            return x => lookup.GetOrAdd(x, func);
         }
     }
 }

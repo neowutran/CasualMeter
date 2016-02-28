@@ -33,9 +33,6 @@ namespace CasualMeter
 {
     public class ShellViewModel : CasualViewModelBase
     {
-        private static readonly ILog Logger = LogManager.GetLogger
-            (MethodBase.GetCurrentMethod().DeclaringType);
-
         private ITeraSniffer _teraSniffer;
         private TeraData _teraData;
         private MessageFactory _messageFactory;

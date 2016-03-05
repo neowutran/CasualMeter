@@ -33,7 +33,7 @@ namespace CasualMeter.Common.Entities
         [DefaultValue(false)]
         public bool ShowPersonalDps { get; set; }
 
-        [DefaultValue("{Name} {DPS} {DamagePercent}")]
+        [DefaultValue("{Boss} {Time} : @{Name} {DPS} {DamagePercent}")]
         public string DpsPasteFormat { get; set; }
 
         [DefaultValue(30)]

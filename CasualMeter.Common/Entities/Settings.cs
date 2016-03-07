@@ -33,7 +33,7 @@ namespace CasualMeter.Common.Entities
         [DefaultValue(false)]
         public bool ShowPersonalDps { get; set; }
 
-        [DefaultValue("{Name} {DPS} {DamagePercent}")]
+        [DefaultValue("{Boss} {Time} : @{Name} {DPS} {DamagePercent}")]
         public string DpsPasteFormat { get; set; }
 
         [DefaultValue(30)]
@@ -50,6 +50,9 @@ namespace CasualMeter.Common.Entities
 
         [DefaultValue(true)]
         public bool IgnoreOneshots { get; set; }
+
+        [DefaultValue(false)]
+        public bool AutosaveEncounters { get; set; }
 
         [DefaultValue(false)]
         public bool UseRawSockets { get; set; }

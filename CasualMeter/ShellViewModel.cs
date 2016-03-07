@@ -124,6 +124,11 @@ namespace CasualMeter
                 });
             }
         }
+        public bool AutosaveEncounters 
+        { 
+            get { return GetProperty(getDefault: () => SettingsHelper.Instance.Settings.AutosaveEncounters); } 
+            set { SetProperty(value, onChanged: e => SettingsHelper.Instance.Settings.AutosaveEncounters = value);} 
+        } 
 
         public bool ShowCompactView => UseCompactView || (SettingsHelper.Instance.Settings.ExpandedViewPlayerLimit > 0 
                                                           && PlayerCount > SettingsHelper.Instance.Settings.ExpandedViewPlayerLimit);
@@ -252,8 +257,9 @@ namespace CasualMeter
         {
             if (Server == null) return;
 
-            if (message != null && message.ShouldSaveCurrent && !DamageTracker.IsArchived && 
-                DamageTracker.StatsByUser.Count > 0 && DamageTracker.FirstAttack != null && DamageTracker.LastAttack != null)
+            bool saveEncounter = DamageTracker != null && (AutosaveEncounters || (message != null && message.ShouldSaveCurrent));
+            if (saveEncounter && !DamageTracker.IsArchived && DamageTracker.StatsByUser.Count > 0 && 
+                DamageTracker.FirstAttack != null && DamageTracker.LastAttack != null)
             {
                 DamageTracker.IsArchived = true;
                 ArchivedDamageTrackers.Add(DamageTracker);
@@ -275,6 +281,39 @@ namespace CasualMeter
         {
             var message = _messageFactory.Create(obj);
             _entityTracker.Update(message);
+
+            var despawnNpc = message as SDespawnNpc;
+            if (despawnNpc != null && !DamageTracker.IsArchived)
+            {
+                Entity ent = _entityTracker.GetOrPlaceholder(despawnNpc.NPC);
+                if (ent is NpcEntity)
+                {
+                    var npce = ent as NpcEntity;
+                    if (npce.Info.Boss && despawnNpc.Dead)
+                    {
+                        DamageTracker.Name = npce.Info.Name; //Name encounter with the last dead boss
+                        if (AutosaveEncounters) CasualMessenger.Instance.ResetPlayerStats(true);
+                    }
+                }
+                return;
+            }
+            if (DamageTracker.IsArchived)
+            { 
+                var npcOccupier = message as SNpcOccupierInfo;
+                if (npcOccupier != null)
+                {
+                    Entity ent = _entityTracker.GetOrPlaceholder(npcOccupier.NPC);
+                    if (ent is NpcEntity)
+                    {
+                        var npce = ent as NpcEntity;
+                        if (npce.Info.Boss && npcOccupier.Target != EntityId.Empty) 
+                        {
+                            CasualMessenger.Instance.ResetPlayerStats(true); //Stop viewing saved encounter on boss aggro
+                        }
+                    }
+                    return;
+                }
+            }
 
             var skillResultMessage = message as EachSkillResultServerMessage;
             if (SettingsHelper.Instance.Settings.InactivityResetDuration > 0
@@ -303,12 +342,20 @@ namespace CasualMeter
             var sb = new StringBuilder();
             bool first = true;
 
+            string body = SettingsHelper.Instance.Settings.DpsPasteFormat;
+            if (body.Contains('@'))
+            {
+                var splitter = body.Split(new[] { '@' }, 2);                
+                var placeHolder = new DamageTrackerFormatter(DamageTracker, FormatHelpers.Invariant);
+                sb.Append(placeHolder.Replace(splitter[0]));
+                body = splitter[1];
+            }
             foreach (var playerInfo in playerStatsSequence)
             {
                 var placeHolder = new PlayerStatsFormatter(playerInfo, FormatHelpers.Invariant);
                 var playerText = first ? "" : " | ";
 
-                playerText += placeHolder.Replace(SettingsHelper.Instance.Settings.DpsPasteFormat);
+                playerText += placeHolder.Replace(body);
 
                 if (sb.Length + playerText.Length > maxLength)
                     break;

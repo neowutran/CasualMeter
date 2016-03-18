@@ -1,6 +1,6 @@
 [submodule "Tera.Core"]
 	path = Tera.Core
 	url = https://github.com/neowutran/Tera.git
-[submodule "CasualMeter\\res"]
-	path = CasualMeter\\res
+[submodule "CasualMeter/res"]
+	path = CasualMeter/res
 	url = https://github.com/neowutran/TeraDpsMeterData.git

@@ -9,12 +9,16 @@
         <ImageSource x:Key="PinButtonImage">pack://application:,,,/Resources/pin-inverted.png</ImageSource>
         <ImageSource x:Key="DropdownButtonImage">pack://application:,,,/Resources/down-open-inverted.png</ImageSource>
         <ImageSource x:Key="SettingsButtonImage">pack://application:,,,/Resources/settings-inverted.png</ImageSource>
-        <SolidColorBrush x:Key="BrushBlack" Color="#1A1A1A"/>
+
+        <Color x:Key="ColorBlack">#1A1A1A</Color>
+        <Color x:Key="ColorWhite">GhostWhite</Color>
+        <SolidColorBrush x:Key="BrushBlack" Color="{StaticResource ColorBlack}"/>
+        <SolidColorBrush x:Key="BrushWhite" Color="{StaticResource ColorWhite}"/>
         <SolidColorBrush x:Key="BrushGray" Color="#4D4D4D"/>
         <SolidColorBrush x:Key="BrushLightGray" Color="#808080"/>
         <SolidColorBrush x:Key="BrushHeal" Color="LimeGreen"/>
         <SolidColorBrush x:Key="BrushDamage" Color="Red"/>
-        <SolidColorBrush x:Key="BrushWhite" Color="GhostWhite"/>
+        <SolidColorBrush x:Key="BrushBackgroundBlack" Color="#1A1A1A" Opacity="{Binding ElementName=OpacityScaleSlider, Path=Value}"/>
         
         <ControlTemplate TargetType="{x:Type Button}" x:Key="ButtonTemplate">
             <Border Background="{TemplateBinding Background}" 
@@ -24,7 +28,7 @@
             </Border>
         </ControlTemplate>
         <Style TargetType="{x:Type Button}" x:Key="ButtonStyle">
-            <Setter Property="Background" Value="{StaticResource BrushBlack}"/>
+            <Setter Property="Background" Value="{StaticResource BrushBackgroundBlack}"/>
             <Setter Property="Template" Value="{StaticResource ButtonTemplate}"/>
             <Setter Property="Width" Value="25"/>
             <Setter Property="Height" Value="25"/>
@@ -44,7 +48,7 @@
             </Border>
         </ControlTemplate>
         <Style TargetType="ToggleButton" x:Key="ToggleButtonStyle">
-            <Setter Property="Background" Value="{StaticResource BrushBlack}"/>
+            <Setter Property="Background" Value="{StaticResource BrushBackgroundBlack}"/>
             <Setter Property="Template" Value="{StaticResource ToggleButtonTemplate}"/>
             <Setter Property="Width" Value="25"/>
             <Setter Property="Height" Value="25"/>
@@ -60,14 +64,14 @@
         </Style>
 
         <Style TargetType="{x:Type Grid}" x:Key="GridStyle">
-            <Setter Property="Background" Value="{StaticResource BrushBlack}"/>
+            <Setter Property="Background" Value="{StaticResource BrushBackgroundBlack}"/>
         </Style>
         <Style TargetType="{x:Type Image}" x:Key="ButtonImageStyle">
             <Setter Property="Height" Value="10"/>
             
         </Style>
         <Style TargetType="{x:Type Panel}" x:Key="PanelStyle">
-            <Setter Property="Background" Value="{StaticResource BrushBlack}"/>
+            <Setter Property="Background" Value="{StaticResource BrushBackgroundBlack}"/>
         </Style>
         <Style TargetType="Label">
             <Setter Property="Foreground" Value="{StaticResource BrushWhite}"/>

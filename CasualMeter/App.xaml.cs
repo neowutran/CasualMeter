@@ -113,6 +113,9 @@ namespace CasualMeter
         private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             HandleException(e.ExceptionObject as Exception);
+            if (e.IsTerminating)
+                MessageBox.Show("There was an unexpected error. Please check the log for more details.", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         public bool SignalExternalCommandLineArgs(IList<string> args)

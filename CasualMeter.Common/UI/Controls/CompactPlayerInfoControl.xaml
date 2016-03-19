@@ -24,6 +24,7 @@
         <converters:DpsToStringConverter x:Key="DpsToStringConverter"/>
         <converters:ContributionToWidthConverter x:Key="ContributionToWidthConverter"/>
         <converters:BooleanToContributionBrushConverter x:Key="BooleanToContributionBrushConverter"/>
+        <converters:OpacityValueConverter x:Key="OpacityValueConverter"></converters:OpacityValueConverter>
     </controls:PlayerInfoControl.Resources>
     <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
@@ -31,10 +32,11 @@
         <ColumnDefinition Width="Auto"/>
     </Grid.ColumnDefinitions>
     <Rectangle Fill="{Binding Tracker.IsArchived, Converter={StaticResource BooleanToContributionBrushConverter}}"
+               Opacity="{Binding ElementName=OpacityScaleSlider, Path=Value, Converter={StaticResource OpacityValueConverter}}"
                Grid.Column="0" Grid.ColumnSpan="3"
                Grid.ZIndex="-99999"
                HorizontalAlignment="Left"
-               Width="{Binding DamageFraction, Converter={StaticResource ContributionToWidthConverter}, ConverterParameter={StaticResource Width}}"/>
+               Width="{Binding Dealt.DamageFraction, Converter={StaticResource ContributionToWidthConverter}, ConverterParameter={StaticResource Width}}"/>
     <Image Source="{Binding Class, Converter={StaticResource PlayerClassToImageConverter}}"
            Grid.Column="0"
            Margin="2,0,0,0"
@@ -58,11 +60,11 @@
                        TextAlignment="Right"
                        Foreground="{StaticResource BrushDamage}"/>
             <TextBlock Grid.Column="2" 
-                       Text="{Binding Dps, Converter={StaticResource DpsToStringConverter}}"
+                       Text="{Binding Dealt.Dps, Converter={StaticResource DpsToStringConverter}}"
                        TextAlignment="Right"
                        Visibility="{Binding ElementName=ShowPersonalDpsCheckBox, Path=IsChecked, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
             <TextBlock Grid.Column="2" 
-                       Text="{Binding PersonalDps, Converter={StaticResource DpsToStringConverter}}"
+                       Text="{Binding Dealt.PersonalDps, Converter={StaticResource DpsToStringConverter}}"
                        TextAlignment="Right"
                        Visibility="{Binding ElementName=ShowPersonalDpsCheckBox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </Grid>

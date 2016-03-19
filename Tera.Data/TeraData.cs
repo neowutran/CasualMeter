@@ -13,12 +13,14 @@ namespace Tera.Data
         public Region Region { get; private set; }
         public OpCodeNamer OpCodeNamer { get; private set; }
         public SkillDatabase SkillDatabase { get; private set; }
+        public NpcDatabase NpcDatabase { get; private set; }
 
         internal TeraData(BasicTeraData basicData, string region)
         {
-            Region = basicData.Regions.Single(x => x.Key == region);
-            SkillDatabase = new SkillDatabase(basicData.ResourceDirectory);
-            OpCodeNamer = new OpCodeNamer(Path.Combine(basicData.ResourceDirectory, $"opcodes-{Region.Version}.txt"));
+            string suffix = (basicData.Language=="Auto")?(region != "EU") ? region : "EU-EN": basicData.Language;
+            SkillDatabase = new SkillDatabase(basicData.ResourceDirectory,suffix);
+            NpcDatabase = new NpcDatabase(basicData.ResourceDirectory, suffix);
+            OpCodeNamer = new OpCodeNamer(Path.Combine(basicData.ResourceDirectory, $"opcodes\\opcodes-{region}.txt"));
         }
     }
 }

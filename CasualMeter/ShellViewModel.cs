@@ -4,6 +4,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +21,7 @@ using CasualMeter.Common.UI.ViewModels;
 using GalaSoft.MvvmLight.CommandWpf;
 using log4net;
 using Lunyx.Common.UI.Wpf;
+using NetworkSniffer;
 using Tera;
 using Tera.DamageMeter;
 using Tera.Data;
@@ -29,9 +33,6 @@ namespace CasualMeter
 {
     public class ShellViewModel : CasualViewModelBase
     {
-        private static readonly ILog Logger = LogManager.GetLogger
-            (MethodBase.GetCurrentMethod().DeclaringType);
-
         private ITeraSniffer _teraSniffer;
         private TeraData _teraData;
         private MessageFactory _messageFactory;
@@ -88,10 +89,46 @@ namespace CasualMeter
                 SetProperty(value, onChanged: e =>
                 {
                     SettingsHelper.Instance.Settings.IsPinned = value;
-                    ProcessHelper.Instance.ForceVisibilityRefresh();
+                    ProcessHelper.Instance.ForceVisibilityRefresh(true);
                 });
             }
         }
+        public bool OnlyBosses
+        {
+            get { return GetProperty(getDefault: () => SettingsHelper.Instance.Settings.OnlyBosses); }
+            set
+            {
+                SetProperty(value, onChanged: e =>
+                {
+                    SettingsHelper.Instance.Settings.OnlyBosses = value;
+                    if (DamageTracker != null)
+                    {
+                        DamageTracker.OnlyBosses = value;
+                    }
+                });
+            }
+        }
+
+        public bool IgnoreOneshots
+        {
+            get { return GetProperty(getDefault: () => SettingsHelper.Instance.Settings.IgnoreOneshots); }
+            set
+            {
+                SetProperty(value, onChanged: e =>
+                {
+                    SettingsHelper.Instance.Settings.IgnoreOneshots = value;
+                    if (DamageTracker != null)
+                    {
+                        DamageTracker.IgnoreOneshots = value;
+                    }
+                });
+            }
+        }
+        public bool AutosaveEncounters 
+        { 
+            get { return GetProperty(getDefault: () => SettingsHelper.Instance.Settings.AutosaveEncounters); } 
+            set { SetProperty(value, onChanged: e => SettingsHelper.Instance.Settings.AutosaveEncounters = value);} 
+        } 
 
         public bool ShowCompactView => UseCompactView || (SettingsHelper.Instance.Settings.ExpandedViewPlayerLimit > 0 
                                                           && PlayerCount > SettingsHelper.Instance.Settings.ExpandedViewPlayerLimit);
@@ -129,7 +166,26 @@ namespace CasualMeter
             set { SetProperty(value, onChanged: e => SettingsHelper.Instance.Settings.UseGlobalHotkeys = value); }
         }
 
+        public bool UseRawSockets
+        {
+            get { return GetProperty(getDefault: () => SettingsHelper.Instance.Settings.UseRawSockets); }
+            set
+            {
+                SetProperty(value, onChanged: e =>
+                {
+                    SettingsHelper.Instance.Settings.UseRawSockets = value;
+                    Initialize();
+                });
+            }
+        }
+
         #region Commands
+
+        public RelayCommand ToggleIsPinnedCommand
+        {
+            get { return GetProperty(getDefault: () => new RelayCommand(ToggleIsPinned)); }
+            set { SetProperty(value); }
+        }
 
         public RelayCommand<DamageTracker> LoadEncounterCommand
         {
@@ -142,32 +198,40 @@ namespace CasualMeter
             get { return GetProperty(getDefault: () => new RelayCommand(ClearEncounters, () => ArchivedDamageTrackers.Count > 0)); }
             set { SetProperty(value); }
         }
-
-        public RelayCommand ExitCommand
-        {
-            get { return GetProperty(getDefault: () => new RelayCommand(Exit)); }
-            set { SetProperty(value); }
-        }
         #endregion
+
+        private object _snifferLock = new object();
 
         public void Initialize()
         {
-            if (_teraSniffer != null)
-            {   //dereference the existing sniffer if it exists
-                var sniffer = _teraSniffer;
-                _teraSniffer = null;
-                sniffer.Enabled = false;
-                sniffer.MessageReceived -= HandleMessageReceived;
-                sniffer.NewConnection -= HandleNewConnection;
-                Logger.Info("Sniffer has been disabled.");
-            }
-            
-            _teraSniffer = new TeraSniffer(BasicTeraData.Servers);
-            _teraSniffer.MessageReceived += HandleMessageReceived;
-            _teraSniffer.NewConnection += HandleNewConnection;
-            _teraSniffer.Enabled = true;
+            Task.Factory.StartNew(() =>
+            {
+                lock (_snifferLock)
+                {
+                    if (_teraSniffer != null)
+                    {   //dereference the existing sniffer if it exists
+                        var sniffer = _teraSniffer;
+                        _teraSniffer = null;
+                        sniffer.Enabled = false;
+                        sniffer.MessageReceived -= HandleMessageReceived;
+                        sniffer.NewConnection -= HandleNewConnection;
+                        Logger.Info("Sniffer has been disabled.");
+                    }
 
-            Logger.Info("Sniffer has been enabled.");
+                    IpSniffer ipSniffer = null;
+                    if (UseRawSockets)
+                    {
+                        ipSniffer = new IpSnifferRawSocketMultipleInterfaces();
+                    }
+
+                    _teraSniffer = new TeraSniffer(ipSniffer, BasicTeraData.Servers);
+                    _teraSniffer.MessageReceived += HandleMessageReceived;
+                    _teraSniffer.NewConnection += HandleNewConnection;
+                    _teraSniffer.Enabled = true;
+
+                    Logger.Info("Sniffer has been enabled.");
+                }
+            }, TaskCreationOptions.LongRunning);//provide hint to start on new thread
         }
 
         private void HandleNewConnection(Server server)
@@ -175,12 +239,16 @@ namespace CasualMeter
             Server = server;
             _teraData = BasicTeraData.DataForRegion(server.Region);
 
-            _entityTracker = new EntityTracker();
+            _entityTracker = new EntityTracker(_teraData.NpcDatabase);
             _playerTracker = new PlayerTracker(_entityTracker);
             _messageFactory = new MessageFactory(_teraData.OpCodeNamer);
 
             ResetDamageTracker();
-            DamageTracker = DamageTracker ?? new DamageTracker();
+            DamageTracker = DamageTracker ?? new DamageTracker
+            {
+                OnlyBosses = OnlyBosses,
+                IgnoreOneshots = IgnoreOneshots
+            };
 
             Logger.Info($"Connected to server {server.Name}.");
         }
@@ -189,8 +257,9 @@ namespace CasualMeter
         {
             if (Server == null) return;
 
-            if (message != null && message.ShouldSaveCurrent && !DamageTracker.IsArchived && 
-                DamageTracker.StatsByUser.Count > 0 && DamageTracker.FirstAttack != null && DamageTracker.LastAttack != null)
+            bool saveEncounter = message != null && message.ShouldSaveCurrent;
+            if (saveEncounter && !DamageTracker.IsArchived && DamageTracker.StatsByUser.Count > 0 && 
+                DamageTracker.FirstAttack != null && DamageTracker.LastAttack != null)
             {
                 DamageTracker.IsArchived = true;
                 ArchivedDamageTrackers.Add(DamageTracker);
@@ -201,7 +270,11 @@ namespace CasualMeter
                 ArchivedDamageTrackers.Remove(DamageTracker);
             }
 
-            DamageTracker = new DamageTracker();
+            DamageTracker = new DamageTracker
+            {
+                OnlyBosses = OnlyBosses,
+                IgnoreOneshots = IgnoreOneshots
+            };
         }
 
         private void HandleMessageReceived(Message obj)
@@ -209,16 +282,49 @@ namespace CasualMeter
             var message = _messageFactory.Create(obj);
             _entityTracker.Update(message);
 
+            var despawnNpc = message as SDespawnNpc;
+            if (despawnNpc != null && !DamageTracker.IsArchived)
+            {
+                Entity ent = _entityTracker.GetOrPlaceholder(despawnNpc.NPC);
+                if (ent is NpcEntity)
+                {
+                    var npce = ent as NpcEntity;
+                    if (npce.Info.Boss && despawnNpc.Dead)
+                    {
+                        DamageTracker.Name = npce.Info.Name; //Name encounter with the last dead boss
+                        if (AutosaveEncounters) CasualMessenger.Instance.ResetPlayerStats(true);
+                    }
+                }
+                return;
+            }
+            if (DamageTracker.IsArchived)
+            { 
+                var npcOccupier = message as SNpcOccupierInfo;
+                if (npcOccupier != null)
+                {
+                    Entity ent = _entityTracker.GetOrPlaceholder(npcOccupier.NPC);
+                    if (ent is NpcEntity)
+                    {
+                        var npce = ent as NpcEntity;
+                        if (npce.Info.Boss && npcOccupier.Target != EntityId.Empty) 
+                        {
+                            CasualMessenger.Instance.ResetPlayerStats(true); //Stop viewing saved encounter on boss aggro
+                        }
+                    }
+                    return;
+                }
+            }
+
             var skillResultMessage = message as EachSkillResultServerMessage;
             if (SettingsHelper.Instance.Settings.InactivityResetDuration > 0
                 && _inactivityTimer.Elapsed > TimeSpan.FromSeconds(SettingsHelper.Instance.Settings.InactivityResetDuration)
                 && skillResultMessage.IsValid())
             {
-                ResetDamageTracker();
+                CasualMessenger.Instance.ResetPlayerStats(AutosaveEncounters);
             }
             if (!DamageTracker.IsArchived && skillResultMessage.IsValid(DamageTracker)) //don't process while viewing a past encounter
             {
-                var skillResult = new SkillResult(skillResultMessage, _entityTracker, _playerTracker, _teraData.SkillDatabase);
+                var skillResult = new SkillResult(skillResultMessage, _entityTracker, _playerTracker, _teraData.SkillDatabase,_teraData.NpcDatabase);
                 DamageTracker.Update(skillResult);
                 if (!skillResult.IsHeal && skillResult.Amount > 0)
                     _inactivityTimer.Restart();
@@ -236,12 +342,20 @@ namespace CasualMeter
             var sb = new StringBuilder();
             bool first = true;
 
+            string body = SettingsHelper.Instance.Settings.DpsPasteFormat;
+            if (body.Contains('@'))
+            {
+                var splitter = body.Split(new[] { '@' }, 2);                
+                var placeHolder = new DamageTrackerFormatter(DamageTracker, FormatHelpers.Invariant);
+                sb.Append(placeHolder.Replace(splitter[0]));
+                body = splitter[1];
+            }
             foreach (var playerInfo in playerStatsSequence)
             {
                 var placeHolder = new PlayerStatsFormatter(playerInfo, FormatHelpers.Invariant);
                 var playerText = first ? "" : " | ";
 
-                playerText += placeHolder.Replace(SettingsHelper.Instance.Settings.DpsPasteFormat);
+                playerText += placeHolder.Replace(body);
 
                 if (sb.Length + playerText.Length > maxLength)
                     break;
@@ -274,9 +388,9 @@ namespace CasualMeter
             ArchivedDamageTrackers.Clear();
         }
 
-        private void Exit()
+        private void ToggleIsPinned()
         {
-            CasualMessenger.Instance.Messenger.Send(new ExitMessage());
+            IsPinned = !IsPinned;
         }
     }
 }

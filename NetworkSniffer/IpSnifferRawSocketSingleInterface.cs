@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
 namespace NetworkSniffer
@@ -16,27 +17,35 @@ namespace NetworkSniffer
         private Socket _socket;
         private readonly IPAddress _localIp;
         private readonly byte[] _buffer;
+        private bool _isInit;
 
         public IpSnifferRawSocketSingleInterface(IPAddress localIp)
         {
             _localIp = localIp;
-            _buffer = new byte[1024 * 64];
+            _buffer = new byte[1<<19];
         }
 
         private void Init()
         {
             Debug.Assert(_socket == null);
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.IP);
+
             if (_localIp != null)
                 _socket.Bind(new IPEndPoint(_localIp, 0));
             _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.HeaderIncluded, true);
-            var receiveAllOn = BitConverter.GetBytes(1);
-            _socket.IOControl(IOControlCode.ReceiveAll, receiveAllOn, null);
+            var receiveAllIp = BitConverter.GetBytes(3);
+            _socket.IOControl(IOControlCode.ReceiveAll, receiveAllIp, null);
+
+            _socket.ReceiveBufferSize = (1 << 18);
             Read();
         }
 
         private void Finish()
         {
+            if (!_isInit)
+            {
+                return;
+            }
             Debug.Assert(_socket != null);
             _socket.Close();
             _socket = null;
@@ -53,6 +62,7 @@ namespace NetworkSniffer
                 return;
             var socket = (Socket)ar.AsyncState;
             int count = socket.EndReceive(ar);
+            
             OnPacketReceived(new ArraySegment<byte>(_buffer, 0, count));
             Read();
         }
@@ -60,7 +70,17 @@ namespace NetworkSniffer
         protected override void SetEnabled(bool value)
         {
             if (value)
-                Init();
+            {
+                try
+                {
+                    Init();
+                    _isInit = true;
+                }
+                catch
+                {
+                    // ignored ip addresses that cannot be binded, due to "disconnect network cable" state or other causes.
+                }
+            }
             else
                 Finish();
         }

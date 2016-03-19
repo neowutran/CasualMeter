@@ -1,7 +1,10 @@
-﻿using System;
+﻿using CasualMeter.Common.JsonConverters;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,7 +33,7 @@ namespace CasualMeter.Common.Entities
         [DefaultValue(false)]
         public bool ShowPersonalDps { get; set; }
 
-        [DefaultValue("{Name} {DPS} {DamagePercent}")]
+        [DefaultValue("{Boss} {Time} : @{Name} {DPS} {DamagePercent}")]
         public string DpsPasteFormat { get; set; }
 
         [DefaultValue(30)]
@@ -41,6 +44,22 @@ namespace CasualMeter.Common.Entities
 
         [DefaultValue(false)]
         public bool UseGlobalHotkeys { get; set; }
+
+        [DefaultValue(false)]
+        public bool OnlyBosses { get; set; }
+
+        [DefaultValue(true)]
+        public bool IgnoreOneshots { get; set; }
+
+        [DefaultValue(false)]
+        public bool AutosaveEncounters { get; set; }
+
+        [DefaultValue(false)]
+        public bool UseRawSockets { get; set; }
+        
+        [JsonConverter(typeof(LanguageConverter))]
+        [DefaultValue("Auto")]
+        public string Language { get; set; }
 
         //since you can't set DefaultValueAttribute on objects
         private HotKeySettings _hotkeys;

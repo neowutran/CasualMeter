@@ -14,11 +14,19 @@ namespace CasualMeter.Common.Entities
     {
         [JsonConverter(typeof(StringEnumConverter))]
         [DefaultValue(ModifierKeys.Control)]
-        public ModifierKeys Modifier { get; set; }
+        public ModifierKeys ModifierPaste { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        [DefaultValue(ModifierKeys.Control)]
+        public ModifierKeys ModifierReset { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        [DefaultValue(ModifierKeys.Control)]
+        public ModifierKeys ModifierSave { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         [DefaultValue(Key.Insert)]
-        public Key PasteStats { get; set; }
+        public Key Paste { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         [DefaultValue(Key.Delete)]
@@ -26,6 +34,6 @@ namespace CasualMeter.Common.Entities
 
         [JsonConverter(typeof(StringEnumConverter))]
         [DefaultValue(Key.End)]
-        public Key SaveAndReset { get; set; }
+        public Key Save { get; set; }
     }
 }

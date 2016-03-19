@@ -26,7 +26,7 @@ namespace Tera.Sniffing
 
         public TeraSniffer(IpSniffer ipSniffer, IEnumerable<Server> servers)
         {
-            _serversByIp = servers.ToDictionary(x => x.Ip);
+            _serversByIp = servers.GroupBy(x => x.Ip).ToDictionary(x => x.Key, x => x.First());
 
             if (ipSniffer == null)
             {
